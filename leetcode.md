@@ -661,4 +661,59 @@ public:
 };
 ```
 
+### [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+
+* 把握**回溯**和**重复**的关键
+```C++
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int b_heigth = board.size();
+        int b_length = board[0].size();
+        vector<vector<bool>> used(b_heigth, vector<bool>(b_length, false));//建立一个和board尺寸一样的used数组，用于判断每个位置是否被使用过
+        for (int row = 0; row < b_heigth; row++)
+        {
+            for (int col = 0; col < b_length; col++)//遍历board中的每个位置
+            {
+                if (dfs(board, word, used, row, col, 0))//遍历每个位置时，从word[0],也就是第一个字符开始对比
+                    return true;//由于回溯，只要dfs(.......,0)true，说明 word[1]、word[2]...到最后都是true
+            }
+        }
+        return false; 
+    }
+
+    bool dfs (vector<vector<char>>& board, string& word, vector<vector<bool>>& used, int row, int col, int index)
+    {
+        if (board[row][col] != word[index]) return false;//单个字符不匹配，单词肯定不匹配，直接返回false
+        if (index == word.size() - 1) return true;//所有的单个字符都匹配的**前提**下，下标index已至word最后一位（说明word检查完了），返回结果true
+// * ps：本人最初就是把上面两条语句写反了，导致出错.||
+
+        vector<pair<int, int>> side{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};//上下左右四个方向
+        used[row][col] = true;//占据board的row，col位置，则此处标记为**“被使用”**，即 true
+
+        for (auto direction : side)
+        {
+            int curRow = row + direction.first;
+            int curCol = col + direction.second;
+
+            if ((curRow >= 0 && curRow < board.size() && curCol >= 0 && curCol < board[0].size()) && (used[curRow][curCol] == false))// 这里有可以理解为两个主要条件，一是col和row不能超出范围去寻找；二是要确保[row][col]的下一位置[curRow][curCol]是“未使用”的，才能确保不走“回头路”
+            {
+                if (dfs(board, word, used, curRow, curCol, index + 1))
+                {
+                    return true;
+                }
+            }
+            
+        }
+        used[row][col] = false;//回溯完毕，退出该位置，标记为“未使用”，即false
+
+        return false;
+    }
+};
+```
+
+
+
+
+
 
