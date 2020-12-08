@@ -705,12 +705,14 @@ public:
             }
             
         }
-        used[row][col] = false;//回溯完毕，退出该位置，标记为“未使用”，即false
+        used[row][col] = false;//回溯完毕，退出该位置，标记为“未使用”，即false.
 
         return false;
     }
 };
 ```
+
+
 
 
 
