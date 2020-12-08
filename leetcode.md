@@ -1,9 +1,199 @@
 
-# 1. LEETCODE
+# LEETCODE
 
-## 1.1. 回溯
+## 链表
 
-### 1.1.1. [78.子集](https://leetcode-cn.com/problems/subsets/)
+## 树
+
+### [101. 对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
+
+1. **递归**
+```C++
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        return check(root, root);
+    }
+    bool check(TreeNode* Node1, TreeNode* Node2)
+    {
+        if (Node1 == nullptr && Node2 == nullptr) return true;
+        if (Node1 == nullptr || Node2 == nullptr) return false;
+        return (Node1->val == Node2->val) && check(Node1->left, Node2->right) && check(Node1->right, Node2->left);
+    }
+};
+```
+
+2. **迭代**
+> **一层一层**地放入**队列**
+> 终止迭代：**continue**
+```C++
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        return check(root, root);
+    }
+    bool check(TreeNode* Node1, TreeNode* Node2)
+    {
+        queue<TreeNode*> myQue;
+        myQue.push(Node1);
+        myQue.push(Node2);
+
+        while (!myQue.empty())
+        {
+            auto temp1 = myQue.front();
+            myQue.pop();
+            auto temp2 = myQue.front();
+            myQue.pop();   
+
+            if (!temp1 && !temp2) continue;//终止当前迭代
+            if (!temp1 || !temp2) return false;
+            if (temp1->val != temp2->val) return false;
+
+            myQue.push(temp1->right);
+            myQue.push(temp2->left);
+            myQue.push(temp1->left);
+            myQue.push(temp2->right);      
+        }
+        return true;
+    }
+};
+```
+---
+### [104. 二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)
+
+1. 递归
+> 父树深度 = 子树深度 + 1
+
+```C++
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == nullptr) return 0;
+        return max(maxDepth(root->left), maxDepth(root->right)) + 1;
+    }
+};
+```
+
+1. 迭代
+> **一层一层**地放入**队列**
+> **用size作为标记**，标记每层是否**遍历完毕**
+```C++
+class Solution {
+public:
+    int maxDepth(TreeNode* root) {
+        if (root == nullptr) return 0;
+        int count = 0;
+        queue<TreeNode*> que;
+        que.push(root);
+        while(!que.empty())
+        {
+            for (int i = que.size() - 1; i >= 0; i--)
+            {
+                auto node = que.front();
+                que.pop();
+                if (node->left) que.push(node->left);
+                if (node->right) que.push(node->right);
+            }
+            count++;
+        }
+        return count;
+    }
+};
+```
+---
+### [226. 翻转二叉树](https://leetcode-cn.com/problems/invert-binary-tree/)
+
+>思路框架
+```C++
+/* 二叉树遍历框架 */
+void traverse(TreeNode root) {
+    // 前序遍历
+    traverse(root.left)
+    // 中序遍历
+    traverse(root.right)
+    // 后序遍历
+}
+```
+* 写法1
+```C++
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+        if (root == nullptr) {
+            return nullptr;
+        }
+        TreeNode* temp = root->left;
+        root->left = root->right;
+        root->right = temp;
+        invertTree(root->left);
+        invertTree(root->right);
+        return root;
+    }   
+};
+```
+* 写法2
+```C++
+class Solution {
+public:
+    TreeNode* invertTree(TreeNode* root) {
+        if (root == nullptr) return nullptr;
+        TreeNode* r = invertTree(root->right);
+        TreeNode* l = invertTree(root->left);
+        root->left = r;
+        root->right = l; 
+        return root;
+    }
+};
+```
+---
+### [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+* 递归
+```C++
+class Solution {
+public:
+    int res = 0;
+    int diameterOfBinaryTree(TreeNode* root) {
+        depth (root);
+        return res;
+    }
+    int depth(TreeNode* root)
+    {
+        if (root == nullptr) return 0;
+        int L = depth(root->left);
+        int R = depth(root->right);
+        res = max(L + R, res);//比较当前子树的深度和此前的最大深度，取其大者
+        return max(L, R) + 1;//返回深度
+    }
+};
+```
+---
+### [617. 合并二叉树](https://leetcode-cn.com/problems/merge-two-binary-trees/)
+```C++
+class Solution {
+public:
+    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {
+        if (!t1) return t2;
+        if (!t2) return t1;
+        TreeNode* sumTree = new TreeNode(t1->val + t2->val);
+        sumTree->left = mergeTrees(t1->left, t2->left);
+        sumTree->right = mergeTrees(t1->right, t2->right);
+        return sumTree;
+    }
+};
+```
+---
+
+
+
+
+---
+---
+---
+---
+---
+## 回溯
+
+### [78.子集](https://leetcode-cn.com/problems/subsets/)
 
 1. **回溯算法**，前序遍历
 
@@ -53,7 +243,8 @@ public:
     }
 };
 ```
-### 1.1.2. [90.子集2](https://leetcode-cn.com/problems/subsets-ii/)
+---
+### [90.子集2](https://leetcode-cn.com/problems/subsets-ii/)
 
 * 子集2，与子集1相比，含有重复元素，关键在于**去重**
 * 在**sort**排序的基础上，用**start**标记已经用过的元素
@@ -82,7 +273,8 @@ public:
     }
 };
 ```
-### 1.1.3. [77.组合](https://leetcode-cn.com/problems/combinations/)
+---
+### [77.组合](https://leetcode-cn.com/problems/combinations/)
 
 * 组合问题利用的是回溯思想，结果可以表示成树结构，我们只要套用回溯算法模板即可，关键点在于要用一个 **start** 排除已经选择过的数字。
 ```C++
@@ -110,8 +302,8 @@ public:
     }
 };
 ```
-
-### 1.1.4. [46.全排列](https://leetcode-cn.com/problems/permutations/)
+---
+### [46.全排列](https://leetcode-cn.com/problems/permutations/)
 
 * 排列问题是回溯思想，也可以表示成树结构套用算法模板，不同之处在于使用 **contains**方法排除已经选择的数字，前文有详细分析，这里主要是和组合问题作对比。**<used、 map>**
 1. map
@@ -177,8 +369,8 @@ public:
     }
 };
 ```
-
-### 1.1.5. [47.全排列2](https://leetcode-cn.com/problems/permutations-ii/)
+---
+### [47.全排列2](https://leetcode-cn.com/problems/permutations-ii/)
 
 * 相比*全排列*，多了重复的数，关键是**去重**
 * 排序，**uesd**数组判断状态，**used[i - 1] == false/true**;
@@ -214,7 +406,8 @@ public:
     }
 };
 ```
-### 1.1.6. [51.N皇后](https://leetcode-cn.com/problems/n-queens/)
+---
+### [51.N皇后](https://leetcode-cn.com/problems/n-queens/)
 
 * 类似全排列，关键在于条件的判断
 * **isOK函数**
@@ -268,7 +461,8 @@ public:
 };
 
 ```
-### 1.1.7. [52.N皇后 II](https://leetcode-cn.com/problems/n-queens-ii/)
+---
+### [52.N皇后 II](https://leetcode-cn.com/problems/n-queens-ii/)
 
 ```C++
 class Solution {
@@ -317,7 +511,8 @@ public:
     }
 };
 ```
-### 1.1.8. [36.有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)
+---
+### [36.有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)
 
 1. 暴力求解
 * 直接遍历比较
@@ -378,11 +573,8 @@ public:
     }
 };
 ```
-
-
-
-
-### 1.1.9. [37.解数独](https://leetcode-cn.com/problems/sudoku-solver/)
+---
+### [37.解数独](https://leetcode-cn.com/problems/sudoku-solver/)
 > 思路
 
 >```java
@@ -479,7 +671,8 @@ public:
     }
 };
 ```
-### 1.1.10. [22.括号生成](https://leetcode-cn.com/problems/generate-parentheses/)
+---
+### [22.括号生成](https://leetcode-cn.com/problems/generate-parentheses/)
 >思路
 ```C++
 vector<string> generateParenthesis(int n) {
@@ -571,7 +764,8 @@ public:
     backtrack(leftValid, right - 1);
     track.pop_back(); 
 ```
-### 1.1.11. [39.组合总和](https://leetcode-cn.com/problems/combination-sum/)
+---
+### [39.组合总和](https://leetcode-cn.com/problems/combination-sum/)
 * 组合问题设置**start**
 ```C++
 class Solution {
@@ -617,7 +811,7 @@ public:
 >i =3时，下一次可以取 367
 
 >以此类推
-
+---
 ### [17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
 * 本身不涉及**重复**等问题，简单的**回溯**就可以解决了
 ```C++
@@ -660,7 +854,7 @@ public:
     }
 };
 ```
-
+---
 ### [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
 
 * 把握**回溯**和**重复**的关键
@@ -697,6 +891,8 @@ public:
             int curCol = col + direction.second;
 
             if ((curRow >= 0 && curRow < board.size() && curCol >= 0 && curCol < board[0].size()) && (used[curRow][curCol] == false))// 这里有可以理解为两个主要条件，一是col和row不能超出范围去寻找；二是要确保[row][col]的下一位置[curRow][curCol]是“未使用”的，才能确保不走“回头路”
+
+            // used[][]数组要后判断，避免溢出错误！！！
             {
                 if (dfs(board, word, used, curRow, curCol, index + 1))
                 {
@@ -711,6 +907,7 @@ public:
     }
 };
 ```
+---
 
 
 
