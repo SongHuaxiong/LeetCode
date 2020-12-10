@@ -5,7 +5,19 @@
 
 ## 树
 
-### [101. 对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
+>**树的遍历框架***
+```C++
+/* 二叉树遍历框架 */
+void traverse(TreeNode root) {
+    // 前序遍历
+    traverse(root.left)
+    // 中序遍历
+    traverse(root.right)
+    // 后序遍历
+}
+```
+
+### [101.对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
 
 1. **递归**
 ```C++
@@ -59,7 +71,7 @@ public:
 };
 ```
 ---
-### [104. 二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)
+### [104.二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)
 
 1. 递归
 > 父树深度 = 子树深度 + 1
@@ -101,19 +113,8 @@ public:
 };
 ```
 ---
-### [226. 翻转二叉树](https://leetcode-cn.com/problems/invert-binary-tree/)
+### [226.翻转二叉树](https://leetcode-cn.com/problems/invert-binary-tree/)
 
->思路框架
-```C++
-/* 二叉树遍历框架 */
-void traverse(TreeNode root) {
-    // 前序遍历
-    traverse(root.left)
-    // 中序遍历
-    traverse(root.right)
-    // 后序遍历
-}
-```
 * 写法1
 ```C++
 class Solution {
@@ -146,7 +147,7 @@ public:
 };
 ```
 ---
-### [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+### [543.二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
 * 递归
 ```C++
 class Solution {
@@ -167,7 +168,7 @@ public:
 };
 ```
 ---
-### [617. 合并二叉树](https://leetcode-cn.com/problems/merge-two-binary-trees/)
+### [617.合并二叉树](https://leetcode-cn.com/problems/merge-two-binary-trees/)
 ```C++
 class Solution {
 public:
@@ -182,6 +183,132 @@ public:
 };
 ```
 ---
+### [98.验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)
+1. **递归**
+* 利用不等关系，递归判断
+* root的**整个左子树**都要小于root.val，**整个右子树**都要大于root.val
+* 使用辅助函数，增加函数参数列表，在参数中**携带额外信息（root信息）**，将这种**约束传递**给子树的所有节点
+```C++
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {  
+        return isValid(root, nullptr, nullptr);
+    }
+    bool isValid(TreeNode* root, TreeNode* minNode, TreeNode* maxNode)
+    {
+        if (root == nullptr) return true;
+        if (minNode != nullptr && root->val <= minNode->val) return false;
+        if (maxNode != nullptr && root->val >= maxNode->val) return false;
+        return isValid(root->left, minNode, root) && isValid(root->right, root, maxNode);//此处的root是关键。
+    }
+};
+```
+
+2. **中序遍历**
+* 根据二叉搜索树的定义，不难知道，树的**中序遍历**是**升序**排列的
+* 首先中序遍历输出数组，在判断数组是否是升序即可
+>```C++ 
+> 操作(root->left)
+> 操作(root)
+> 操作(root->right)
+>```
+```C++
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {  
+        if (root == nullptr) return true;
+        vector<TreeNode*> res;//直接存数也可以
+        inorder(root, res);
+        for (int i = 1; i < res.size(); ++i)
+        {
+            if (res.at(i - 1)->val >= res.at(i)->val)
+                return false;
+        }
+        return true;
+    }
+    void inorder(TreeNode* root, vector<TreeNode*>& res)
+    { 
+        if (root == nullptr) return;
+        inorder(root->left, res);//左
+        res.push_back(root);//存
+        inorder(root->right,res);//右
+    }
+};
+```
+---
+### [114.二叉树展开为链表](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/)
+```C++
+class Solution {
+public:
+    void flatten(TreeNode* root) {
+        if (root == nullptr) return;
+        flatten(root->left);//拉平左侧
+        flatten(root->right);//拉平右侧
+        auto rightTemp = root->right; 
+        root->right = root->left;//把左侧复制到根节点右边
+        root->left = nullptr;//原本左侧置空
+        auto cur = root;
+        while (cur->right)
+        {
+            cur = cur->right;
+        }
+        cur->right = rightTemp;//把原本拉平的右侧接到末尾      
+    }
+};
+```
+
+### [116.填充每个节点的下一个右侧节点指针](https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/)
+
+```C++
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if (root == nullptr) return nullptr;
+        makeConnect(root->left, root->right);
+        return root;
+    }
+    void makeConnect(Node* N1, Node* N2)
+    {
+        if (N1 == nullptr || N2 == nullptr) return;
+        N1->next = N2;
+        makeConnect(N1->left, N1->right);//左子树的左节点连接左子树的右节点
+        makeConnect(N1->right, N2->left);//左子树的右节点连接右子树的左节点
+        makeConnect(N2->left, N2->right);//右子树的左节点连接右子树的右节点
+    }
+};
+```
+---
+### [654.最大二叉树](https://leetcode-cn.com/problems/maximum-binary-tree/)
+
+```C++
+class Solution {
+public:
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        if (nums.empty()) return  nullptr;
+        return construct(nums, 0, nums.size() - 1);
+    }
+    TreeNode* construct(vector<int>& nums, int lo, int hi)
+    {
+        if (lo > hi) return nullptr;
+        int maxValue = INT_MIN;
+        int index = -1;
+        for (int i = lo; i <= hi; ++i)
+        {
+            if (nums[i] > maxValue)
+            {
+                maxValue = nums[i];
+                index = i;
+            }
+        }
+        TreeNode* root = new TreeNode(maxValue);
+        root->left = construct(nums, lo, index - 1);
+        root->right = construct(nums, index + 1, hi);
+        return root;
+    }
+};
+```
+
+### [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
 
 
 
@@ -462,7 +589,7 @@ public:
 
 ```
 ---
-### [52.N皇后 II](https://leetcode-cn.com/problems/n-queens-ii/)
+### [52.N皇后II](https://leetcode-cn.com/problems/n-queens-ii/)
 
 ```C++
 class Solution {
@@ -812,7 +939,7 @@ public:
 
 >以此类推
 ---
-### [17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
+### [17.电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
 * 本身不涉及**重复**等问题，简单的**回溯**就可以解决了
 ```C++
 class Solution {
@@ -855,7 +982,7 @@ public:
 };
 ```
 ---
-### [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+### [79.单词搜索](https://leetcode-cn.com/problems/word-search/)
 
 * 把握**回溯**和**重复**的关键
 ```C++
