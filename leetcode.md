@@ -3,6 +3,440 @@
 
 ## 链表
 
+### [206.反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
+1. **递归**
+```C++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if(head == nullptr || head->next == nullptr) return head;
+        ListNode* last = reverseList(head->next);
+        head->next->next = head;
+        head->next = nullptr;
+        return last;
+    }
+};
+```
+2. **迭代**
+```C++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* pre = nullptr;
+        auto cur = head;
+        while(cur != nullptr)
+        {
+            auto temp = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+    }
+};
+```
+**反转链表前N个节点**
+https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484467&idx=1&sn=beb3ae89993b812eeaa6bbdeda63c494&chksm=9bd7fa3baca0732dc3f9ae9202ecaf5c925b4048514eeca6ac81bc340930a82fc62bb67681fa&scene=21#wechat_redirect
+
+---
+### []()
+* 判断长度**小于k**
+* **反转前k个节点**
+* 反转后续节点，并把前一段链表的**尾部连上**
+1. 用**迭代**方法反转**任意区间**的链表
+```C++
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head == nullptr) return head;
+        ListNode* m = head;
+        ListNode* n = head;
+        for(int i = 0; i < k; ++i)
+        {
+            if(n == nullptr) return head;
+            n = n->next;
+        }
+        ListNode* newHead = reversemn(m, n);
+        m->next = reverseKGroup(n, k);//！注意：此处是“m”，因为此时“m”节点是上一段反转结果的尾节点
+        return newHead;
+    }
+    ListNode* reversemn(ListNode* m, ListNode* n)
+    {
+        ListNode* pre = nullptr;
+        ListNode* cur = m;
+        while(cur != n)
+        {
+            auto nxt = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        return pre;
+    }
+};
+```
+---
+### [234.回文链表](https://leetcode-cn.com/problems/palindrome-linked-list/)
+1. **反转**得到新的链表之后**逐个比较**
+```C++
+class Solution {
+public:
+    ListNode* originList;//保存原来的链表
+    bool isPalindrome(ListNode* head) {
+        originList = head;
+        return compare(head);
+    }
+    bool compare(ListNode* head)//边判断边递归
+    {
+        if(head ==nullptr) return true;
+        bool res = compare(head->next);
+        res = res && (head->val == originList->val);
+        originList = originList->next;
+        return res; 
+    }
+};
+```
+2. 反转**后半部分**
+   * **快慢指针**找到**中点**，反转后半部分
+```C++
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if(head == nullptr || head->next ==nullptr) return true;
+        ListNode* centerNode = findCenter(head);
+        auto reverseFromCenter = reverseList(centerNode);
+
+        auto p = head;
+        auto q = reverseFromCenter;
+        while(q != nullptr && p != nullptr)
+        {
+            if(q->val != p->val)
+                return false;
+            p = p->next;
+            q = q->next;
+        }
+        centerNode->next = reverseList(reverseFromCenter);//还原
+        return true;
+    }
+    ListNode* findCenter(ListNode* head)//快慢指针找中点
+    {
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast->next != nullptr && fast->next->next != nullptr)//链表长度为奇数：fast->next != nullptr；为偶数：fast->next->next != nullptr
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+        return slow;
+    }
+    ListNode* reverseList(ListNode* head)//反转
+    {
+        ListNode* cur = head;
+        ListNode* pre = nullptr;
+        while(cur != nullptr)
+        {
+            ListNode* temp = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = temp;
+        }
+        return pre;
+    }
+};
+```
+---
+### [21.合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
+1. **递归**
+```C++
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if(l1 == nullptr) return l2;
+        if(l2 == nullptr) return l1;
+        if(l1->val < l2->val)
+        {
+            l1->next = mergeTwoLists(l1->next, l2);
+            return l1;
+        }
+        else
+        {
+            l2->next = mergeTwoLists(l1, l2->next);
+            return l2;     
+        }     
+    }
+};
+```
+2. **迭代**
+```C++
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        ListNode* presumHead = new ListNode(-99);//此节点标记为链表和的前一个节点，易于带入迭代计算
+        ListNode* temp = presumHead;
+        while(l1 != nullptr && l2 != nullptr)
+        {
+            if(l1->val < l2->val)
+            {
+                temp->next = l1;
+                l1 = l1->next;
+            }
+            else
+            {
+                temp->next = l2;
+                l2 = l2->next;
+            }
+            temp = temp->next;
+        }
+        temp->next = l1 == nullptr ? l2 : l1;
+        return presumHead->next;
+    }
+};
+```
+---
+### []()
+* 
+```C++
+
+```
+---
+### [141.环形链表](https://leetcode-cn.com/problems/linked-list-cycle/)
+1. **快慢指针**有循环必定会相遇
+   * 快慢指针相遇后**继续移动**，直到第二次相遇。**两次相遇间的移动次数即为环的长度。**
+```C++
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == nullptr) return false;
+        auto fast = head;
+        auto slow = head;
+        while(fast != nullptr && fast->next != nullptr)//为空说明链表可以走到头，必定不是循环链表
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)
+                return true;
+        }
+        return false;
+    }
+};
+```
+2. hash
+```C++
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(head == nullptr) return false;
+        unordered_set<ListNode*> set;//unorder记录重复元素，可以用map之类的用int记录出现次数
+        while(head != nullptr)
+        {
+            if(set.count(head)) return true;
+            set.insert(head);
+            head = head->next;
+        }
+        return false;
+    }
+};
+```
+---
+### [160.相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)
+1. 暴力求解
+   * 两层循环逐一比较
+```C++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(headA == nullptr || headB == nullptr) return nullptr;
+        auto temp = headB;
+        while(headA != nullptr)
+        {
+            while(temp != nullptr)
+            {
+                if(temp == headA)
+                    return temp;
+                temp = temp->next;
+            }
+            headA = headA->next;
+            temp = headB;//内层一次遍历结束后要返回初始位置再次进行下一轮比较
+        }
+        return nullptr;
+    }
+};
+```
+2. 哈希
+   * 保存A的所有信息，检查B
+```C++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(headA == nullptr || headB == nullptr) return nullptr;
+        unordered_set<ListNode*> set;
+        while(headA)
+        {
+            set.insert(headA);
+            headA = headA->next;
+        }
+        while(headB)
+        {
+            if(set.count(headB))
+                return headB;
+            headB = headB->next;
+        }
+        return nullptr;
+    }
+};
+```
+3. 双指针（妙啊！）
+    * A和B两个链表长度可能不同，但是**A+B**和**B+A**的长度是相同的，所以遍历A+B和遍历B+A一定是同时结束。 如果A,B相交的话A和B有一段尾巴是相同的，所以两个遍历的指针一定会同时到达交点 如果A,B不相交的话两个指针就会同时到达A+B（B+A）的尾节点
+```C++
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(headA == nullptr || headB == nullptr) return nullptr;
+        auto A = headA;
+        auto B = headB;
+        while(A != B)
+        {
+            A = A == nullptr ? headB : A->next;
+            B = B == nullptr ? headA : B->next;
+        }
+        return A;
+    }
+};
+```
+---
+### []()
+1. 快慢指针（官方）
+   * **快指针先走n**，**走到尾**时，**慢指针**自然就到**倒数第n个**了
+```C++
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0, head);//指向head的上一节点！！
+        ListNode* first = head;
+        ListNode* second = dummy;
+        for (int i = 0; i < n; ++i) {
+            first = first->next;
+        }
+        while (first) {
+            first = first->next;
+            second = second->next;
+        }
+        second->next = second->next->next;
+        ListNode* ans = dummy->next;
+        delete dummy;
+        return ans;
+    }
+};
+
+```
+2. 快慢指针
+```C++
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        if(head == nullptr) return nullptr;
+        auto pFirst = head;
+        auto pSecond = head;
+        while(n--)
+        {
+            pFirst = pFirst->next;
+        }
+        if(pFirst == nullptr) return head->next;//head自己可能会被删掉！！！
+        while(pFirst->next != nullptr)
+        {
+            pFirst = pFirst->next;
+            pSecond = pSecond->next;
+        }
+        pSecond->next = pSecond->next->next;
+        return head;
+    }
+};
+```
+3. **两次遍历**(官方)
+   * 第一次求**长度L**，第二次删除**L-n+1**处的节点
+```C++
+class Solution {
+public:
+    int getLength(ListNode* head) {
+        int length = 0;
+        while (head) {
+            ++length;
+            head = head->next;
+        }
+        return length;
+    }
+
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0, head);
+        int length = getLength(head);
+        ListNode* cur = dummy;
+        for (int i = 1; i < length - n + 1; ++i) {
+            cur = cur->next;
+        }
+        cur->next = cur->next->next;
+        ListNode* ans = dummy->next;
+        delete dummy;
+        return ans;
+    }
+};
+```
+4. **栈**(官方)
+   * 利用栈**先进后出**的特点
+```C++
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0, head);
+        stack<ListNode*> stk;
+        ListNode* cur = dummy;
+        while (cur) {
+            stk.push(cur);
+            cur = cur->next;
+        }
+        for (int i = 0; i < n; ++i) {
+            stk.pop();
+        }
+        ListNode* prev = stk.top();
+        prev->next = prev->next->next;
+        ListNode* ans = dummy->next;
+        delete dummy;
+        return ans;
+    }
+};
+```
+---
+### []()
+
+```C++
+
+```
+---
+### []()
+
+```C++
+
+```
+---
+### []()
+
+```C++
+
+```
+---
+### []()
+
+```C++
+
+```
+---
+### []()
+
+```C++
+
+```
+---
+---
+---
 ## 树
 
 >**树的遍历框架***
@@ -308,9 +742,773 @@ public:
 };
 ```
 
-### [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+### [105.从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+* 画图找出规律
+* **前序遍历**的**第一个数**一定是**根节点**
+* **中序遍历根节点**的**左侧一定是左子树**、**右侧一定是右子树**
+* 递归停止条件：上下标**越界**
+```C++
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        return rebuild(preorder, 0, preorder.size() - 1,
+                        inorder, 0, inorder.size() - 1);
+    }
+    TreeNode* rebuild(vector<int>& preorder, int preStart, int preEnd,
+                    vector<int>& inorder, int inStart, int inEnd)
+    {
+        if (preStart > preEnd || inStart > inEnd)
+        {
+            return nullptr;
+        }
+        int rootVal = preorder[preStart];
+        int index = -1;
+        for (int i = inStart; i <= inEnd; ++i)
+        {
+            if (inorder[i] == rootVal)
+            {
+                index = i;
+                break;
+            }
+        }
+        int leftSize = index - inStart;
+        TreeNode* root = new TreeNode(rootVal);
 
+        root->left = rebuild(preorder, preStart + 1, preStart + leftSize,
+                            inorder, inStart, index-1);
+        root->right = rebuild(preorder, preStart + leftSize + 1, preEnd,
+                            inorder, index + 1, inEnd);       
+        return root;
+    }
+};
+```
+### [106.从中序与后序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+* 同105题，不过是规律有所改变
+```C++
+class Solution {
+public:
+    TreeNode* buildTree(vector<int>& inorder, vector<int>& postorder) {
+        if (inorder.empty() || postorder.empty()) return nullptr;
+        return rebuild(inorder, 0, inorder.size() - 1, postorder, 0, postorder.size() - 1);
+    }
+    TreeNode* rebuild(vector<int>& inorder, int inStart, int inEnd, vector<int>& postorder, int postStart, int postEnd)
+    {
+        if (inStart > inEnd || postStart > postEnd) return nullptr;
 
+        int index;
+        int value = postorder[postEnd];
+
+        for (int i = inStart; i <= inEnd; ++i)
+        {
+            if (value == inorder[i])
+            {
+                index = i;
+                break;
+            }
+        }
+        int leftSize = index - inStart;
+        TreeNode* root = new TreeNode(value);
+        root->left = rebuild(inorder, inStart, index - 1, postorder, postStart, postStart + leftSize - 1);
+        root->right = rebuild(inorder, index + 1, inEnd, postorder, postStart + leftSize, postEnd - 1);
+        return root;
+    }
+};
+```
+### [652.寻找重复的子树](https://leetcode-cn.com/problems/find-duplicate-subtrees/)
+
+* **后序遍历**，是否重复的前提是->对比自身和其他树，因此要知道自己**树的全貌**
+* 先将树**序列化**，转换为易于比较的形式
+* 用**map**记录序列出现的次数，当次数等于2时，保存该子树（序列）
+```C++
+class Solution {
+public:
+    vector<TreeNode*> res;
+    unordered_map<string, int> map;
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        traverse(root);
+        return res;
+    }
+    string traverse(TreeNode* root)
+    {
+        if (root == nullptr) return "#";
+        string subTree = traverse(root->left) + "," + traverse(root->right) + "," + to_string(root->val);
+        if (++map[subTree] == 2) res.push_back(root);// == 1->出现1次，不存入结果；== 2->出现2次，存入； > 2,避免重复，不再存入
+        return subTree;
+    }
+};
+```
+---
+
+### [230.二叉搜索树中第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/)
+
+1. **中序遍历**有序，生成递增数组，取第k个数即可
+```C++
+class Solution {
+public:
+    vector<int> res;
+    int kthSmallest(TreeNode* root, int k) {
+        inorder(root);
+        return res.at(k - 1);      
+    }
+    void inorder(TreeNode* root)
+    {
+        if (root == nullptr) return;
+
+        inorder(root->left);
+        res.push_back(root->val);
+        inorder(root->right);
+    }
+};
+```
+2. 不用完全遍历，只需要在遍历过程中**找出即停止**
+```C++
+class Solution {
+public:
+    int res;
+    int rank = 0;
+    int kthSmallest(TreeNode* root, int k) {
+        inorder(root, k);
+        return res;      
+    }
+    void inorder(TreeNode* root, int k)
+    {
+        if (root == nullptr) return;
+        inorder(root->left, k);
+        rank++;
+        if (rank == k)
+        {
+            res = root->val;
+            return;//立即退出
+        }    
+        inorder(root->right, k);
+    }
+};
+```
+---
+### [538/1038.把二叉搜索树转换为累加树](https://leetcode-cn.com/problems/convert-bst-to-greater-tree/)
+* **反向**中序遍历，累加求解
+```C++
+class Solution {
+public:
+    int sum = 0;
+    TreeNode* convertBST(TreeNode* root) {
+        if (root == nullptr) return nullptr;
+        convertBST(root->right);//先遍历右侧
+        sum += root->val;
+        root->val = sum;
+        convertBST(root->left);//再遍历左侧
+        return root;
+        
+    }
+};
+```
+---
+### [700.二叉搜索树中的搜索](https://leetcode-cn.com/problems/search-in-a-binary-search-tree/)
+```C++
+class Solution {
+public:
+    TreeNode* searchBST(TreeNode* root, int val) {
+        if (root == nullptr || root->val == val) return root;//注意次序
+        return (root->val > val) ? searchBST(root->left, val) : searchBST(root->right, val);
+    }
+};
+```
+---
+### [701.二叉搜索树中的插入操作](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)
+
+```C++
+class Solution {
+public:
+    TreeNode* insertIntoBST(TreeNode* root, int val) {
+        if (root == nullptr) return new TreeNode(val);
+        if (root->val > val)
+            root->left = insertIntoBST(root->left, val);
+        if (root->val < val)
+            root->right = insertIntoBST(root->right, val);
+        return root;         
+    }
+};
+```
+---
+### [450.删除二叉搜索树中的节点](https://leetcode-cn.com/problems/delete-node-in-a-bst/)
+* 删除节点时有三种情况
+  1. 节点下无子节点：直接删除即可；
+  2. 节点下有单侧节点：令节点 = 单侧节点即可；
+  3. 节点下有双侧节点：令节点 = 右节点中最小的节点/左节点中最大的节点
+```C++
+class Solution {
+public:
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if (root == nullptr) return nullptr;
+        if (root->val == key)
+        {
+            if (root->left == nullptr) return root->right;
+            if (root->right == nullptr) return root->left;
+            //包含了1-2两种情况
+            root->val = minNode(root->right)->val;//改变root的值
+            root->right = deleteNode(root->right, root->val);//删除转移的节点
+        }
+        if (root->val > key)
+            root->left = deleteNode(root->left, key);
+        if (root->val < key)
+            root->right = deleteNode(root->right, key);    
+        return root;   
+    }
+    TreeNode* minNode(TreeNode* node)
+    {
+        while (node->left != nullptr)
+        {
+            node = node->left;
+        }
+        return node;
+    }
+};
+```
+---
+### [222.完全二叉树的节点个数](https://leetcode-cn.com/problems/count-complete-tree-nodes/)
+1. 通用解法：**直接求解**
+```C++
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (root == nullptr) return 0;
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};
+```
+2. 考虑完全二叉树性质：一定含有**满二叉树！**（2^n - 1个节点）
+```C++
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if (root == nullptr) return 0;
+
+        auto lnode = root;
+        auto rnode = root;
+        int l = 0, r = 0;
+        while (lnode != nullptr)
+        {
+            lnode = lnode->left;
+            l++;
+        }
+        while (rnode != nullptr)
+        {
+            rnode = rnode->right;
+            r++;
+        }
+        if (l == r)
+        {
+            return pow(2, l) - 1;
+        }
+        return 1 + countNodes(root->left) + countNodes(root->right);
+    }
+};
+```
+---
+### [235.二叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-search-tree/solution/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-26/)
+1. 利用搜索树性质9直接解）
+* 如果p、q都比当前节点小，那么pq公共祖先节点位于当前节点的左侧；
+* 反之位于右侧
+* 如果pq其中一个比节点值大，另一个小，则当前节点就是所求节点
+```C++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        while ((root->val - q->val) * (root->val - p->val) > 0)
+        {
+            if (p->val < root->val)
+                root = root->left;
+            else
+                root = root->right;
+        }
+        return root;
+    }
+};
+```
+2. 递归（原理同方法1.）
+```C++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if ((q->val - root->val) * (p->val - root->val) <= 0)
+            return root;
+        return lowestCommonAncestor(p->val < root->val ? root->left : root->right, p, q);
+    }
+};
+```
+3. 同下[236题]
+---
+### [236.二叉树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+1. [labuladong](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485561&idx=1&sn=a394ba978283819da1eb34a256f6915b&chksm=9bd7f671aca07f6722f0bc1e946ca771a0a40fd8173cc1227a7e0eabfe4e2fcc57b9ba464547&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if (root == nullptr) return nullptr;
+        if (p == root || q == root) return root;
+
+        TreeNode* left = lowestCommonAncestor(root->left, p, q);
+        TreeNode* right = lowestCommonAncestor(root->right, p, q);
+
+        if (left == nullptr && right == nullptr) return nullptr;
+        if (left != nullptr && right != nullptr) return root;
+        return (left == nullptr) ? right : left;    
+    }
+};
+```
+2. 存储**父节点**
+    1. 从根节点开始遍历整棵二叉树，用哈希表记录每个节点的父节点指针。
+    2. 从 p 节点开始不断往它的祖先移动，并用数据结构记录已经访问过的祖先节点。
+    3. 同样，我们再从 q 节点开始不断往它的祖先移动，如果有祖先已经被访问过，即意味着这是 p 和 q 的深度最深的公共祖先，即 LCA 节点。
+
+```C++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        findFather[root->val] = nullptr;
+        dfs(root);
+        while (p != nullptr)
+        {
+            isIn[p->val] = true;
+            p = findFather[p->val];
+        }
+
+        while (q != nullptr)
+        {
+            if (isIn[q->val])
+                return q;
+            q = findFather[q->val];
+        }
+        return nullptr;
+    }
+
+    unordered_map<int, TreeNode*> findFather;
+    unordered_map<int, bool> isIn;
+    void dfs(TreeNode* root)
+    {
+        if (root->left != nullptr)
+        {
+            findFather[root->left->val] = root;
+            dfs(root->left);
+        }
+        if (root->right != nullptr)
+        {
+            findFather[root->right->val] = root;
+            dfs(root->right);
+        }
+    }
+};
+```
+3. 递归
+* (inleft && inright) || (incur && (inleft || inright))条件的理解：
+  1. 一个在左一个在右
+  2. 一个在当前节点，一个在左或右
+```C++
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        findNode(root, p, q);
+        return ans;
+    }
+    TreeNode* ans;
+    bool findNode(TreeNode* root, TreeNode* p, TreeNode* q)
+    {
+        if (root == nullptr) return false;
+
+        bool inleft = findNode(root->left, p, q);
+        bool inright = findNode(root->right, p, q);
+        bool incur = (root->val == q->val)||(root->val == p->val);
+
+        if ((inleft && inright) || (incur && (inleft || inright)))
+        //if ((inleft && inright) || (incur))
+            ans = root;
+        
+        return inleft || inright || incur;
+    }
+};
+```
+---
+### [297.二叉树的序列化与反序列化](https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/)
+1. **前序遍历**
+   * **strtok**函数分割字符串
+   * string流 **istringstream**分割
+```C++
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {  
+        if (root == nullptr)
+        {
+            return "#,";
+        }
+        string s;
+        s += to_string(root->val);
+        s += ",";
+        s += serialize(root->left);
+        s += serialize(root->right);
+        return s;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        vector<string> myvector = split(data, ','/*","*/);
+        int index = 0;
+        return deserializeHelper(myvector, index);
+    }
+    TreeNode* deserializeHelper(vector<string>& myvector, int& index)
+    {
+        const string& s = myvector[index];
+        ++index;
+        if (s == "#")
+        {
+            return nullptr;
+        }
+
+        TreeNode* root = new TreeNode(stoi(s));
+        root->left = deserializeHelper(myvector, index);
+        root->right = deserializeHelper(myvector, index);
+        return root;
+    }
+   /* vector<string> split(string& data,  const char* delim)
+    {
+        vector<string> res;
+        char* temp = strtok((char*)data.c_str(), delim);
+        while (temp != nullptr)
+        {
+            res.push_back(temp);
+            temp = strtok(NULL, delim);
+        }
+        return res;
+    }*/
+    vector<string> split(string& data,  char delim)
+    {
+        vector<string> res;
+        istringstream iss(data);
+        string temp;
+        while (getline(iss, temp, delim))
+        {
+            res.push_back(temp);
+        }
+        return res;
+    }
+};
+```
+2. **后序遍历**
+   * 同1分割
+```C++
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if (root == nullptr)
+        {
+            return "#,";
+        }  
+        string s;
+        s += serialize(root->left);
+        s += serialize(root->right);
+        s += to_string(root->val);
+        s += ",";
+        return s;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        vector<string> vec = split(data, ",");
+        int index = vec.size() - 1;
+        return deserializeHelper(vec, index);
+    }
+    TreeNode* deserializeHelper(vector<string>& vec, int& index)
+    {
+        const string& s = vec.at(index);
+        --index;
+        if (s == "#")
+        {
+            return nullptr;
+        }
+        TreeNode* root = new TreeNode(stoi(s));
+        root->right = deserializeHelper(vec, index);
+        root->left = deserializeHelper(vec, index);
+        
+        return root;
+    }
+};
+```
+3. 层序遍历
+```C++
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if (root == nullptr)
+        {
+            //return "";
+            return "#,";
+        }
+        string s;
+        queue<TreeNode*> q;
+        q.push(root);
+        while (!q.empty())
+        {
+            TreeNode* cur = q.front();
+            q.pop();
+
+            if (cur == nullptr)
+            {
+                s += "#,";
+                continue;
+            }
+            else 
+            {
+                s += to_string(cur->val);
+                s += ",";
+            }
+
+            q.push(cur->left);
+            q.push(cur->right);
+        }
+        return s;  
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        //if (data.empty()) return nullptr;//对应serialize中的return "";
+        auto myvector = split(data, ",");
+        if (myvector[0] == "#") return nullptr;
+        TreeNode* root = new TreeNode(stoi(myvector.at(0)));
+        queue<TreeNode*> q;
+        q.push(root);
+        for(int i = 1; i < myvector.size();)
+        {
+            TreeNode* node = q.front();
+            q.pop();
+            string left = myvector.at(i++);//左节点就是下一个
+            if (left == "#")
+            {
+                node->left = nullptr;
+            }
+            else
+            {
+                node->left = new TreeNode(stoi(left));
+                q.push(node->left);
+            }
+            string right = myvector.at(i++);//在下一个就是右节点
+            if (right == "#")
+            {
+                node->right = nullptr;
+            }
+            else
+            {
+                node->right = new TreeNode(stoi(right));
+                q.push(node->right);
+            }
+        }
+        return root;
+    }
+    vector<string> split(string& s, const char* delim)
+    {
+        vector<string> myvector;
+        char* str = strtok((char*)s.c_str(), delim);
+        while(str)
+        {
+            myvector.push_back(str);
+            str = strtok(NULL, delim);
+        }
+        return myvector;
+    }
+};
+```
+---
+### [341. 扁平化嵌套列表迭代器](https://leetcode-cn.com/problems/flatten-nested-list-iterator/)
+* 这种解嵌套的问题，实际都可以通过类似`树遍历`的方式解决。
+>* 首先要读懂本题需要实现的目标：
+    1. 设计一个**迭代器**；
+    2. 迭代器具有next()，即**指向下一数据**的功能；
+    3. 在调用next()之前，首先**要确保下一个数据**存在，只有存在才能指向下一数据，因此还需要设计**hasnext()**;
+
+>* 实现过程：
+    1. 通过遍历的方式，把所有数据存在一个容器中(不局限于我用的vector)；
+    2. 有了这样一个存放所有integer的容器，判断hasnext就很简单了，只需要判断下一数据是否还在容器中就行，我们借助**下标变量index**进行判断；
+    3. 剩下的next实现也很简单，对下标index进行运算即可；
+
+* 仔细理解题目之后，本题其实不难
+```C++
+class NestedIterator {
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        for (auto item : nestedList)//直接用遍历的方式将全部integer保存在迭代器内部的res数组中，树遍历左右子树，而对应NestedInteger则是遍历所有的“子树”，相当于是遍历**N叉树**；C++11的新方法遍历，在这里更好理解
+            traversing(item);
+    }
+    
+    void traversing(NestedInteger item)
+    {
+        if (item.isInteger()) res.push_back(item.getInteger());//当子项是integer，直接放入res
+        else//当父项中的子项不是一个integer时，接着往里层遍历；
+        {
+            auto subItem = item.getList();
+            for (auto sSubItem : subItem)
+                traversing(sSubItem);
+        }
+    }
+    
+    int next() {
+        return res.at(index++);//指向下一数字；
+    }
+    
+    bool hasNext() {
+        return index < res.size();//只要在数组内，hasNext就一定为true；
+    }
+    
+private:
+
+    vector<int> res;//用于保存展开的的扁平化数组；
+    int index = 0;//标记位置
+};
+```
+---
+### [96.不同的二叉搜索树](https://leetcode-cn.com/problems/unique-binary-search-trees/)
+* **动态规划**
+* 找规律
+```C++
+class Solution {
+public:
+    int numTrees(int n) {
+        vector<int>G(n + 1, 0);
+        G[0] = 1;
+        G[1] = 1;
+        for (int i = 2; i <= n; ++i)
+            for (int j = 1; j <= i; ++j)
+                G[i] += G[i - j] * G[j - 1];
+        return G[n];
+    }
+};
+```
+---
+### [437.路径总和III](https://leetcode-cn.com/problems/path-sum-iii/)
+* 双递归
+```C++
+class Solution {
+public:
+    int res = 0;
+    int pathSum(TreeNode* root, int sum) {
+        if (root == nullptr) return 0;
+        calPath(root, sum);
+        pathSum(root->left, sum);
+        pathSum(root->right, sum);
+        return res;
+    }
+    int calPath(TreeNode* root, int sum)
+    {
+        if (root == nullptr) return 0;
+        sum -= root->val;
+        if (sum == 0)
+            res++;
+        calPath(root->left, sum);
+        calPath(root->right, sum);
+        return res;
+    }
+};
+```
+### [337.打家劫舍III](https://leetcode-cn.com/problems/house-robber-iii/)
+* **动态规划**
+  1. **选择**当前节点，则**不能选择**当前节点的**相邻**节点｛左右节点｝
+  2. **不选择**当前节点，则可以**选择/不选择**相邻节点
+  3. 设计**state**这个结构来**保存选择/不选择两种状态**
+```C++
+class Solution {
+public:
+    struct state
+    {
+        int isSelected;
+        int isNotSelected;
+    };
+    int rob(TreeNode* root) {
+        auto res = dfs(root);
+        return max(res.isSelected, res.isNotSelected);
+    }
+    state dfs(TreeNode* root)
+    {
+        if(root == nullptr)
+            return {0, 0};
+        auto L = dfs(root->left);
+        auto R = dfs(root->right);
+
+        int isSelected = root->val + L.isNotSelected + R.isNotSelected;
+        int isNotSelected = max(L.isSelected, L.isNotSelected) + max(R.isSelected, R.isNotSelected);
+        return {isSelected, isNotSelected};
+    }
+};
+```
+### [102.二叉树的层序遍历](https://leetcode-cn.com/problems/binary-tree-level-order-traversal/)
+* 层序遍历的框架：利用**queue**、**size**
+```C++
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        if(root == nullptr) return {};//此条件可以保证ans.push_back不放入空的数据、避免出错
+        vector<vector<int>> res;
+        queue<TreeNode*> myque;
+        myque.push(root);
+        while(!myque.empty())
+        {
+            int size = myque.size();
+            vector<int> ans = {};
+            for(int i = 0; i < size; ++i)
+            {
+                auto node = myque.front();
+                myque.pop();
+                ans.push_back(node->val);
+                if(node->left != nullptr) myque.push(node->left);
+                if(node->right != nullptr) myque.push(node->right);
+            }
+            res.push_back(ans);
+        }
+        return res;
+    }
+};
+```
+---
+### [94.二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)
+```C++
+class Solution {
+public:
+    vector<int> ans;
+    vector<int> inorderTraversal(TreeNode* root) {
+        if(root == nullptr) return {};
+        inorderTraversal(root->left);
+        ans.push_back(root->val);
+        inorderTraversal(root->right);
+        return ans;
+    }
+};
+```
+---
+### [124.二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
+
+```C++
+class Solution {
+public:
+    int maxSum = INT_MIN;
+    int maxPathSum(TreeNode* root) {
+        calculate(root);
+        return maxSum;
+    }
+    int calculate(TreeNode* root)
+    {
+        if(root == nullptr) return 0;
+        int lVal = max(calculate(root->left), 0);//负数就不加入到路径中，相当于+0，即从除和为负的节点之外开始计算路径
+        int rVal = max(calculate(root->right), 0);
+        int sum = lVal + root->val + rVal;
+        maxSum = max(sum, maxSum);
+        return root->val + max(lVal, rVal);
+    }
+};
+```
+---
 
 
 ---
