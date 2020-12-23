@@ -304,7 +304,7 @@ public:
 };
 ```
 ---
-### []()
+### [19.删除链表的倒数第N个节点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)
 1. 快慢指针（官方）
    * **快指针先走n**，**走到尾**时，**慢指针**自然就到**倒数第n个**了
 ```C++
@@ -405,13 +405,107 @@ public:
 };
 ```
 ---
-### []()
-
+### [142.环形链表II](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
+1. 哈希
 ```C++
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        if(head == nullptr) return nullptr;
+        auto temp = head;
+        unordered_map<ListNode*, bool> map;
+        while(temp != nullptr)
+        {
+            if(map[temp])
+                return temp;
+            map[temp] = true;
+            temp = temp->next;
+        }
+        return nullptr;
+    }
 
+
+};
+```
+2. 快慢指针暴力求解
+* 可以考虑一个问题：只要存在环，环节点走过环的长度后一定会**再次回到自身**
+* 想到这里，只要遍历每一个节点，判断是否满足以上条件即可
+* 耗时，但是满足空间复杂度O(1)
+```C++
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        if(head == nullptr) return nullptr;
+        auto fast = head;
+        auto slow = head;
+        while(fast->next != nullptr && fast->next->next != nullptr)
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)
+                break;
+        }
+        int ans = 0;//环的长度
+
+        while(fast->next != nullptr && fast->next->next != nullptr)
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            ans++;
+            if(fast == slow)
+                break;
+        }
+
+        auto temp1 = head;
+        while(ans)
+        {
+            int length = ans;
+            auto temp2 = temp1;
+            while(length--)
+            {
+                temp2 = temp2->next;
+            }
+            if(temp2 == temp1)
+                return temp1;
+            temp1 = temp1->next;
+        }
+        return nullptr;
+    }
+};
+```
+3. 快慢指针
+* 官方题解讲的很详细，移步[官方题解](https://leetcode-cn.com/problems/linked-list-cycle-ii/solution/huan-xing-lian-biao-ii-by-leetcode-solution/);
+> 这里解释一下官方题解到的 a = c + (n - 1)(b + c);
+> fast和slow相遇时，slow位于**a + b**处，此时slow只要移动c或者**c + m(b + c)**(b+c刚好是一圈)的距离都可以回到入环点，而a刚好满足c + m(b + c) 的关系。
+```C++
+class Solution {
+public:
+    ListNode *detectCycle(ListNode *head) {
+        if(head == nullptr) return nullptr;
+        auto fast = head;
+        auto slow = head;
+        while(fast->next != nullptr && fast->next->next != nullptr)
+        {
+            fast = fast->next->next;
+            slow = slow->next;
+            if(fast == slow)
+            {
+                auto ptr = head;
+                while(ptr != slow)
+                {
+                    ptr = ptr->next;
+                    slow = slow->next;
+                       
+                }
+                return ptr;
+            }
+        }
+        return nullptr;
+    }
+};
 ```
 ---
-### []()
+### [23.合并K个升序链表](https://leetcode-cn.com/problems/merge-k-sorted-lists/)
 
 ```C++
 
