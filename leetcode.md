@@ -506,27 +506,102 @@ public:
 ```
 ---
 ### [23.合并K个升序链表](https://leetcode-cn.com/problems/merge-k-sorted-lists/)
-
+1. **顺序**合并
+   * 合并两个有序链表，再合并下一个
 ```C++
-
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.empty()) return nullptr;
+        if(lists.size() == 1) return lists[0];
+        ListNode* sumList = nullptr;
+        for (auto l : lists)
+        {
+            sumList = mergeTwoLists(sumList, l);
+        }
+        return sumList;
+    }
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if(l1 == nullptr) return l2;
+        if(l2 == nullptr) return l1;
+        if(l1->val < l2->val)
+        {
+            l1->next = mergeTwoLists(l1->next, l2);
+            return l1;
+        }
+        else
+        {
+            l2->next = mergeTwoLists(l1, l2->next);
+            return l2;     
+        }     
+    }
+};
 ```
----
-### []()
-
+2. **分治**
+   * 一次合并两个，最终合并成一个
 ```C++
-
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.empty()) return nullptr;
+        if(lists.size() == 1) return lists[0];
+        return merge(lists, 0, lists.size() - 1);
+    }
+    ListNode* merge(vector<ListNode*>& lists, int lo, int hi)
+    {
+        if(lo > hi) return nullptr;
+        if(lo == hi) return lists.at(lo);
+        int mid = (lo + hi) / 2;
+        return mergeTwoLists(merge(lists, lo, mid), merge(lists, mid + 1, hi));
+    }
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if(l1 == nullptr) return l2;
+        if(l2 == nullptr) return l1;
+        if(l1->val < l2->val)
+        {
+            l1->next = mergeTwoLists(l1->next, l2);
+            return l1;
+        }
+        else
+        {
+            l2->next = mergeTwoLists(l1, l2->next);
+            return l2;     
+        }     
+    }
+};
 ```
----
-### []()
-
+3. **优先队列**
 ```C++
-
-```
----
-### []()
-
-```C++
-
+class Solution {
+public:
+    struct Compare {
+        bool operator() (ListNode* N1, ListNode* N2)
+        {
+            return N1->val > N2->val;
+        }
+    };//这里重写仿函数或者重载操作符皆可
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if(lists.empty()) return nullptr;
+        if(lists.size() == 1) return lists[0];
+        priority_queue<ListNode*, vector<ListNode*>, Compare> que;
+        for(auto l : lists)
+        {
+            if(l != nullptr) que.push(l);
+        }
+        ListNode dummy(-1);
+        ListNode* temp = &dummy;
+        while(!que.empty())
+        {
+            auto node = que.top();
+            que.pop();
+            temp->next = node;
+            temp = temp->next;
+            if(node->next != nullptr) que.push(node->next);
+        }
+        auto res = dummy.next;
+        return res;
+    }
+};
 ```
 ---
 ---
@@ -1604,12 +1679,637 @@ public:
 ```
 ---
 
+## 数据结构设计
+### [130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+1. **DFS**
+   * 深度优先遍历，从**边缘**往里判断，把不被围绕的'O'换成'#',最后**还原**
+   * 借用**direction方位数组**
+```C++
+class Solution {
+public:
+    int m = 0;
+    int n = 0;
+    vector<pair<int, int>>direction = {{1, 0},{-1, 0},{0, 1},{0, -1}};//方位
+
+    void solve(vector<vector<char>>& board) {
+        m = board.size();
+        if(m == 0) return;
+        n = board.at(0).size();
+        for(int row = 0; row < m; ++row)
+        {
+            dfs(board, row, 0);
+            dfs(board, row, n - 1);
+        }
+        for(int col = 1; col < n - 1; ++col)
+        {
+            dfs(board, 0, col);
+            dfs(board, m - 1, col);
+        }
+        for(int row = 0; row < m; ++row)
+            for(int col = 0; col < n; ++col)
+            {
+                if(board[row][col] == '#') board[row][col] = 'O';
+                else if(board[row][col] == 'O') board[row][col] = 'X';
+            }
+
+    }
+
+    void dfs(vector<vector<char>>& board, int x, int y)
+    {
+        if(x < 0 || x >= m || y < 0 || y >= n || board[x][y] != 'O')
+            return;
+        board[x][y] = '#';
+        for(auto d : direction)
+        {
+            dfs(board, x + d.first, y + d.second);
+        }     
+    }
+};
+```
+2. **BFS**（实现类似DFS）
+   * 广度优先，等于把‘O’的对象放入队列，在检验其周围的对象
+   * 将替换过程放在队列的while中
+```C++
+class Solution {
+public:
+    int m = 0;
+    int n = 0;
+    vector<pair<int, int>>direction = {{1, 0},{-1, 0},{0, 1},{0, -1}};//方位
+    void solve(vector<vector<char>>& board) {
+        m = board.size();
+        if(m == 0) return;
+        n = board.at(0).size();
+        queue<pair<int, int>> myque;
+        for(int row = 0; row < m; ++row)
+        {
+            if(board[row][0] == 'O') myque.emplace(row, 0);
+            if(board[row][n - 1] == 'O') myque.emplace(row, n - 1);
+        }
+        for(int col = 1; col < n - 1; ++col)
+        {
+            if(board[0][col] == 'O') myque.emplace(0, col);
+            if(board[m -1][col] == 'O') myque.emplace(m - 1, col);
+        }
+        while(!myque.empty())
+        {
+            auto row = myque.front().first;
+            auto col = myque.front().second;
+            myque.pop();
+            board[row][col] = '#';//替换步骤
+            for(auto d : direction)
+            {
+                int curRow = row + d.first;
+                int curCol = col + d.second;
+                if(curRow < 0 || curRow >= m || curCol < 0 || curCol >= n || board[curRow][curCol] != 'O') continue;
+                myque.emplace(curRow, curCol);
+            }
+        }
+        for(int row = 0; row < m; ++row)
+        {
+            for(int col  = 0; col < n; ++col)
+            {
+                if(board[row][col] == '#') board[row][col] =  'O';
+                else if(board[row][col] = 'O')board[row][col] = 'X';
+            }
+        }
+    }
+};
+```
+3. **Union Find结构**
+   * **并查集算法**，判断连通区域
+      *  实现**Union Find结构**
+   * 和边界'O'连接的区域保留，并把连通的区域全部和dummy节点进行连接
+   * 不连通节点改为'X'
+```C++
+class Union_Find{
+public:
+    Union_Find(int n)
+    {
+        count = n;
+        parent = new int[n];
+        size = new int[n];
+        for(int i = 0; i < n; ++i)
+        {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    };
+    ~Union_Find(){};
+    int find(int p)
+    {
+        while(parent[p] != p)
+        {
+            parent[p] = parent[parent[p]];
+            p = parent[p];
+        }
+        return p;
+    };
+    void toUnion(int p, int q)
+    {
+        int rootP = find(p);
+        int rootQ = find(q);
+        if(rootP == rootQ) return;
+        if(size[rootP] > size[rootQ])
+        {
+            parent[rootQ] = rootP;
+            size[rootP] += size[rootQ];
+        }
+        else
+        {
+            parent[rootP] = rootQ;
+            size[rootQ] += size[rootP];
+        }
+        count--;
+    };
+    bool isConnected(int p, int q)
+    {
+        return find(p) == find(q);
+    };
+private:
+    int count;
+    int* parent;//可用vector
+    int* size;
+};
+
+class Solution {
+public:
+    int m = 0;
+    int n = 0;
+    vector<pair<int, int>>direction = {{1, 0},{-1, 0},{0, 1},{0, -1}};//方位
+    void solve(vector<vector<char>>& board) {
+        m = board.size();
+        if(m == 0) return;
+        n = board.at(0).size();
+        Union_Find UF(m * n + 1);
+        int dummy = m * n;
+        for(int row = 0; row < m; ++row)
+        {
+            if(board[row][0] == 'O') UF.toUnion(row * n, dummy);
+            if(board[row][n - 1] == 'O') UF.toUnion(row * n + n - 1, dummy);
+        }
+        for(int col = 1; col < n-1; ++col)
+        {
+            if(board[0][col] == 'O') UF.toUnion(col, dummy);
+            if(board[m - 1][col] == 'O') UF.toUnion((m - 1) * n + col, dummy);
+        }
+        for(int row = 1; row < m - 1; ++row)
+            for(int col = 1; col < n - 1; ++col)
+            {
+                if(board[row][col] == 'O')
+                {
+                    for(auto d : direction)
+                    {
+                        auto curRow = row + d.first;
+                        auto curCol = col + d.second;
+                        if(board[curRow][curCol] == 'O')
+                            UF.toUnion(row * n + col, curRow * n + curCol);
+                    }                   
+                }
+            }
+        for(int row = 1; row < m - 1; ++row)
+            for(int col = 1; col < n - 1; ++col)
+                if(!UF.isConnected(row * n + col, dummy))
+                    board[row][col] = 'X';
+    }
+
+};
+```
+---
+### [990.等式方程的可满足性](https://leetcode-cn.com/problems/satisfiability-of-equality-equations/)
+* 并查集 **UF**算法
+* 将相等的字母连接起来，再判断是否矛盾（！= 的式子哩，如果不等式两边连通，则矛盾）
+```C++
+class Union_Find {
+public:
+    Union_Find(int n)
+    {
+        count = n;
+        parent.resize(n);
+        size.resize(n);
+        for(int i = 0; i < n; ++i)
+        {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    };
+    ~Union_Find(){};
+    int find(int p)
+    {
+        while(parent[p] != p)
+        {
+            parent[p] = parent[parent[p]];
+            p = parent[p];
+        }
+        return p;
+    };
+    void toUnion(int p, int q)
+    {
+        int rootP = find(p);
+        int rootQ = find(q);
+        if(rootP == rootQ) return;
+        if(size[rootP] > size[rootQ])
+        {
+            parent[rootQ] = rootP;
+            size[rootP] += size[rootQ];
+        }
+        else 
+        {
+            parent[rootP] = rootQ;
+            size[rootQ] += size[rootP];
+        }
+        count--;
+    };
+    bool isConnected(int p, int q)
+    {
+        return find(p) == find(q);
+    };
+private:
+    int count;
+    vector<int> parent;
+    vector<int> size;
+};
+class Solution {
+public:
+    bool equationsPossible(vector<string>& equations) {
+        if(equations.size() == 0) return true;
+        Union_Find uf(26);
+        for(auto eqt : equations)
+        {
+            if(eqt.at(1) == '=')
+            {
+                uf.toUnion(int(eqt.at(0) - 'a'), int(eqt.at(3) - 'a'));
+            }
+        }
+        for(auto eqt : equations)
+        {
+            if(eqt.at(1) == '!')
+            {
+                if(uf.isConnected(int(eqt.at(0) - 'a'), int(eqt.at(3) - 'a'))) return false;
+            }
+        }
+        return true;
+    }
+};
+```
+---
+### [146.LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/)
+* 用哈希建立节点和key的关系
+* 借鉴队列的**思想**，新的节点/最近访问的节点放在队列尾部，旧的节点/最近不曾访问的节点保存在前头
+* 由于队列的时间限制，用**链表**实现快速插入和删除
+```C++
+struct Node//节点类
+{
+    int key;
+    int value;
+    Node* prev;
+    Node* next;
+    Node() : key(0), value(0), prev(nullptr), next(nullptr) {};
+    Node(int k, int val) : key(k), value(val), prev(nullptr), next(nullptr) {};
+};
+
+struct DLinkedList//双向链表类
+{
+    Node* head;
+    Node* tail;
+    int size;
+    DLinkedList() : size(0)
+    {
+        head = new Node(0, 0);
+        tail = new Node(0, 0);
+        head->next = tail;
+        tail->prev = head;
+    };
+    ~DLinkedList()
+    {
+        delete head;
+        head = nullptr;
+        delete tail;
+        tail = nullptr;
+    };
+    int getSize()
+    {
+        return size;
+    };
+    void push(Node* node)//尾部放入
+    {
+        node->prev = tail->prev;
+        tail->prev->next = node;//连接node与最后一个节点
+        tail->prev = node;
+        node->next = tail;//连接node与尾节点
+        size++;
+    };
+    void remove(Node* node)
+    {
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
+        size--;
+    };
+    Node* top()//返回头部节点
+    {
+        return head->next;
+    };
+    void pop()//头部弹出
+    {
+        if (head->next == tail) return;
+        remove(head->next);
+    };
+};
+
+class LRUCache {
+public:
+    LRUCache(int capacity) : m_Capacity(capacity) {
+    }
+
+    int get(int key) {
+        if (m_Map.count(key) == 0) return -1;
+        updateByKey(key);
+        return m_Map[key]->value;
+    }
+
+    void put(int key, int value) {
+        if (m_Map.count(key) != 0)
+        {
+            deleteByKey(key);
+            add(key, value);
+            return;
+        }
+        if (m_Capacity == m_List.getSize())
+            deleteOldest();
+        add(key, value);
+    }
+public:
+    void updateByKey(int key)//更新节点位置，每次更新放在链表最后的位置
+    {
+        auto temp = m_Map[key];
+        m_List.remove(temp);
+        m_List.push(temp);
+    };
+    void add(int key, int val)//添加节点至最新（最后）位置
+    {
+        auto temp = new Node(key, val);
+        m_List.push(temp);
+        m_Map[key] = temp;
+    };
+    void deleteByKey(int key)//索引key删除对应节点
+    {
+        auto temp = m_Map[key];
+        m_List.remove(temp);
+        m_Map.erase(key);
+    };
+    void deleteOldest()//删除最老的节点
+    {
+        m_Map.erase(m_List.top()->key);
+        m_List.pop();
+    };
+private:
+    DLinkedList m_List;
+    unordered_map<int, Node*> m_Map;
+    int m_Capacity;
+};
+```
+---
+### [146.LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/)
+1. 哈希 + 双向链表
+```C++
+struct Node {
+	int key;
+	int value;
+	int freq;
+	Node(int k, int val, int f) : key(k), value(val), freq(f) {}
+};
+
+class LFUCache
+{
+private:
+	int m_Capacity;//<缓存大小
+	int minFreq; //<保存最小的频次
+	unordered_map<int, list<Node>::iterator> key_To_Node;//<key索引Node的地址
+	unordered_map<int, list<Node>> freq_To_ListOfNode;//<freq索引出现次数相同的节点组成的链表，最近访问的节点放置在链表的最末端
+public:
+	LFUCache(int capacity) {
+		m_Capacity = capacity;
+		key_To_Node.clear();
+		freq_To_ListOfNode.clear();
+		minFreq = 0;
+	}
+
+	int get(int key) {
+		if (m_Capacity == 0) return -1;
+		auto it = key_To_Node.find(key);
+		if (it == key_To_Node.end()) return -1;
+		auto iteratorOfNode = it->second;
+		int value = iteratorOfNode->value;
+		int freq = iteratorOfNode->freq;
+		// 更新freq
+		//key_To_Node[key]->freq = freq + 1; 错误写法，key_To_Node索引地址，不应当改变地址所指向内容的值，而应该直接key所指更改地址
+		freq_To_ListOfNode[freq].erase(iteratorOfNode);
+		if (freq_To_ListOfNode[freq].size() == 0)
+		{
+			freq_To_ListOfNode.erase(freq);
+			if (minFreq == freq) minFreq++;
+		}
+		freq_To_ListOfNode[freq + 1].push_back(Node(key, value, freq + 1));
+		key_To_Node[key] = --freq_To_ListOfNode[freq + 1].end();
+		return value;
+	}
+
+	void put(int key, int value) {
+		if (m_Capacity == 0) return;
+		auto it = key_To_Node.find(key);
+		if (it == key_To_Node.end())//放入的缓存 是 新的数据
+		{
+			if (key_To_Node.size() == m_Capacity)//容量已满，此时需要删去频次最低、且最早使用的数据
+			{
+				auto node = freq_To_ListOfNode[minFreq].front();
+				key_To_Node.erase(node.key);
+				freq_To_ListOfNode[minFreq].pop_front();
+				if (freq_To_ListOfNode[minFreq].size() == 0)
+				{
+					freq_To_ListOfNode.erase(minFreq);
+					//这里更新或者不更新minFreq都无所谓，因为 it == key_To_Node.end() 这个条件说明key对应的数据是此前缓存中不存在的数据，只需要在添加key对应的这个新的缓存后，将其freq和minFreq均置为1即可（除了初始化，1是最小的频次）
+				}
+			}
+			freq_To_ListOfNode[1].push_back(Node(key, value, 1));
+			key_To_Node[key] = --freq_To_ListOfNode[1].end();
+			minFreq = 1;
+		}
+		else//放入的缓存 不是 新的数据
+		{
+			auto iteratorOfNode = it->second;
+			int freq = iteratorOfNode->freq;
+			//auto node = freq_To_ListOfNode[freq].front();
+			freq_To_ListOfNode[freq].erase(iteratorOfNode);
+			if (freq_To_ListOfNode[freq].size() == 0)
+			{
+				freq_To_ListOfNode.erase(freq);
+				if (minFreq == freq) minFreq++;
+			}
+			freq_To_ListOfNode[freq + 1].push_back(Node(key, value, freq + 1));
+			key_To_Node.erase(key);
+			key_To_Node[key] = --freq_To_ListOfNode[freq + 1].end();
+		}
+	}
+};
+```
+2. 哈希 + set
+```C++
+struct Node {
+    int cnt, time, key, value;
+
+    Node(int _cnt, int _time, int _key, int _value):cnt(_cnt), time(_time), key(_key), value(_value){}
+    
+    bool operator < (const Node& rhs) const {
+        return cnt == rhs.cnt ? time < rhs.time : cnt < rhs.cnt;
+    }
+};
+class LFUCache {
+    // 缓存容量，时间戳
+    int capacity, time;
+    unordered_map<int, Node> key_table;
+    set<Node> S;
+public:
+    LFUCache(int _capacity) {
+        capacity = _capacity;
+        time = 0;
+        key_table.clear();
+        S.clear();
+    }
+    
+    int get(int key) {
+        if (capacity == 0) return -1;
+        auto it = key_table.find(key);
+        // 如果哈希表中没有键 key，返回 -1
+        if (it == key_table.end()) return -1;
+        // 从哈希表中得到旧的缓存
+        Node cache = it -> second;
+        // 从平衡二叉树中删除旧的缓存
+        S.erase(cache);
+        // 将旧缓存更新
+        cache.cnt += 1;
+        cache.time = ++time;
+        // 将新缓存重新放入哈希表和平衡二叉树中
+        S.insert(cache);
+        it -> second = cache;
+        return cache.value;
+    }
+    
+    void put(int key, int value) {
+        if (capacity == 0) return;
+        auto it = key_table.find(key);
+        if (it == key_table.end()) {
+            // 如果到达缓存容量上限
+            if (key_table.size() == capacity) {
+                // 从哈希表和平衡二叉树中删除最近最少使用的缓存
+                key_table.erase(S.begin() -> key);
+                S.erase(S.begin());
+            }
+            // 创建新的缓存
+            Node cache = Node(1, ++time, key, value);
+            // 将新缓存放入哈希表和平衡二叉树中
+            key_table.insert(make_pair(key, cache));
+            S.insert(cache);
+        }
+        else {
+            // 这里和 get() 函数类似
+            Node cache = it -> second;
+            S.erase(cache);
+            cache.cnt += 1;
+            cache.time = ++time;
+            cache.value = value;
+            S.insert(cache);
+            it -> second = cache;
+        }
+    }
+};
+```
+3. 哈希 + set //2
+```C++
+struct Node {
+	int key;
+	int value;
+	int freq;
+	int time;
+	Node(int k, int val, int f, int t) : key(k), value(val), freq(f), time(t) {};
+	bool operator < (const Node& temp) const
+	{
+		return freq == temp.freq ? time < temp.time : freq < temp.freq;
+	}
+};
+
+class LFUCache
+{
+private:
+	int m_Capacity;
+	int time;
+	unordered_map<int, Node> key_To_Node;
+	set<Node> S;
+public:
+	LFUCache(int capacity) {
+		time = 0;
+		m_Capacity = capacity;
+		key_To_Node.clear();
+		S.clear();
+	}
+
+	int get(int key) {
+		if (m_Capacity == 0) return -1;
+		auto it = key_To_Node.find(key);
+		if (it == key_To_Node.end()) return -1;
+		time++;
+		auto node = it->second;
+		int freq = node.freq;
+		int value = node.value;
+		Node newNode(key, value, freq + 1, time);
+		key_To_Node.erase(key);
+		key_To_Node.insert(make_pair(key, newNode));
+		S.erase(node);
+		S.insert(newNode);
+		return value;//get其实没必要新建一个对象，浪费内存空间
+
+	}
+
+	void put(int key, int value) {
+		if (m_Capacity == 0) return;
+		auto it = key_To_Node.find(key);
+		if (it == key_To_Node.end())
+		{
+			if (key_To_Node.size() == m_Capacity)
+			{
+				key_To_Node.erase(S.begin()->key);
+				S.erase(S.begin());
+			}
+			time++;
+			Node newNode(key, value, 1, time);
+		    key_To_Node.insert(make_pair(key, newNode));
+			S.insert(newNode);
+		}
+		else
+		{
+			time++;
+			auto node = it->second;
+			int freq = node.freq;
+			Node newNode(key, value, freq + 1, time);
+			key_To_Node.erase(key);
+			key_To_Node.insert(make_pair(key, newNode));
+			S.erase(node);
+			S.insert(newNode);
+		}
+	}
+};
+```
+
+### []()
 
 ---
 ---
 ---
 ---
 ---
+
+
+
+
+
 ## 回溯
 
 ### [78.子集](https://leetcode-cn.com/problems/subsets/)
@@ -1639,6 +2339,7 @@ public:
     }
 };
 ```
+---
 
 2. **数学归纳**
 
