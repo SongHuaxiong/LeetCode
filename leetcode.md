@@ -39,7 +39,7 @@ public:
 https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484467&idx=1&sn=beb3ae89993b812eeaa6bbdeda63c494&chksm=9bd7fa3baca0732dc3f9ae9202ecaf5c925b4048514eeca6ac81bc340930a82fc62bb67681fa&scene=21#wechat_redirect
 
 ---
-### []()
+### [25.K个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
 * 判断长度**小于k**
 * **反转前k个节点**
 * 反转后续节点，并把前一段链表的**尾部连上**
@@ -423,8 +423,6 @@ public:
         }
         return nullptr;
     }
-
-
 };
 ```
 2. 快慢指针暴力求解
@@ -2068,7 +2066,7 @@ private:
 };
 ```
 ---
-### [146.LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/)
+### [146.LFU缓存机制](https://leetcode-cn.com/problems/lfu-cache/)
 1. 哈希 + 双向链表
 ```C++
 struct Node {
@@ -2298,14 +2296,1740 @@ public:
 };
 ```
 
+### [295.数据流的中位数](https://leetcode-cn.com/problems/find-median-from-data-stream/)
+1. **每次放入**数据**排序**，在输出(*超时*)
+```C++
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        V.clear();
+    }
+    
+    void addNum(int num) {
+        V.push_back(num);
+    }
+    
+    double findMedian() {
+        sort(V.begin(), V.end());
+        int size = V.size();
+        return (size & 1 ? V[size / 2] : (V[size / 2 - 1] + V[size / 2]) * 0.5); 
+    }
+    vector<double> V;
+};
+```
+2. 插入排序
+   * 把数据插入（排序）到已经排序的数组中,保持输入容器**始终排序**
+   * lower_bound( begin,end,num)：从数组的begin位置到end-1位置二分查找第一个大于或等于num的数字，找到返回该数字的地址，不存在则返回end。通过返回的地址减去起始地址begin,得到找到数字在数组中的下标。
+```C++
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        V.clear();
+    }
+    
+    void addNum(int num) {
+        if (V.empty())
+            V.push_back(num);
+        else
+            V.insert(lower_bound(V.begin(), V.end(), num), num);
+    }
+    
+    double findMedian() {
+        int size = V.size();
+        return (size & 1 ? V[size / 2] : (V[size / 2 - 1] + V[size / 2]) * 0.5); 
+    }
+    vector<double> V;
+};
+```
+3. **双优先队列**（大顶锥 + 小顶锥）
+   * 用于存储输入数字中**较小一半**的**最大堆**
+   * 用于存储输入数字的**较大一半**的**最小堆**
+   * 最大堆可以允许比最小堆多维护一个数据，当两个堆一样大（数据为偶数个），返回两个堆顶的均值；最大堆大（数据为奇数个），返回最大堆堆顶数据
+   * **添加**一个数 num：
+将 num 添加到最大堆 lo。因为 lo 收到了一个新元素，所以我们必须为 hi 做一个平衡步骤。因此，从 lo 中移除最大的元素并将其提供给 hi。
+在上一个操作之后，最小堆 hi 可能会比最大堆 lo 保留更多的元素。我们通过从 hi 中去掉最小的元素并将其提供给 lo 来解决这个问题。
+```C++
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+    }
+    
+    void addNum(int num) {
+        lo.push(num);
+        hi.push(lo.top());
+        lo.pop();
+        if (hi.size() > lo.size())
+        {
+            lo.push(hi.top());
+            hi.pop();
+        }
+    }
+    
+    double findMedian() {
+        return lo.size() > hi.size() ? lo.top() : (lo.top() + hi.top()) * 0.5; 
+    }
+    priority_queue<double> lo;
+    priority_queue<double, vector<double>, greater<double>> hi;
+};
+```
+4. AVL树（**multiset**） + 双指针
+   * 也可用单指针
+   * 双指针分别记录中位数/组成中位数的两个数
+```C++
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        l_Iter = M.end();
+        r_Iter = M.end();
+    }
+    
+    void addNum(int num) {
+        auto size = M.size();
+        M.insert(num);
+        if (size == 0)
+        {
+            l_Iter = M.begin();
+            r_Iter = M.begin();
+        }
+        else if (size & 1)//奇数
+        {
+            if (num < *l_Iter)
+                l_Iter--;
+            else
+                r_Iter++;
+        }
+        else//偶数
+        {
+            if (num > *l_Iter && num < *r_Iter)
+            {
+                l_Iter++;
+                r_Iter--;
+            }
+            else if (num >= *r_Iter)
+                l_Iter++;
+            else
+                l_Iter = --r_Iter;
+        }
+    }
+    
+    double findMedian() {
+        return 0.5*(*l_Iter + *r_Iter); 
+    }
+    multiset<double> M;
+    multiset<double>::iterator l_Iter, r_Iter;
+};
+```
+---
+### [355.设计推特](https://leetcode-cn.com/problems/design-twitter/)
+* 哈希 + 链表
+* **hashmap**关联用户id和用户对象
+* 链表顺序存储推特
+* 合并K个升序链表
+```C++
+int T = 0;
+class Tweet {
+public:
+    int id;
+    int time;
+    Tweet* next;
+    Tweet(int ID) 
+    {
+        id = ID;
+        time = T++;
+        next = nullptr;
+    }
+};
+
+class User {
+private:
+    int id;//用户id
+    Tweet* tweet;//推特链表
+    unordered_set<int> myFollows;//关注列表
+public:
+    User(int ID) : id(ID) 
+    {
+        tweet = nullptr;
+        myFollows.clear();
+    }
+
+    void follow(int userId)
+    {
+        if (userId == id) return;//不关注自己
+        if (myFollows.count(userId) != 0) return;//已经关注，不用再次关注
+        myFollows.insert(userId);
+    }
+
+    void unfollow(int userId)
+    {
+        if (userId == id) return;//不取关自己
+        if (myFollows.count(userId) == 0) return;//已经取关/没有关注，不用再次取关
+        myFollows.erase(userId);
+    }
+
+    void post(int tweetId)
+    {
+        Tweet* newTweet = new Tweet(tweetId);
+        newTweet->next = tweet;//新发的推特放在链表头部
+        tweet = newTweet;
+    }
+
+    unordered_set<int> getMyFollows()
+    {
+        return myFollows;
+    }
+    Tweet* getMyTweet()
+    {
+        return tweet;
+    }
+};
+class Twitter {
+private:
+    unordered_map<int, User*> id_To_User;
+
+
+public:
+    /** Initialize your data structure here. */
+    Twitter() {
+        id_To_User.clear();
+    }
+
+    /** Compose a new tweet. */
+    void postTweet(int userId, int tweetId) {
+        if (id_To_User.count(userId) == 0)//用户不存在，首先创建用户
+        {
+            User* newUser = new User(userId);
+            id_To_User[userId] = newUser;
+        }   
+        id_To_User[userId]->post(tweetId);
+    }
+
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    vector<int> getNewsFeed(int userId) {
+        if (id_To_User.count(userId) == 0) return{};//用户不存在
+        struct cmp {
+            bool operator()(const Tweet* a, const Tweet* b) {
+                return a->time < b->time;
+            }
+        };
+        priority_queue<Tweet*, vector<Tweet*>, cmp> server;
+        for (auto id : id_To_User[userId]->getMyFollows())
+        {
+            if (id_To_User.count(id) == 0) continue;//关注的人不存在，直接退出
+            if (id_To_User[id]->getMyTweet() == nullptr) continue;//关注的人没有发推特，无需添加
+            server.push(id_To_User[id]->getMyTweet());//把关注的人的tweet放入队列，后续合并K个有限链表
+        }
+        if (id_To_User[userId]->getMyTweet() != nullptr)//自己没发推特，无需添加
+            server.push(id_To_User[userId]->getMyTweet());//自己的tweet也放进去；
+        vector<int> result;
+        while (!server.empty())
+        {
+            auto tweet = server.top();
+            server.pop();
+            result.push_back(tweet->id);
+            if (result.size() == 10) return result;
+            if (tweet->next != nullptr) server.push(tweet->next);
+
+        }
+        return result;
+    }
+
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    void follow(int followerId, int followeeId) {
+        if (id_To_User.count(followerId) == 0)//用户不存在，首先创建用户
+        {
+            User* newUser = new User(followerId);
+            id_To_User[followerId] = newUser;
+        }
+        id_To_User[followerId]->follow(followeeId);
+    }
+
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    void unfollow(int followerId, int followeeId) {
+        if (id_To_User.count(followerId) == 0)//用户不存在，首先创建用户
+            return;
+        id_To_User[followerId]->unfollow(followeeId);
+    }
+};
+```
+---
+### [496.下一个更大元素I](https://leetcode-cn.com/problems/next-greater-element-i/)
+1. 暴力求解
+```C++
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.empty() || nums2.empty()) return {};
+        vector<int> result;
+        for (auto num : nums1)
+        {
+            vector<int>::iterator iter;
+            int res;
+            for (auto it = nums2.begin(); it != nums2.end(); ++it)
+            {
+                if (num == *it)
+                {
+                    iter = it;
+                    break;
+                } 
+            }
+            for (; iter != nums2.end(); ++iter)
+            {
+                if (*iter > num)
+                {
+                    res = *iter;
+                    break;
+                }
+            }
+            if (iter == nums2.end()) res = -1;
+            result.push_back(res);
+        }
+        return result;
+    }
+};
+```
+2. 单调栈 + hash
+  * 可以忽略数组 nums1，先对将 nums2 中的每一个元素，求出其下一个更大的元素
+  * 随后对于将这些答案放入哈希映射（HashMap）中，再遍历数组 nums1，并直接找出答案。对于 nums2，我们可以使用**单调栈**来解决这个问题。
+```C++
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.empty() || nums2.empty()) return {};
+        vector<int> result;
+        unordered_map<int, int> map;
+        stack<int> mystack;
+        //单调栈求出nums2中每个数的下一个更大元素，并建立 数 与 下一个更大数 的映射关系，最后nums1的数作为key，value即为所得
+        for (int i = nums2.size() - 1; i >= 0; --i)
+        {
+            while (!mystack.empty() && mystack.top() <= nums2[i])
+            {
+                mystack.pop();
+            }
+            map[nums2[i]] = mystack.empty() ? -1 : mystack.top();
+            mystack.push(nums2[i]);
+        }
+        for (auto num : nums1)
+        {
+            result.push_back(map[num]);
+        }
+        return result;
+    }
+};
+
+
+class Solution {
+public:
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.empty() || nums2.empty()) return {};
+        int n = nums2.size();
+        unordered_map<int, int> map;
+        stack<int> mystack;
+        vector<int> result;
+        for (int i = 0; i < n; ++i)
+        {
+            while (!mystack.empty() && nums2[i] > nums2[mystack.top()])
+            {
+                int temp = mystack.top();
+                mystack.pop();
+                map[nums2[temp]] = nums2[i];
+            }
+            mystack.push(i);
+        }
+        while (!mystack.empty())
+        {
+            map[nums2[mystack.top()]] = -1;
+            mystack.pop();
+        }
+
+        for (auto num : nums1)
+        {
+            result.push_back(map[num]);
+        }
+        return result;
+    }
+};
+```
+---
+### [503.下一个更大元素II](https://leetcode-cn.com/problems/next-greater-element-ii/)
+* **循环数组**模拟数组翻倍
+```C++
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        stack<int> mystack;
+        vector<int> result(nums.size(), 0);
+        for (int i = 2 * nums.size() - 1; i >= 0; --i)
+        {
+            while (!mystack.empty() && mystack.top() <= nums[i % nums.size()])
+            {
+                mystack.pop();
+            }
+            result.at(i % nums.size()) = mystack.empty() ? -1 : mystack.top();
+            mystack.push(nums[i % nums.size()]);
+        }
+        return result;
+    }
+};
+
+
+
+
+```
+---
+### [739.每日温度](https://leetcode-cn.com/problems/daily-temperatures/submissions/)
+* 单调栈
+```C++
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& T) {
+        vector<int> result(T.size(), 0);
+        stack<int> days;
+        for (int i = T.size() - 1; i >= 0; --i)
+        {
+            while (!days.empty() && T[days.top()] <= T[i])
+            {
+                days.pop();
+            }
+            result[i] = days.empty() ? 0 : (days.top() - i);
+            days.push(i);
+        }
+        return result;
+    }
+};
+
+class Solution {
+public:
+    vector<int> dailyTemperatures(vector<int>& T) {
+        if (T.empty()) return {};
+        int n = T.size();
+        stack<int> mystack;
+        vector<int> result(n, 0);
+        for (int i = 0; i < n; ++i)
+        {
+            while (!mystack.empty() && T[i] > T[mystack.top()])
+            {
+                int temp = mystack.top();
+                mystack.pop();
+                result[temp] = i - temp;
+            }
+            mystack.push(i);
+        }
+        return result;
+    }
+};
+```
+---
+### [42.接雨水](https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/)
+1. 单调栈(...)
+```C++
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int sum = 0;
+        int current = 0;
+        stack<int> mystack;
+        while (current < height.size())
+        {
+            while (!mystack.empty() && height[mystack.top()] < height[current] )
+            {
+                int temp = mystack.top();
+                mystack.pop();
+                if (mystack.empty()) break;
+                int distance = current - mystack.top() - 1;
+                int h = min(height[current], height[mystack.top()]) - height[temp];
+                sum += h * distance;
+            }
+            mystack.push(current++);
+        }
+        return sum;
+    }
+};
+----------------------------
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        if (height.empty()) return 0; 
+        int sum = 0;
+        stack<int> mystack;
+        for (int i = 0; i < height.size(); ++i)
+        {
+            while (!mystack.empty() && height[i] > height[mystack.top()])
+            {
+                int temp = mystack.top();
+                mystack.pop();
+                if (mystack.empty()) break;
+                int dis = i - mystack.top() - 1;
+                sum += dis * (min(height[i], height[mystack.top()]) - height[temp]);
+            }
+            mystack.push(i);
+        }
+        return sum;
+    }
+};
+```
+2. 暴力
+* 求**每一列**可以容纳的水
+* 该列的**左右必须均大于**该列
+* 左侧最大和右侧最大列的**较小值**决定容纳量
+```C++
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int sum = 0;
+        int size = height.size();
+        for (int i = 1; i < size - 1; ++i)
+        {
+            int max_L = 0;
+            int max_R = 0;
+            for (int j = i - 1; j >= 0; --j)
+            {
+                max_L = max(max_L, height[j]);
+            }
+            for (int k = i + 1; k < size; ++k)
+            {
+                max_R = max(max_R, height[k]);
+            }
+            sum += max(0, min(max_L, max_R) - height[i]);//确保插值不为负数
+        }
+        return sum;
+   
+```
+3. 动态规划(2进阶)
+* 用数组当作**备忘录**记录此前信息
+* **当前的最大左值为：max（当前值左值，当前值左值的最大值）**
+* **当前的最大右值为：max（当前值右值，当前值右值的最大值）**
+```C++
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        if (height.empty()) return 0; 
+        int sum = 0;
+        int size = height.size();
+        vector<int> max_L(size, 0);
+        vector<int> max_R(size, 0);
+        for (int i = 1;  i < size - 1; ++i)
+        {
+            max_L[i] = max(max_L[i - 1], height[i - 1]);
+        }
+        for (int i = size - 2; i >= 0; --i)
+        {
+            max_R[i] = max(max_R[i + 1], height[i + 1]);
+        }
+        for (int i = 1; i < size - 1; ++i)
+        {
+            sum += max(0, min(max_L[i], max_R[i]) - height[i]);
+        }
+        return sum;
+    }
+};
+```
+4. 双指针(3进阶)
+* max_left [ i ] 和 max_right [ i ] 数组中的元素其实只用一次，然后就再也不会用到了。
+* 所以可以不用数组，只用一个元素就行了
+* **双指针**一边**遍历**一边**计算**
+> 定理一：在某个位置i处，它能存的水，取决于它左右两边的最大值中较小的一个。
+
+定理二：当我们从左往右处理到left下标时，左边的最大值left_max对它而言是可信的，但right_max对它而言是不可信的。（见下图，由于中间状况未知，对于left下标而言，right_max未必就是它右边最大的值）
+
+定理三：当我们从右往左处理到right下标时，右边的最大值right_max对它而言是可信的，但left_max对它而言是不可信的。定理一：在某个位置i处，它能存的水，取决于它左右两边的最大值中较小的一个。
+详见[官方解答评论](https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/)
+```C++
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        if (height.empty()) return 0; 
+        int sum = 0;
+        int size = height.size();
+        int left = 0;
+        int right = size - 1;
+        int max_L = height[0];
+        int max_R = height[size - 1];
+
+        while(left <= right)
+        {
+            max_L = max(max_L, height[left]);
+            max_R = max(max_R, height[right]);
+
+            if (max_L <= max_R)
+            {
+                sum += max_L - height[left];
+                left++;
+            }
+            else
+            {
+                sum += max_R - height[right];
+                right--;
+            }
+        }
+        return sum;
+    }
+};
+-------------------------------------------------
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        if (height.empty()) return 0; 
+        int sum = 0;
+        int size = height.size();
+        int left = 0;
+        int right = size - 1;
+        int max_L = height[0];
+        int max_R = height[size - 1];
+
+        while(left <= right)
+        {
+            if (max_L <= max_R)
+            {
+                sum += max(0, max_L - height[left]);
+                max_L = max(max_L, height[left]);
+                left++;
+            }
+            else
+            {
+                sum += max(0, max_R - height[right]);
+                max_R = max(max_R, height[right]);
+                right--;
+            }
+        }
+        return sum;
+    }
+};
+```
+---
+### [84.柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)
+1. 暴力求解
+   * 找出低于当前柱子左右两侧的位置
+   * 详见[官方题解](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/solution/zhu-zhuang-tu-zhong-zui-da-de-ju-xing-by-leetcode-/)
+```C++
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        if (heights.empty()) return 0;
+        int max_A = 0;
+        for (int i = 0; i < heights.size(); ++i)
+        {
+            int left = i;
+            int right = i;
+            int height = heights[i];
+            while (left -1 >= 0 && heights[left - 1] >= height)
+                --left;
+            while (right - 1 < heights.size() && heights[right + 1] >= height)
+                ++right;
+            max_A = max(max_A, (right - left + 1) * height);//宽度*高度
+        }
+        return max_A;
+    }   
+};
+```
+2. 单调栈
+   * 详见[题解](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/solution/bao-li-jie-fa-zhan-by-liweiwei1419/)
+```C++
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& heights) {
+        if (heights.empty()) return 0;
+        int sum = 0;
+        stack<int> mystack;
+        mystack.push(0);
+        //构建一个首位带有哨兵的新数组，遍历时需要避开
+        //末尾 + 0， 确保最后一个柱状图能够被塞进栈
+        vector<int> newHeights;
+        newHeights.push_back(0);
+        newHeights.insert(newHeights.end(), heights.begin(), heights.end());
+        newHeights.push_back(0);
+
+        for (int i = 1; i < newHeights.size(); ++i)
+        {
+            while(newHeights[i] < newHeights[mystack.top()])
+            {
+                int tempH = newHeights[mystack.top()];
+                mystack.pop();
+                sum = max(sum, (i - mystack.top() - 1) * tempH);
+            }
+            mystack.push(i);
+        }
+        return sum;
+    }
+```
+---
+### [581.最短无序连续子数组](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/submissions/)
+1. **暴力求解**
+   * 直接对整个数组排序，比较发生改变的区间，区间长度即为所求
+```C++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        if (nums.size() == 1) return 0;
+        auto temp = nums;
+        sort(temp.begin(), temp.end());
+        vector<int> result;
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            if (temp[i] != nums[i])
+                result.push_back(i);
+        }
+        return result.empty() ? 0 : *(result.rbegin()) - *(result.begin()) + 1;
+    }
+};
+```
+2. **单调栈**
+   * **两边遍历**无序子数组中最小元素的正确位置可以决定左边界，最大元素的正确位置可以决定右边界
+   * **正向遍历**找元素突然变小的**左边界**
+   * **反向遍历**找元素突然变大的**右边界**
+```C++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        if (nums.size() == 1) return 0;
+        stack<int> mystack;
+        int l = nums.size() - 1;
+        int r = 0;
+        //正向遍历找左边界
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            while (!mystack.empty() && nums[i] < nums[mystack.top()])
+            {
+                auto temp = mystack.top();
+                mystack.pop();
+                l = min(l, temp);//找最左边界（可能有多处反转发生，取最左）
+            }
+            mystack.push(i);
+        }
+        //反向遍历找右边界（栈元素清空不清空都可以）
+        stack<int>().swap(mystack);//（可以不用这一句）
+        for (int i = nums.size() - 1; i >= 0; --i)
+        {
+            while (!mystack.empty() && nums[i] > nums[mystack.top()])
+            {
+                auto temp = mystack.top();
+                mystack.pop();
+                r = max(r, temp);//找最右边界（可能有多处反转发生，取最右）
+            }
+            mystack.push(i);
+        }
+        return r > l ? r - l + 1 : 0;
+    }
+};
+```
+
+3. 不适用额外空间[->参考](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/)
+```C++
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+        if (nums.size() == 1) return 0;
+        auto size = nums.size();
+        int max = INT_MIN;
+        int min = INT_MAX;
+        int left = 0;
+        int right = -1;
+        for (int i = 0; i < size; ++i)
+        {
+            if (nums[i] < max)
+                right = i;
+            else 
+                max = nums[i];
+            if (nums[size - 1 - i] > min)
+                left = size - 1 - i;
+            else
+                min = nums[size - 1 - i];
+        }
+        return right - left + 1;
+    }
+};
+```
+---
+### [901.股票价格跨度](https://leetcode-cn.com/problems/online-stock-span/submissions/)
+**单调栈**
+* 数组维护历史数组
+* index维护数组下标
+* 栈维护单调递减的顺序
+* 借用**哨兵**
+```C++
+class StockSpanner {
+public:
+    StockSpanner() {
+        V.clear(); 
+        V.push_back(INT_MAX); //哨兵
+        index = 0;
+        mystack.push(0);  //哨兵  
+    }
+
+    int next(int price){
+        index++;//数组对应的下标
+        V.push_back(price);//把数据存入数组
+        int result = 1;//未进栈的数据为1
+        while (price >= V[mystack.top()])
+        {
+            mystack.pop();
+            result = index - mystack.top();
+        }
+        mystack.push(index);
+        return result;//数据进栈则result执行相应操作，未进栈则仍为1
+    }
+    vector<int> V;
+    int index;
+    stack<int> mystack;
+};
+```
+---
+### [402.移掉K位数字](https://leetcode-cn.com/problems/remove-k-digits/)
+**单调栈 + 贪心**
+* 对于每个数字，如果该数字小于栈顶元素，我们就不断地弹出栈顶元素，直到
+>栈为空
+
+>或者新的栈顶元素不大于当前数字
+
+>或者我们已经删除了 k 位数字
+```C++
+class Solution {
+public:
+    string removeKdigits(string num, int k) {
+        if (num.size() == k) return "0";
+        if (k == 0) return num == "" ? "0" : num;
+        string result;
+        for (int i = 0; i < num.size(); ++i)
+        {
+            while (result.size() != 0 && num[i] < result.back() && k != 0)//num[i] 不能等于栈顶元素
+            {
+                result.pop_back();
+                --k;
+            }
+            if (result.size() == 0 && num[i] == '0')
+                continue;
+            result += num[i];
+        }
+        while (k != 0)
+        {
+            result.pop_back();
+            --k;
+        }
+        return result == "" ? "0" : result; //判空
+    }
+};
+```
+---
+### [316.去除重复字母](https://leetcode-cn.com/problems/remove-duplicate-letters/solution/qu-chu-zhong-fu-zi-mu-by-leetcode-soluti-vuso/)
+### [1081.不同字符的最小子序列](https://leetcode-cn.com/problems/smallest-subsequence-of-distinct-characters/)
+**单调栈**
+* 去重
+* 去重字符串中的字符顺序不能打乱字符出现的相对顺序
+* 字典序最小
+```C++
+class Solution {
+public:
+    string removeDuplicateLetters(string s) {
+        if (s.empty()) return "";
+        string result;//保存结果的栈（string直接输出比用stack倒序输出要方便简单一些）
+        vector<int> count(26, 0);//字符在s中出现的总次数
+        vector<bool> visited(26, false);//判断字符数否入栈过
+        for (auto ch : s)
+        {
+            count[ch - 'a']++;
+        }
+        for (auto ch : s)
+        {
+            count[ch - 'a']--;//用一次、少一次
+            if (visited[ch - 'a'])
+            {
+                continue;
+            }
+            while (result.size() != 0 && ch < result.back())
+            {            
+                auto temp = result.back();
+                if (count[temp - 'a'] == 0) break;//这个字符是最后一个，必须保留
+                result.pop_back();
+                visited[temp - 'a'] = false;//出栈后，字符入栈状态改为false，此时后续相同字符又可以重新进栈
+            }
+            result += ch;//进栈
+            visited[ch - 'a'] = true;
+        }
+        return result;
+    }
+};
+
+```
+---
+### [321.拼接最大数](https://leetcode-cn.com/problems/create-maximum-number/solution/c-dan-diao-zhan-pin-jie-tiao-li-qing-xi-nrnu1/)
+* 思路
+    1. 从num1中选出长度为l1的最大子序列**单调栈**
+    2. 从num2中选出长度为k-l1的最大子序列
+    3. 合并得到当前情况下( k = l1 + [k - l1])最大和子序列（最大的序列等于两者的“拼接”）
+    4. 循环改变l1并实时维护最大值             
+```C++
+class Solution {
+public:
+    vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+        if (k == 0) return{};
+        int m = nums1.size();
+        int n = nums2.size();
+        vector<int> result(k, 0);
+        for (int l1 = 0; l1 <= k && l1 <= m; ++l1)
+        {
+            //长度为m中挑选l1个,另一个数组中中挑选k-l1个；
+            if (k - l1 > n) continue;
+            auto maxInNums1 = lDigits(nums1, l1);
+            auto maxInNums2 = lDigits(nums2, k - l1);
+            auto maxMerge = merge(maxInNums1, maxInNums2);
+            result = max(result, maxMerge);
+        }
+        return result;
+    }
+
+    vector<int> lDigits(vector<int>& nums,int l) //长度为l的最大子序列,且不改变相对次序
+    {
+        if (l == 0) return {};
+        int n = nums.size();
+        if (l == n) return nums;
+        vector<int> mystack;  
+        vector<int> result;  
+        for (int i = 0; i < n; ++i)
+        {
+            while (!mystack.empty() && nums[i] > nums[mystack.back()])
+            {
+                if (mystack.size() + n - i == l)
+                    break;
+                mystack.pop_back();
+            }
+            mystack.push_back(i);
+        }
+        for (auto it = mystack.begin(); it != mystack.begin() + l; ++it)
+            result.push_back(nums[*it]);
+        return result;
+    }
+
+    vector<int> merge(vector<int>& nums1, vector<int>& nums2)//拼接
+    {
+        if (nums1.empty()) return nums2;
+        if (nums2.empty()) return nums1;
+        vector<int> result;
+        deque<int> d1(nums1.begin(), nums1.end());
+        deque<int> d2(nums2.begin(), nums2.end());
+        while (!d1.empty() && !d2.empty())//把两队列“头”大者取出来，并更新“头”，保证顺序
+        {
+            if (d1 > d2)//stl容器的比较
+            {
+                result.push_back(d1.front());
+                d1.pop_front();
+            }
+            else
+            {
+                result.push_back(d2.front());
+                d2.pop_front();
+            }
+        }
+        if (d1.empty())//添加剩下的部分
+            result.insert(result.end(), d2.begin(), d2.end());
+        result.insert(result.end(), d1.begin(), d1.end());
+        return result;
+    }   
+};
+```
+> 这是基于思路的简单实现，具体的优化就不做进一步阐述了
+
+---
+### [239.滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)
+* 维护一个有序序列window
+* **第一大元素也就是这个 window.front() 在窗口内**，那我们可以**不用管**第二大第三大元素在不在区间内了。因为答案一定是这个第一大元素。如果 window.front() 不在窗口内，则将其弹出，第二个大元素变成第一大元素，第三大元素变成第二大元素以此类推
+1. 优先队列
+```C++
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        if (k == 1) return nums;
+        int size = nums.size();
+        priority_queue<pair<int, int>> window;
+
+        for (int i = 0; i < k; ++i)
+        {
+            window.emplace(nums[i], i);
+        }
+        vector<int> result;
+        result.push_back(window.top().first);
+
+        for (int i = k; i < size; ++i)
+        {
+            window.emplace(nums[i], i);
+            while (window.top().second <= i - k) 
+                window.pop();
+            result.push_back(window.top().first);  
+        }
+        return result;       
+    }
+};
+```
+2. 单调队列
+```C++
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+        if (k == 1) return nums;
+        int size = nums.size();
+        deque<int> window;
+        for (int i = 0; i < k; ++i)
+        {
+            while (!window.empty() && nums[i] > nums[window.back()])
+            {
+                window.pop_back();
+            }
+            window.push_back(i);
+        }
+
+        vector<int> result;
+        result.push_back(nums[window.front()]);
+
+        for (int i = k; i < size; ++i)
+        {
+            while (!window.empty() && window.front() <= i - k)
+                window.pop_front();
+            while (!window.empty() && nums[i] > nums[window.back()])
+            {
+                window.pop_back();
+            }
+            window.push_back(i);
+            result.push_back(nums[window.front()]);
+        }
+        return result;
+    }
+};
+```
+---
+### [剑指Offer09.用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)
+*
+```C++
+class CQueue {
+public:
+    CQueue() {
+        while (!s1.empty()) s1.pop();
+        while (!s2.empty()) s2.pop();
+    }
+    
+    void appendTail(int value) {
+        s1.push(value);
+    }
+    
+    int deleteHead() {
+        if (s2.empty())
+        {
+            while (!s1.empty())
+            {
+                s2.push(s1.top());
+                s1.pop();
+            }
+        }
+        if (s2.empty()) return -1;
+        else
+        {
+            auto dele = s2.top();
+            s2.pop();
+            return dele;
+        }
+    }
+private:
+    stack<int> s1;
+    stack<int> s2;
+};
+```
+---
+
+## 数组
+***tip二分法***
+### [875.爱吃香蕉的珂珂](https://leetcode-cn.com/problems/koko-eating-bananas/)
+* 最少可以吃一颗，最多吃最大堆的香蕉数量
+* 由此可知，暴力遍历1-max可以求解，由小到大枚举，满足条件的第一个数据就是所需数据
+* 联想用**二分**进行优化
+```C++
+class Solution {
+public:
+    int minEatingSpeed(vector<int>& piles, int H) {
+        int lo = 1;
+        int hi = *max_element(piles.begin(), piles.end());
+        while (lo < hi)
+        {
+            int mid = lo + (hi - lo) / 2;
+            if (!valid(piles, mid, H))
+            {
+                lo = mid + 1;
+            }
+            else 
+                hi = mid;
+        }
+        return lo;
+    }
+
+    bool valid(vector<int>& piles, int speed, int H)
+    {
+        int totolTime = 0;
+        for (auto p : piles)
+        {
+            totolTime += p/speed;
+            if (p % speed != 0)
+                 totolTime++;
+        }
+        return totolTime <= H;
+    }
+};
+```
+---
+
+### [1011.在D天内送达包裹的能力](https://leetcode-cn.com/problems/capacity-to-ship-packages-within-d-days/)
+
+```C++
+class Solution {
+public:
+    int shipWithinDays(vector<int>& weights, int D) {
+        int lo = *max_element(weights.begin(), weights.end());
+        int hi = accumulate(weights.begin(), weights.end(), 0);
+        while (lo < hi)
+        {
+            int mid = lo + (hi - lo) / 2;
+            if (!valid(weights, mid, D))
+            {
+                lo = mid + 1;
+            }
+            else 
+                hi = mid;
+        }
+        return lo;
+    }
+    bool valid(vector<int>& weights, int loader, int D)
+    {
+        int sum = 0;
+        int day = 0;
+        for (int i = 0; i < weights.size(); ++i)
+        {
+            sum += weights[i];
+            if (sum > loader)
+            {
+                day++;
+                sum = weights[i];
+            }
+            if (sum == loader)
+            {
+                day++;
+                sum = 0;
+            }
+        }
+        if (sum != 0)
+            day++;
+        return day <= D;
+    }
+};
+```
+---
+***tip滑动窗口***
+
+### [76.最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/submissions/)
+* **滑动窗口**，详见[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485141&idx=1&sn=0e4583ad935e76e9a3f6793792e60734&chksm=9bd7f8ddaca071cbb7570b2433290e5e2628d20473022a5517271de6d6e50783961bebc3dd3b&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char, int> need, window;
+        for (auto c : t) need[c]++;
+        int left = 0, right = 0;
+        int valid = 0;
+        int start = 0;
+        int len = INT_MAX;
+        while (right < s.size())
+        {
+            char ch = s[right];     
+            if (need.count(ch) != 0)
+            {
+                window[ch]++;
+                if (window[ch] == need[ch])
+                    valid++;
+            }
+            right++;
+            
+            while (valid == need.size())
+            {
+                if (right - left < len)
+                {
+                    start = left;
+                    len = right - left;
+                }
+                char ch = s[left];
+                
+                if (need.count(ch) != 0)
+                {
+                    if (window[ch] == need[ch])
+                        valid--;
+                    window[ch]--;
+                }
+                left++;
+            }
+
+        }
+        return len == INT_MAX ? "" : s.substr(start, len);
+        }
+};
+```
+---
+
+### [567.字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)
+* **滑动窗口**，详见[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485141&idx=1&sn=0e4583ad935e76e9a3f6793792e60734&chksm=9bd7f8ddaca071cbb7570b2433290e5e2628d20473022a5517271de6d6e50783961bebc3dd3b&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    bool checkInclusion(string s1, string s2) {
+        unordered_map<char, int> need, window;
+        for (auto ch : s1) need[ch]++;
+        int left = 0, right = 0;
+        int valid = 0;
+
+        while (right < s2.size())
+        {
+            char ch = s2[right];
+            if (need.count(ch) != 0)
+            {
+                window[ch]++;
+                if (window[ch] == need[ch])
+                    valid++;
+            }
+            right++;
+
+            while (right - left >= s1.size())
+            {
+                if (valid == need.size())
+                    return true;
+                char ch = s2[left];
+                if (need.count(ch) != 0)
+                {
+                    if (window[ch] == need[ch])
+                        valid--;
+                    window[ch]--;
+                }
+                left++;
+            }
+        }
+        return false;
+    }
+};
+```
+---
+
+### [438.找到字符串中所有字母异位词](https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/)
+* **滑动窗口**，详见[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485141&idx=1&sn=0e4583ad935e76e9a3f6793792e60734&chksm=9bd7f8ddaca071cbb7570b2433290e5e2628d20473022a5517271de6d6e50783961bebc3dd3b&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+        vector<int> res;
+        unordered_map<char, int> need, window;
+        for (auto ch : p) need[ch]++;
+        int left = 0, right = 0;
+        int valid = 0;
+        while (right < s.size())
+        {
+            char ch = s[right];
+            if (need.count(ch) != 0)
+            {
+                window[ch]++;
+                if (window[ch] == need[ch])
+                    valid++;
+            }
+            right++;
+
+            while (right - left >= p.size())
+            {
+                if (valid == need.size())
+                    res.push_back(left);
+                char ch = s[left];
+                if (need.count(ch) != 0)
+                {
+                    if (window[ch] == need[ch])
+                        valid--;
+                    window[ch]--;
+                }
+                left++;
+            }
+        }
+        return res;
+    }
+};
+```
+---
+
+### [3.无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)
+* **滑动窗口**，详见[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247485141&idx=1&sn=0e4583ad935e76e9a3f6793792e60734&chksm=9bd7f8ddaca071cbb7570b2433290e5e2628d20473022a5517271de6d6e50783961bebc3dd3b&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        unordered_map<char, int>window;
+        int left = 0, right = 0, res = 0;
+        while (right < s.size())
+        {
+            char ch = s[right];
+            window[ch]++;
+            right++;
+            while (window[ch] > 1)
+            {
+                char ch = s[left];
+                window[ch]--;
+                left++;
+            }
+            res = max(res, right - left);
+        }
+        return res;
+    }
+};
+```
+---
+### [30.串联所有单词的子串](https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/)
+* **滑动窗口**，详见[题解](https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-w-6/)
+```C++
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int len = INT_MAX;
+        int left = 0, right = 0;
+        int sum = 0;
+        while (right < nums.size())
+        {
+            sum += nums[right];
+            right++;
+            while (sum >= s)
+            {
+                len = min(len, right - left);
+                sum -= nums[left];
+                left++;
+            }          
+        }
+        return len == INT_MAX ? 0 : len;
+    }
+};
+
+```
+---
+### [209.长度最小的子数组](https://leetcode-cn.com/problems/minimum-size-subarray-sum/)
+* **滑动窗口**
+```C++
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        if (s.empty() || words.empty()) return {};
+        int wordwidth = words.at(0).size();
+        int wordsnum = words.size();
+        unordered_map<string, int> need, window;
+        for (auto s : words) need[s]++;
+         
+        vector<int> res;
+
+        for (int left = 0; left + wordwidth * wordsnum <= s.size(); left++)
+        {
+            int right = left;
+            for (; right < left + wordwidth * wordsnum; right += wordwidth)
+            {
+                string str = s.substr(right, wordwidth);
+                if (need.count(str) == 0)
+                    break;
+                window[str]++;
+                if (window[str] > need[str])
+                    break;
+            }
+            if (right == (left + wordwidth * wordsnum))
+                res.push_back(left);
+            window.clear();
+        }
+        return res;
+    }
+};
+
+```
+---
+### [632.最小区间](https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/)
+1. **堆**
+    * [参考](https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/solution/xin-ping-zhuang-jiu-jiu-zhe-ti-jiu-shi-he-bing-kge/),类似**合并K个有序链表**
+```C++
+class Solution {
+    typedef pair<int, pair<int, int>> Val_Row_Col;//val具体数值, row在那个列表, col列表的第几个数字
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        int n = nums.size();
+        int maxNum = -100001;
+        int start = -100001;
+        int end = 100001;
+        priority_queue<Val_Row_Col, vector<Val_Row_Col>, greater<Val_Row_Col>> myQue;
+        for (int row = 0; row < n; ++row)
+        {
+            myQue.push(make_pair(nums[row][0], make_pair(row, 0)));
+            maxNum = max(maxNum, nums[row][0]);
+        }
+        while (myQue.size() == n)
+        {
+            auto temp = myQue.top();
+            myQue.pop();
+            int minvalue = temp.first;
+            int row = temp.second.first;
+            int col = temp.second.second;
+            if (maxNum - minvalue < end - start)
+            {
+                end = maxNum;
+                start = minvalue;
+            }
+            if (col + 1 < nums[row].size())
+            {
+                myQue.push(make_pair(nums[row][col + 1], make_pair(row, col + 1)));
+                maxNum = max(maxNum, nums[row][col + 1]);
+            }
+        }
+        return {start, end};
+    }
+};
+```
+
+2. **哈希** + **滑动窗口**
+    * [参考](https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/solution/pai-xu-hua-chuang-by-netcan/)
+```C++
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        vector<pair<int, int>> val_Row;//val保存值， row表示位于那个列表
+        int n = nums.size();
+        for (int row = 0; row < n; ++row)
+            for (auto num : nums[row])
+                val_Row.push_back(make_pair(num, row));
+        sort(val_Row.begin(), val_Row.end());
+
+        int left = 0, right = 0;
+        int start = 0, end = 0;
+        int len = INT_MAX;
+        unordered_map<int, int> window;
+
+        while (right < val_Row.size())
+        {
+            int row = val_Row[right].second;
+            window[row]++;
+            right++;
+            while (window.size() == n)//包含了每个列表的数，则可以开始收缩
+            {
+                auto newLen = val_Row[right - 1].first - val_Row[left].first;
+                if (newLen < len)
+                {
+                    start = val_Row[left].first;
+                    end = val_Row[right - 1].first;
+                    len = newLen;
+                }
+                int row = val_Row[left].second;
+                window[row]--;
+                left++;
+                if(window[row] == 0){//当window[row]没有数据， 应删除对应关系（size应-1），因为window[row] == 0,window[row]仍然存在，此时window.size()就会出错
+                    window.erase(row);
+                }
+            }
+        }       
+        return {start, end};
+    }
+};
+```
++++
+```C++
+class Solution {
+public:
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        vector<pair<int, int>> val_Row;
+        int n = nums.size();
+        for (int row = 0; row < n; ++row)
+            for (auto num : nums[row])
+                val_Row.push_back(make_pair(num, row));
+        sort(val_Row.begin(), val_Row.end());
+
+        int left = 0, right = 0;
+        int start = 0, end = 0;
+        int len = INT_MAX;
+        unordered_map<int, int> window;
+
+        while (right < val_Row.size())
+        {
+            int row = val_Row[right].second;
+            window[row]++;
+            while (window.size() == n)
+            {
+                auto newLen = val_Row[right].first - val_Row[left].first;
+                if (newLen < len)
+                {
+                    start = val_Row[left].first;
+                    end = val_Row[right].first;
+                    len = newLen;
+                }
+                int row = val_Row[left].second;
+                window[row]--;
+                left++;
+                if(window[row] == 0){
+                    window.erase(row);
+                }
+                
+            }
+            right++;
+        }      
+        return {start, end};
+    }
+};
+```
+---
+
+***O(1) 时间，我能查找/删除数组中的任意元素***
+### [380.常数时间插入、删除和获取随机元素](https://leetcode-cn.com/problems/insert-delete-getrandom-o1/)
+* **哈希 + 数组**
+* 关键在于删除元素时，首先将**待删除元素**与**数组尾部元素**交换，因为删除数组尾部的数据时间为O(1)[pop_back]
+* rand()随机数，返回0-RAND_MAX(32727?)
+```C++
+class RandomizedSet {
+public:
+    /** Initialize your data structure here. */
+    RandomizedSet() {
+        nums.clear();
+        val_Index.clear();
+    }
+    
+    /** Inserts a value to the set. Returns true if the set did not already contain the specified element. */
+    bool insert(int val) {
+        if (val_Index.count(val) != 0)
+            return false;
+        val_Index[val] = nums.size();//记录在vector中的顺序
+        nums.push_back(val);
+        return true;
+    }
+    
+    /** Removes a value from the set. Returns true if the set contained the specified element. */
+    bool remove(int val) {
+        if (val_Index.count(val) == 0)
+            return false;
+        int index = val_Index[val];
+        val_Index[nums.back()] = index;//保证删除后容器中剩余元素的index仍是连续的，才能够继续索引
+        swap(nums[index], nums.back());//此处要用nums[index], 直接用val会交换形参val，而实际对应val的数组值nums[val]仍然没有被交换
+        nums.pop_back();
+        val_Index.erase(val);
+        return true;
+    }
+    
+    /** Get a random element from the set. */
+    int getRandom() {
+        return nums.at(rand() % nums.size());
+    }
+private:
+    vector<int> nums;
+    unordered_map<int, int> val_Index;
+};
+
+```
+---
+
+### [710.黑名单中的随机数](https://leetcode-cn.com/problems/random-pick-with-blacklist/)
+* 参考[题解](https://leetcode-cn.com/problems/random-pick-with-blacklist/solution/xiang-jie-ti-mu-si-lu-ji-guan-fang-ti-jie-by-luo-z/)
+* 将**黑名单映射到白名单**，再取随机数！
+```C++
+class Solution {
+public:
+    Solution(int N, vector<int>& blacklist) {
+        blackToWhite.clear();
+        sizeOfWhite = N - blacklist.size();//白名单大小，最后从这个范围里面选择数据即可
+        unordered_set<int> w;//erase方便删除
+        for (int i = sizeOfWhite; i < N; ++i) w.insert(i);
+        for (auto b : blacklist) w.erase(b);//保存sizeOfWhite之后的白名单数据
+        auto it = w.begin();
+        for (auto b : blacklist)
+        {
+            if (b < sizeOfWhite)
+                blackToWhite[b] = *it++;//sizeOfWhite之前的黑名单数据映射到sizeOfWhite之后的白名单数据（两者数量一定相等）
+        } 
+    }
+    
+    int pick() {
+        int temp = rand() % sizeOfWhite;
+        return blackToWhite.count(temp) ? blackToWhite[temp] : temp;
+    }
+private:
+    int sizeOfWhite;
+    unordered_map<int, int> blackToWhite;
+};
+```
+---
+
+### [26.删除排序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/submissions/)
+* **双指针**， 慢指针slow走在后面，快指针fast走在前面探路，找到一个不重复的元素就告诉slow并让slow前进一步。
+```C++
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.size() == 0) return 0;
+        int slow = 0;
+        int fast = 0;
+        while (fast < nums.size())
+        {
+            if (nums[fast] != nums[slow])
+            {
+                slow++;
+                nums[slow] = nums[fast];
+            }
+            fast++;
+        }
+        return slow + 1;//slow是index，相应长度要 + 1
+    }
+};
+```
+---
+
+### [83.删除排序链表中的重复元素]()
+* **双指针**同上
+```C++
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if (head == nullptr) return nullptr;
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while (fast != nullptr)
+        {
+            if (fast->val != slow->val)
+            {
+                slow->next = fast;
+                slow = slow->next;
+            }
+            fast = fast->next;
+        }
+        slow->next = nullptr;
+        return head;
+    }
+};
+```
+---
+
+### [27.移除元素](https://leetcode-cn.com/problems/remove-element/)
+* **双指针** 
+```C++
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        int size = nums.size();
+        if (size == 0) return 0;
+        int slow = 0;
+        int fast = 0;
+        while (fast < size)
+        {
+            if (nums[fast] != val)
+            {
+                nums[slow++] = nums[fast];//此处++后，结果已经 + 1 ，return时不需要重新+1
+            }
+            fast++;
+        }
+        return slow;
+    }
+};
+```
+---
+
+### [283.移动零](https://leetcode-cn.com/problems/move-zeroes/)
+1. **双指针** + **末尾补0**
+```C++
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        if (nums.empty()) return;
+        int slow = 0;
+        int fast = 0;
+        while(fast < nums.size())
+        {
+            if (nums[fast] != 0)
+            {
+                nums[slow++] = nums[fast];
+            }
+            fast++;
+        }
+        while(slow < nums.size())
+        {
+            nums[slow++] = 0;
+        }
+    }
+};
+```
+2. **双指针** + **swap**
+```C++
+class Solution {
+public:
+    void moveZeroes(vector<int>& nums) {
+        if (nums.empty()) return;
+        int left = 0;
+        int right = 0;
+        while(right < nums.size())
+        {
+            if (nums[right] != 0)
+            {
+                swap(nums[left++], nums[right]);
+            }
+            right++;
+        }
+    }
+};
+```
+---
 ### []()
+*
+```C++
 
+```
 ---
----
----
----
----
+### []()
+*
+```C++
 
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+---
 
 
 
