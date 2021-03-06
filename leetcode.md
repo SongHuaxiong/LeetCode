@@ -1,5 +1,5 @@
 
-# LEETCODE
+# LEETCODE OF SHX
 
 ## 链表
 
@@ -1676,6 +1676,8 @@ public:
 };
 ```
 ---
+---
+---
 
 ## 数据结构设计
 ### [130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
@@ -2591,7 +2593,7 @@ public:
     }
 };
 ```
-2. 单调栈 + hash
+2. **单调栈** + hash
   * 可以忽略数组 nums1，先对将 nums2 中的每一个元素，求出其下一个更大的元素
   * 随后对于将这些答案放入哈希映射（HashMap）中，再遍历数组 nums1，并直接找出答案。对于 nums2，我们可以使用**单调栈**来解决这个问题。
 ```C++
@@ -3969,66 +3971,325 @@ public:
 };
 ```
 ---
-### []()
-*
+### [1.两数之和](https://leetcode-cn.com/problems/two-sum/)
+* **哈希表**
 ```C++
-
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        if (nums.empty()) return {};
+        unordered_map<int, int> map;
+        for (int i = 0; i < nums.size(); ++i)
+            map[nums[i]] = i;
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            int temp = target - nums[i];
+            if (map.count(temp) != 0 && map[temp] != i)
+                return {i, map[temp]};
+        }
+        return {};
+    }
+};
 ```
 ---
-### []()
-*
+### [167.两数之和II-输入有序数组](https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/)
+1. **哈希**
 ```C++
-
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int N = numbers.size();
+        if (N == 0) return {};
+        unordered_map<int, int> index;
+        for (int i = 0; i < N; ++i)
+            index[numbers[i]] = i;
+        for (int i = 0; i < N; ++i)
+        {
+            int dif = target - numbers[i];
+            if (index.count(dif) != 0 && index[dif] != i)
+            {
+                if (index[dif] < i)
+                    return {index[dif] + 1, i + 1};
+                else
+                    return {i + 1, index[dif] + 1};
+            }
+        }
+        return {};
+    }
+};
+```
+2. 借助题目给出的**有序**信息，可以通过确定一个数，再用**二分**搜索另一个来实现
+```C++
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int N = numbers.size();
+        for (int i = 0; i < N; ++i)
+        {
+            int lo = i + 1; 
+            int hi = N - 1;
+            while (lo <= hi)
+            {
+                int mid = (hi - lo) / 2 + lo;
+                if (numbers[mid] == target - numbers[i])
+                    return {i + 1, mid + 1};
+                else if (numbers[mid] < target - numbers[i])
+                    lo = mid + 1;
+                else   
+                    hi = mid - 1;
+            }
+        }
+        return {-1, -1};
+    }
+};
+```
+3. **双指针收缩**，一个指向最小，一个指向最大，再收缩
+```C++
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& numbers, int target) {
+        int left = 0;
+        int right = numbers.size() -1;
+        while (left < right)
+        {
+            if (numbers[left] + numbers[right] == target)
+                return {left + 1, right + 1};
+            else if (numbers[left] + numbers[right] < target)
+                ++left;
+            else
+                --right;
+        }
+        return {-1, -1};
+    }
+};
 ```
 ---
-### []()
-*
+### [653.两数之和IV-输入BST](https://leetcode-cn.com/problems/two-sum-iv-input-is-a-bst/)
+* **中序遍历**成有序数组 + **收缩指针**
 ```C++
-
+class Solution {
+public:
+    vector<int> result;
+    bool findTarget(TreeNode* root, int k) {
+        inorder(root);
+        for (int left = 0, right = result.size() - 1;left < right; )
+        {
+            if (result[left] + result[right] == k)
+                return true;
+            else if (result[left] + result[right] < k)
+                ++left;
+            else   
+                --right;
+        }
+        return false;
+    }
+    void inorder(TreeNode* root)
+    {
+        if (root == nullptr) return;
+        inorder(root->left);
+        result.push_back(root->val);
+        inorder(root->right);
+    }
+};
 ```
 ---
-### []()
-*
+### [15.三数之和](https://leetcode-cn.com/problems/3sum/submissions/)
+* **排序** + **两数之和通用去重复解法**
+* 详见[题解](https://leetcode-cn.com/problems/3sum/solution/yi-ge-fang-fa-tuan-mie-by-labuladong/)
 ```C++
-
+/* 注意：调用这个函数之前一定要先给 nums 排序 */
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        std::sort(nums.begin(), nums.end());//务必排序，达到去重效果
+        return nSumTarget(nums, 3, 0, 0);
+    }
+    vector<vector<int>> nSumTarget(vector<int>& nums, int n, int start, int target)
+    {
+        int size = nums.size();
+        vector<vector<int>> result;
+        if (size < 2 || size < n) return result;
+        if (n == 2)//两数之和
+        {
+            int lo = start;
+            int hi = size - 1;
+            while (lo < hi)
+            {
+                int temp_left = nums[lo];
+                int temp_right = nums[hi];
+                if (nums[lo] + nums[hi] == target) 
+                {
+                    result.push_back({nums[lo], nums[hi]});
+                    while (lo < hi && nums[lo] == temp_left) lo++;
+                    while (lo < hi && nums[hi] == temp_right) hi--;
+                }
+                else if (nums[lo] + nums[hi] < target)
+                {
+                    while (lo < hi && nums[lo] == temp_left) lo++;
+                }
+                else 
+                {
+                    while (lo < hi && nums[hi] == temp_right) hi--;
+                }
+            }
+        }
+        else//多数之和，递归求解
+        {
+            for (int i = start; i < size; ++i)
+            {
+                auto subarray = nSumTarget(nums, n - 1, i + 1, target - nums[i]);
+                for (auto& array_elem : subarray)
+                {
+                    array_elem.push_back(nums[i]);//加入提出来的数
+                    result.push_back(array_elem);
+                }
+                while (i < size - 1 && nums[i] == nums[i + 1]) i++;//**后面**有相同的数直接跳过，避免重复
+            }      
+        }
+        return result;
+    }
+};
 ```
 ---
-### []()
-*
+### [18.四数之和](https://leetcode-cn.com/problems/4sum/)
+* 同上
 ```C++
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        std:sort(nums.begin(), nums.end());
+        return nSumTarget(nums, 4, 0, target);
+    }
+    vector<vector<int>> nSumTarget(vector<int>& nums, int n, int start, int target)
+    {
+        int size = nums.size();
+        vector<vector<int>> res;
+        if (n < 2 || size < n) return res;
 
+        if (n == 2)
+        {
+            int lo = start;
+            int hi = size - 1;
+            while (lo < hi)
+            {
+                int sum = nums[lo] + nums[hi];
+                int templ = nums[lo];
+                int tempr = nums[hi];
+                if (sum == target)
+                {
+                    res.push_back({nums[lo], nums[hi]});
+                    while (lo < hi && nums[lo] == templ) lo++;
+                    while (lo < hi && nums[hi] == tempr) hi--;
+                }
+                else if (sum < target)
+                {
+                    while(lo < hi && nums[lo] == templ) lo++;
+                }
+                else
+                {
+                    while (lo < hi && nums[hi] == tempr) hi--;
+                }
+            }
+        }
+        else
+        {
+            for (int i = start; i < size; ++i)
+            {
+                auto subarr = nSumTarget(nums, n - 1, i + 1, target - nums[i]);
+                for (auto& arr : subarr)
+                {
+                    arr.push_back(nums[i]);
+                    res.push_back(arr);
+                }
+                while (i < size - 1 && nums[i] == nums[i + 1]) i++;
+            }
+        }
+        return res;
+    }
+};
 ```
 ---
-### []()
-*
+### [2.两数相加](https://leetcode-cn.com/problems/add-two-numbers/)
+* **逐位相加**，考虑**进位值carry**和**当前位值curValue**
 ```C++
-
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* left = nullptr;
+        ListNode* right = nullptr;
+        int carry = 0; //进位值
+        while (l1 != nullptr || l2 != nullptr)
+        {
+            int n1 = l1 ? l1->val : 0;
+            int n2 = l2 ? l2->val : 0;//易知当前位值位(n1 + n2 + carry) % 10,进位值为(n1 + n2 + carry) / 10
+            int sum = n1 + n2 + carry;
+            int curValue = sum % 10;
+            carry = sum / 10;
+            if (left == nullptr)
+            {
+                left = right = new ListNode(curValue);
+            }
+            else
+            {
+                right->next = new ListNode(curValue);
+                right = right->next;
+            }
+            if (l1 != nullptr)//移至下一位
+                l1 = l1->next;
+            if (l2 != nullptr)
+                l2 = l2->next;
+        }
+        if (carry > 0)//最后有进位
+        {
+            right->next = new ListNode(carry);
+        }
+        return left;
+    }
+};
 ```
 ---
-### []()
-*
+### [445.两数相加II](https://leetcode-cn.com/problems/add-two-numbers-ii/)
+* **逆序问题** + **栈** + **两数相加**
 ```C++
-
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        stack<int> s1, s2;//逆序问题可以考虑用栈解决
+        while (l1)
+        {
+            s1.push(l1->val);
+            l1 = l1->next;
+        }
+        while (l2)
+        {
+            s2.push(l2->val);
+            l2 = l2->next;
+        }
+        int carry = 0;
+        ListNode* sumNode = nullptr;
+        while (!s1.empty() || !s2.empty())
+        {
+            int n1 = s1.empty() ? 0 : s1.top();
+            int n2 = s2.empty() ? 0 : s2.top();
+            if (!s1.empty()) s1.pop();
+            if (!s2.empty()) s2.pop();
+            int curValue = (n1 + n2 + carry) % 10;
+            carry = (n1 + n2 + carry) / 10;
+            /*关键代码，保持头部是最新数据*/
+            ListNode* temp = new ListNode(curValue);
+            temp->next = sumNode;
+            sumNode = temp;
+        }
+        if (carry != 0)
+        {
+            ListNode* newHead = new ListNode(carry);
+            newHead->next = sumNode;
+            return newHead;
+        }
+        return sumNode;     
+    }
+};
 ```
----
-### []()
-*
-```C++
-
-```
----
-### []()
-*
-```C++
-
-```
----
-### []()
-*
-```C++
-
-```
----
 ---
 
 
@@ -4752,6 +5013,939 @@ public:
 };
 ```
 ---
+
+## 动态规划
+
+### [322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)
+* **动态规划**，确定最优解**最少零钱数量**
+* 状态转移的关系是dp[i] = min(dp[i], 1 + dp[i - coin])
+```C++
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount + 1, amount + 1);//dp[a] = b, a指的是目标金额，b是零钱数量，初始化时将数量等于amount + 1，即为最大值
+        dp[0] = 0;
+        for (int i = 0; i <= amount; ++i)// i 是目标金额
+        {
+            for (auto coin : coins)
+            {
+                if (i - coin < 0) continue;
+                dp[i] = min(dp[i], 1 + dp[i - coin]);//关键句
+            }
+        }
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+};
+```
+---
+***tip子序列类型问题***
+### [1143.最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)
+* **动态规划**
+* **dp[i][j]**：长度为[0, i - 1]（i）的字符串text1与长度为[0, j - 1]的字符串text2的最长公共子序列为dp[i][j]，所求即为dp[text1.size()][text2.size()]
+```C++
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2) {
+        int m = text1.size() + 1;
+        int n = text2.size() + 1;
+        vector<vector<int>> dp(m, vector<int>(n, 0));
+        for (int i = 1; i < m; ++i)
+            for (int j = 1; j < n; ++j)
+            {
+                if (text1[i - 1] == text2[j - 1])
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);
+            }
+        return dp[text1.size()][text2.size()];
+    }
+};
+```
+### [583.两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)
+* **基本同上**res = size1 + size2 - 2*最长子串长度
+```C++
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        int m = word1.size();
+        int n = word2.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));//dp[i][j]表示长度为i（0~i-1）的字符串1与长度为j（0~j-1）的字符串2的最长公共子串长度
+        for (int i = 1; i < m + 1; ++i)
+            for (int j = 1; j < n + 1; ++j)
+            {
+                if (word1[i - 1] == word2[j - 1])//注意-1
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);//dp[i-1][j-1]必然是最小的可以不用考虑
+            }
+        return m - dp[m][n] + n - dp[m][n];
+    }
+};
+```
+---
+### [712.两个字符串的最小ASCII删除和](https://leetcode-cn.com/problems/minimum-ascii-delete-sum-for-two-strings/)
+* dp[i][j]表示长度为i(0~i - 1)的字符串s1与长度为j(0~j - 1) 的字符串s2的最长公共子串所有字符的AscII和
+```C++
+class Solution {
+public:
+    int minimumDeleteSum(string s1, string s2) {
+        int m = s1.size();
+        int n = s2.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));//dp[i][j]表示长度为i(0~i - 1)的字符串s1与长度为j(0~j - 1) 的字符串s2的最长公共子串所有字符的AscII和
+        for (int i = 1; i < m + 1; ++i)
+            for (int j = 1; j < n + 1; ++j)
+            {
+                if (s1.at(i - 1) == s2.at(j - 1))
+                    dp[i][j] = s1[i - 1] + dp[i - 1][j - 1];//string到int 的隐式转换
+                else
+                    dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);
+            }
+        //求s1s2所有字符ascII之和
+        int sum = 0;
+        for (auto s : s1)
+            sum += s;
+        for (auto s : s2)
+            sum += s;
+        return sum - 2*dp[m][n];
+    }
+};
+```
+---
+---
+### [72.编辑距离](https://leetcode-cn.com/problems/edit-distance/)
+* 参考题解[题解](https://leetcode-cn.com/problems/edit-distance/solution/dong-tai-gui-hua-java-by-liweiwei1419/)
+* **dp[i][j]含义**:长度为i(下标从0~i-1)的字符串word1与长度为j(下标从0~j-1)的字符串word2转换需要的步骤数
+*  **当word1[i-1] == word2[j-1]**,dp[i][j] = dp[i-1][j-1];
+*  **不相等时**：
+  1. 增加: dp[i][j] = dp[i][j-1] + 1,word1的前i个字符变成word2的前j-1个字符，要dp[i][j-1]步，再增加word2的第j个字符，再+1步添加操作
+  2. 删除: dp[i][j] = dp[i-1][j] + 1,word1的前i-1个字符变成word2的前j个字符，要dp[i-1][j]步，再删除word1的第i个字符，再+1步删除操作
+  3. 替换：dp[i][j] = dp[i-1][j-1] + 1,word1的前i-1个字符变成word2的前j-1个字符，要dp[i-1][j-1]步，再+1步替换操作
+* 取操作的最小次数即为所求，即dp[i][j] = min(insert, delete, replace)
+```C++
+class Solution {
+public:
+    int minDistance(string word1, string word2) {
+        int m = word1.size();
+        int n = word2.size();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+        for (int i = 0; i < m + 1; ++i)//base case ：word2为空，需要删除word1中的所有字符，所需步骤为word1长度i步
+            dp[i][0] = i;
+        for (int j = 0; j < n + 1; ++j)//base case ：word1为空，需要在word1中添加word2中的所有字符，所需步骤为word2长度j步
+            dp[0][j] = j;
+        for (int i = 1; i < m + 1; ++i)
+            for (int j = 1; j < n + 1; ++j)
+            {
+                if (word1[i - 1] == word2[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1];
+                else
+                    dp[i][j] = min(min(dp[i - 1][j] + 1, dp[i][j - 1] + 1), dp[i - 1][j - 1] + 1);
+            }
+        return dp[m][n];//dp.back().back()
+    }
+};
+```
+---
+### [300.最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)
+1. **动态规划**
+   * dp[i]表示截止至nums[i]的最长递增子序列
+   * dp[i] = 在nums[i]之前，所有小于nums[i]的数对应的最长子序列 + 1；
+```C++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> dp(nums.size(), 1);//basecase 每个数至少是他本身，即为1
+        int maxlength = INT_MIN;
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            for (int j = i - 1; j >= 0; --j)
+            {
+                if (nums[j] < nums[i])
+                    dp[i] = max(dp[i], dp[j] + 1);//dp[i]取此前所有小于它的数对应的最长子序列 + 1
+            }
+        }
+        for (auto value : dp)
+            maxlength = max(maxlength, value);
+        return maxlength;
+    }
+};
+```
+2. **二分搜索**
+   * minnums[i]表示长度为 i + 1 的所有上升子序列的**结尾的 最小值**
+   * 原因：如果已经得到的上升子序列的**结尾的数越小**，遍历的时候后面接上一个数，就会有**更大的可能性**构成一个更长的上升子序列
+   * 参考[题解](https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/yi-bu-yi-bu-tui-dao-chu-guan-fang-zui-you-jie-fa-x/)
+```C++
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> minnums;
+        minnums.push_back(nums[0]);
+        for (int i = 1; i < nums.size(); ++i)
+        {
+            if (nums[i] > minnums.back())
+                minnums.push_back(nums[i]);
+            else
+            {
+                int left = 0, right = minnums.size() - 1;
+                while (left < right)//二分搜索第一个大于等于nums[i]的位置
+                {
+                    int mid = (right - left) / 2 + left;
+                    if (minnums[mid] < nums[i])
+                    {
+                        left = mid + 1;
+                    }
+                    else  
+                        right = mid;
+                }
+                minnums[left] = nums[i];//minnums[right] = nums[i];
+            }
+        }
+        return minnums.size();
+    }
+};
+```
+```C++
+//利用标准库函数
+class Solution {
+public:
+    int lengthOfLIS(vector<int> &nums) {
+        vector<int> minnums;
+        for (auto v : nums)
+        {
+            auto pos = lower_bound(minnums.begin(), minnums.end(), v);//二分搜索，查找第一个大于等于v的数
+            if (pos == minnums.end())
+                minnums.push_back(v);
+            else
+                *pos = v;
+        }
+        return minnums.size();
+    } 
+};
+```
+---
+
+### [354.俄罗斯套娃信封问题](https://leetcode-cn.com/problems/russian-doll-envelopes/)
+1. dp[i]代表已以nums[i]结尾的最大递增子序列
+* 依据w递增排序，当w相同时，按h降序
+* 转化为求最长递增子序列问题
+* dp[i]代表已以nums[i]结尾的最大递增子序列
+```C++
+class Solution {
+public:
+    static bool compare (const vector<int>& a, const vector<int>& b)
+    {
+        return a[0] == b[0] ? a[1] > b[1] : a[0] < b[0];
+    }
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        //依据w递增排序，当w相同时，按h降序
+        sort(envelopes.begin(), envelopes.end(), compare);
+        //最长递增子序列
+        vector<int> dp(envelopes.size(), 1);//dp[i]代表已以nums[i]结尾的最大递增子序列
+        for (int i = 1; i < envelopes.size(); ++i)
+        {
+            for (int j = i - 1; j >= 0; --j)
+            {
+                if (envelopes[j][1] < envelopes[i][1])
+                    dp[i] = max(dp[i], dp[j] + 1);//>的情况并没有处理，因此dp[i]并不一定严格大于dp[i - 1](可能为初始值1)
+            }
+        }
+        int maxlength = 0;
+        for (auto ele : dp)
+            maxlength = max(maxlength, ele);
+        return maxlength;
+    }
+};
+```
+2. minnums[i]表示长度为 i + 1 的所有上升子序列的结尾的最小值
+```C++
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        sort(envelopes.begin(), envelopes.end(), [](const vector<int>& a, const vector<int>& b){
+            return a[0] == b[0] ? a[1] > b[1] : a[0] < b[0];
+        });
+        vector<int> minnums;//minnums[i]表示长度为 i + 1 的所有上升子序列的结尾的最小值
+        for (auto env : envelopes)
+        {
+            auto pos = lower_bound(minnums.begin(), minnums.end(), env[1]);
+            if (pos == minnums.end())
+                minnums.push_back(env[1]);
+            else 
+                *pos = env[1];
+        }
+        return minnums.size();
+    }
+};
+```
+3. minnums[i]表示长度为 i + 1 的所有上升子序列的结尾的最小值
+* 手撕二分
+```C++
+bool compare(const vector<int>& a, const vector<int>& b)
+{
+    return a[0] == b[0] ? a[1] > b[1] : a[0] < b[0];
+}
+class Solution {
+public:
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        if (envelopes.size() < 2) return envelopes.size();
+        sort(envelopes.begin(), envelopes.end(), compare);
+        vector<int> minnums;
+        minnums.push_back(envelopes[0][1]);//先放入一个
+        for (int i = 1; i < envelopes.size(); ++i)
+        {
+            if (envelopes[i][1] > minnums.back())
+                minnums.push_back(envelopes[i][1]);//大于所有数直接放入背后
+            int left = 0;
+            int right = minnums.size() - 1;
+            while (left < right)
+            {
+                auto mid = (right - left) / 2 + left;
+                if (minnums[mid] >= envelopes[i][1])
+                    right = mid;
+                else 
+                    left = mid + 1;
+            }
+            minnums[left] = envelopes[i][1];
+        }
+        return minnums.size();
+    }
+};
+```
+---
+### [53.最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)
+1. 动态规划 dp[i]表示长度为截止至nums[i]长度数组的最大子序和，所求即为dpp[size() - 1]
+```C++
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        vector<int> dp(nums.size(), 0);
+        dp[0] = nums[0];
+        for (int i = 1 ; i < nums.size(); ++i)
+        {
+            dp[i] = max(nums[i], nums[i] + dp[i - 1]);
+        }
+        int maxsum = INT_MIN;
+        for (auto num : dp)
+            maxsum = max(maxsum, num);
+        return maxsum;
+    }
+};
+```
+---
+2. 动态规划 + **空间优化**
+   * 实际dp[i]仅仅和dp[i-1]有关，可以空间优化
+```C++
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int pre = nums[0];
+        int cur = 0;
+        int maxsum = pre;
+        for (int i = 1 ; i < nums.size(); ++i)
+        {
+            cur = max(nums[i], nums[i] + pre);
+            pre = cur;
+            maxsum = max(maxsum, cur);
+        }
+        return maxsum;
+    }
+};
+```
+3. 数学意义简洁版
+```C++
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int sum = 0;
+        int maxsum = INT_MIN;
+        for (auto num : nums)
+        {
+            sum = max(num, sum + num);
+            maxsum = max(maxsum, sum);
+        }
+        return maxsum;
+    }
+};
+```
+4. **线段树**(**分治**)
+    * 参考[题解](https://leetcode-cn.com/problems/maximum-subarray/solution/zui-da-zi-xu-he-by-leetcode-solution/)
+```C++
+class Solution {
+public:
+    struct Status
+    {
+        int leftsum;
+        int rightsum;
+        int totalsum;
+        int maxsum;
+    };
+    Status pushUp(Status l, Status r)//整合左右子区间得到当前区间所需值
+    {
+        int totalsum = l.totalsum + r.totalsum;
+        int leftsum = max(l.leftsum, l.totalsum + r.leftsum);
+        int rightsum = max(r.rightsum, r.totalsum + l.rightsum);
+        int maxsum = max((l.rightsum + r.leftsum), max(l.maxsum, r.maxsum));
+        return {leftsum, rightsum, totalsum, maxsum};
+    }
+    Status get(vector<int> &nums, int l, int r)
+    {
+        if (l == r)
+            return {nums[l], nums[l], nums[l], nums[l]};
+        int mid = (r - l) / 2 + l;
+        auto lsub = get(nums, l, mid);
+        auto rsub = get(nums, mid + 1, r);
+        return pushUp(lsub, rsub);
+    }
+    int maxSubArray(vector<int>& nums) {
+        return get(nums, 0, nums.size() - 1).maxsum;
+    }
+};
+```
+### [516.最长回文子序列](https://leetcode-cn.com/problems/longest-palindromic-subsequence/)
+* **动态规划**
+* 遍历方式源于dp表，参考[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484666&idx=1&sn=e3305be9513eaa16f7f1568c0892a468&chksm=9bd7faf2aca073e4f08332a706b7c10af877fee3993aac4dae86d05783d3d0df31844287104e&scene=21#wechat_redirect)
+* dp 数组的定义是：在子串s[i..j]中，最长回文子序列的长度为dp[i][j]
+```C++
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+        int n = s.size();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        for (int i = 0; i < n; ++i)
+            dp[i][i] = 1;//长度为1的字符串，子序列为1
+        for (int i = n - 1; i >= 0; --i)
+        {
+            for (int j = i + 1; j < n; ++j)//注意遍历顺序
+            {
+                if (s[i] == s[j])
+                    dp[i][j] = 2 + dp[i + 1][j - 1];
+                else
+                    dp[i][j] = max(dp[i + 1][j], dp[i][j - 1]);
+            }
+        }
+        return dp[0][n - 1];
+    }
+};
+```
+---
+### [416.分割等和子集](https://leetcode-cn.com/problems/partition-equal-subset-sum/)
+* **动态规划**
+* **0-1背包问题**
+```C++
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int sum = 0;
+        for (auto num : nums)
+            sum += num;
+        if (sum % 2 != 0) return false;
+        int target = sum / 2;
+        int n = nums.size();
+        //dp[i][j]代表，前i个数字（0~i-1）中，是否有部分数据之和为j
+        //target + 1的原因是考虑target可以从0开始，0~target共有target+1个数；
+        vector<vector<bool>> dp(n + 1, vector<bool>(target + 1, false));
+        for (int i = 0; i < n; ++i)
+            dp[i][0] = true;//base case;
+        for (int i = 1; i <= n; ++i)
+            for (int j = 1; j <= target; ++j)
+            {
+                if (nums[i - 1] > j) dp[i][j] = dp[i - 1][j];
+                else
+                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i - 1]];//nums[i - 1]才是第i个数
+            }
+        return dp[n][target];
+    }
+};
+```
+* **状态压缩**
+```C++
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int sum = 0;
+        for (auto num : nums)
+            sum += num;
+        if (sum % 2 != 0) return false;
+        sum = sum / 2;
+        int n = nums.size();
+        vector<bool> dp(sum + 1, false);  
+        dp[0] = true;
+        for (int i = 0; i < n; ++i)
+            for (int j = sum; j >= 0 ; --j)
+            {
+                if (nums[i] <= j) dp[j] = dp[j] || dp[j - nums[i]];             
+            }
+        return dp[sum];
+    }
+};
+```
+---
+### [474.一和零](https://leetcode-cn.com/problems/ones-and-zeroes/)
+* **动态规划**
+```C++
+class Solution {
+public:
+    int findMaxForm(vector<string>& strs, int m, int n) {
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+
+        for (auto s : strs)
+        {
+            int count_0 = 0;
+            int count_1 = 0;
+            for (auto ele : s)
+            {
+                if (ele == '0')
+                    count_0++;
+                else count_1++;
+            }
+            for (int i = m; i >= count_0; --i)//反向遍历
+                for (int j = n; j >= count_1; --j)
+                    dp[i][j] = max(dp[i - count_0][j - count_1] + 1, dp[i][j]);           
+        }
+        return dp[m][n];
+    }
+};
+```
+---
+### [494.目标和](https://leetcode-cn.com/problems/target-sum/)
+1. **二维dp**
+* 首先，如果我们把 nums 划分成两个子集 A 和 B，分别代表分配 + 的数和分配 - 的数，那么他们和 S 存在如下关系：
+
+> sum(A) - sum(B) = S
+> sum(A) = S + sum(B)
+> sum(A) + sum(A) = S + sum(B) + sum(A)
+> 2 * sum(A) = S + sum(nums)
+* 综上，可以推出 sum(A) = (S + sum(nums)) / 2，也就是把原问题转化成：**nums 中存在几个子集 A，使得 A 中元素的和为 (S + sum(nums)) / 2**
+
+```C++
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {       
+        int sum = 0;
+        for (auto num : nums) sum += num;
+        if (sum < S || (sum + S) % 2 != 0) return 0;
+        //dp[i][j]表示只在 nums 的前 i 个元素中选择，若目标和为 j，则最多有 x 种方法划分子集
+        vector<vector<int>> dp(nums.size() + 1, vector<int>((sum + S) / 2 + 1, 0));
+        dp[0][0] = 1;//basecase空集和为零，只有一种
+        for (int i = 1; i <= nums.size(); ++i)
+            for (int j = 0; j <= (sum + S) / 2; ++j)
+            {
+                if (j - nums[i - 1] >= 0)//可选择放/不放，两者相加就是最终的结果
+                    dp[i][j] = dp[i - 1][j] + dp[i - 1][j - nums[i - 1]];
+                else//nums[i - 1]这个数放不进去了，直接等于之前的结果 
+                    dp[i][j] = dp[i - 1][j];
+            }
+        return dp[nums.size()][(sum + S) / 2];//返回0~nums.size() - 1,h和为sum + S)/2的方法
+    }
+};
+
+```
+2. **状态压缩**(**一维dp**)
+```C++
+class Solution {
+public:
+    int findTargetSumWays(vector<int>& nums, int S) {       
+        int sum = 0;
+        for (auto num : nums) sum += num;
+        if (sum < S || (sum + S) % 2 != 0) return 0;
+        vector<int> dp((sum + S) / 2 + 1, 0);
+        dp[0] = 1;
+
+        for (int i = 1; i <= nums.size(); ++i)
+            for (int j = (sum + S) / 2; j >= 0; --j)
+            {
+                if (j - nums[i - 1] >= 0)//可选择放/不放，两者相加就是最终的结果
+                    dp[j] = dp[j] + dp[j - nums[i - 1]];
+                else//nums[i - 1]这个数放不进去了，直接等于之前的结果 
+                    dp[j] = dp[j];
+            }
+        return dp[(sum + S) / 2];
+    }
+};
+```
+3. 回溯 * 超时
+```C++
+class Solution {
+public:
+    int result = 0;
+    int findTargetSumWays(vector<int>& nums, int S) {       
+        if (nums.size() == 0) return 0;
+        dfs(nums, 0, S);
+        return result;
+    }
+    void dfs(vector<int>& nums, int i, int rest)//rest代表剩余的数。rest = 0就代表满足条件
+    {
+        if (i == nums.size())
+        {
+            if (rest == 0)
+            {
+                result++;
+            }
+            return;
+        }
+        vector<int> op{1, -1};
+        for (auto ele : op)
+        {
+            rest += ele * nums[i];
+            dfs(nums, i + 1, rest);
+            rest -= ele * nums[i];
+        }
+    }
+};
+```
+---
+### [879.盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)
+* 实际上是个0-1背包问题，**可选物品对应某项工作**，即可选择做或不做某项工作；**背包容量对应人数和收益**，每当放进/不放物品（做/不做工作），都会对容量（人数、收益产生影响）
+* dp定义：一维定义为物品，二维三维定义为人数和收益，即dp[i][j][k]表示选了i项工作，在j个人可用的情况下,获取至少k利润的方案数
+1. **basecase**        
+> 无人可用，此时利润有且只有0，对应方案只有1种：人可做工作
+> 无人承担任何工作，此时利润也是有且只有0，对应方案只有1种：没人去做工作
+2.  **dp转移方程**
+> dp[i][j][k] = dp[i - 1][j][k];
+> if (j >= curG_num)//第i项工作有足够的人可以做
+>    dp[i][j][k] += dp[i - 1][j - curG_num][max(k - curG_pro, 0)];
+
+```C++
+class Solution {
+public:
+    const int Mod = 1e9 + 7; 
+    int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+        int Gsum = group.size();
+        //dp[i][j][k]表示选了i项工作，在j个人可用的情况下,获取至少k利润的方案数
+        vector<vector<vector<int>>> dp(Gsum + 1, vector<vector<int>>(n + 1, vector<int>(minProfit + 1, 0)));
+        //base case
+        for (int i = 0; i <= Gsum; i++)//无人可用，此时利润有且只有0，对应方案只有1种：没人可做工作
+            dp[i][0][0] = 1;
+        for (int j = 0; j <= n; j++)//无人承担任何工作，此时利润也是有且只有0，对应方案只有1种：没人去做工作
+            dp[0][j][0] = 1;
+        for (int i = 1; i <= Gsum; i++)
+        {
+            int curG_num = group[i - 1];//当前工作对应所需要的人数
+            int curG_pro = profit[i - 1];//当前工作对应可取得的收益
+            for (int j = 1; j <= n; j++)
+            {    
+                for (int k = 0; k <= minProfit; k++)
+                {
+                    dp[i][j][k] = dp[i - 1][j][k];
+                    if (j >= curG_num)//第i项工作有足够的人可以做
+                        dp[i][j][k] += dp[i - 1][j - curG_num][max(k - curG_pro, 0)];//？
+                    dp[i][j][k] %= Mod;
+                }           
+            }
+        }
+        return dp[Gsum][n][minProfit];
+    }
+};
+```
+**空间压缩优化**
+```C++
+class Solution {
+public:
+    const int Mod = 1e9 + 7;
+    int profitableSchemes(int n, int minProfit, vector<int>& group, vector<int>& profit) {
+        int WorkNum = group.size();
+        vector<vector<int>> dp(n + 1, vector<int>(minProfit + 1, 0));
+        for (int j = 0; j <= n; j++)
+            dp[j][0] = 1;
+        for (int i = 1; i <= WorkNum; i++)
+        {
+            for (int j = n; j >= 0; --j)
+                for (int k = minProfit; k >= 0; --k)
+                {
+                    dp[j][k] = dp[j][k];
+                    if (j >= group[i - 1])
+                        dp[j][k] += dp[j - group[i - 1]][max(k - profit[i - 1], 0)];
+                    dp[j][k] %= Mod;
+                }
+        }
+        return dp[n][minProfit];
+    }
+};
+```
+---
+### [518.零钱兑换II](https://leetcode-cn.com/problems/coin-change-2/)
+* 完全背包问题 用二维dp；
+* dp表示用到前i种硬币，凑成j的组合数
+> 如果你不把这第i个物品装入背包，也就是说你不使用coins[i]这个面值的硬币，那么凑出面额j的方法数dp[i][j]应该等于dp[i-1][j]，继承之前的结果。
+> 如果你把这第i个物品装入了背包，也就是说你使用coins[i]这个面值的硬币，那么dp[i][j]应该等于dp[i][j-coins[i-1]]。
+```C++
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<vector<int>> dp(coins.size() + 1, vector<int>(amount + 1, 0));//dp表示用到前i种硬币，凑成j的组合数
+        //basecase
+        for (int j = 0; j <= amount; j++)
+            dp[0][j] = 0;
+        for (int i = 0; i <= coins.size(); i++)
+            dp[i][0] = 1;//dp[0][0]可以为1
+        for (int i = 1; i <= coins.size(); i++)
+            for (int j = 1; j <= amount; j++)
+            {
+                if (j >= coins[i - 1])//能放，可选择放或者不放
+                    dp[i][j] = dp[i][j - coins[i - 1]] + dp[i - 1][j];//注意这里前半部分是dp[i]而不是dp[i - 1]，因为硬币是可以重复使用的
+                else//放不了别无选择
+                    dp[i][j] = dp[i - 1][j];
+            }
+        return dp[coins.size()][amount];
+    }
+};
+```
+* **优化**
+```C++
+class Solution {
+public:
+    int change(int amount, vector<int>& coins) {
+        vector<int> dp(amount + 1, 0);
+        dp[0] = 1;
+        for (int i = 1; i <= coins.size(); ++i)
+            for (int j = 1; j <= amount; ++j)
+            {
+                if (j >= coins[i - 1]) dp[j] += dp[j - coins[i-1]];
+            }
+        return dp[amount];
+    }
+};
+```
+---
+### [1449.数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)
+1. 首先定义dp数组的含义：
+    `dp[i][j]`表示从数组中选出**前i(下标为[0, i - 1])个数**，满足**总成本恰好为j**的“最大整数”
+    > 注意,此处i刚好比实际下标大1，也就刚好满足题给数位（i + 1）这个要求，这个会在后面代码体现，牢记dp数组的含义，后面自然能够理解.
+
+2. 找状态转移方程：
+    在下标j - cost[i - 1]存在的前提下
+    `dp[i][j] = maxresult(dp[i - 1][j], to_string(i) + dp[i][j - cost[i - 1]])`
+    就是说我们选择了**第i个数**`cost[i - 1]`时，得到的总成本是不会超过当前想要的总成本`j`的,此时我们有两种选择：1.不把这个数放进去，那么结果就是dp[i - 1][j],即不放`cost[i - 1]`,满足总成本为j的最大整数；2.把这个数放进去，此时需要注意，数`cost[i - 1]`是可以重复使用的，因此是to_string(i) + **dp[i]**[j - cost[i - 1]]，这里用`to_string(i)`的原因就是上文提到的数位的变化。
+
+3. base case：
+    直接给出basecase
+    ```cpp
+        for (int j = 1; j <= target; ++j)
+            dp[0][j] = "#";
+        for (int i = 0; i <= n; ++i)
+            dp[i][0] = "";
+    ```
+    "#"表示非法
+    联系dp数组的含义，可以解读第一个循环的含义就是：
+    > 一个数都不选，但要获得总成本为j，这显然是不可能的，故设为非法字符"#"
+    第二个循环的含义：
+    > 从选择的数中，让总成本为0，这是可能的，因为只要什么都不选就行了，因此并不“非法”，应该是="0",但**考虑到后面需要进行字符串的加法运算，所以让其为""空字符串**，才能满足。(比如1 + 0 = 1 但是"1" + "0" = "10")
+
+4. 到这里，主要的部分已经阐述清楚了，还有一个比较大小的函数需要重新定义，因为这个函数需要有限考虑长度（如"10" > "5"），简单实现一下
+    ```Cpp
+    string maxresult(const string& s1, const string& s2)
+    {
+        if (s1.size() == s2.size())
+            return max(s1, s2);
+        return s1.size() > s2.size() ? s1 : s2;
+    }
+    ```
+
+```cpp
+class Solution {
+public:
+    string largestNumber(vector<int>& cost, int target) {
+        int n = cost.size();
+        vector<vector<string>> dp(n + 1, vector<string>(target + 1, ""));
+        for (int j = 1; j <= target; ++j)
+            dp[0][j] = "#";
+        for (int i = 0; i <= n; ++i)
+            dp[i][0] = "";
+
+        for (int i = 1; i <= n; ++i)
+            for (int j = 1; j <= target; ++j)
+            {
+                if (j >= cost[i - 1] && dp[i][j - cost[i - 1]] != "#") dp[i][j] = maxresult(dp[i - 1][j], to_string(i) + dp[i][j - cost[i - 1]]);
+                else dp[i][j] = dp[i - 1][j];
+            }
+        return dp[n][target] == "#" ? "0" : dp[n][target];
+    }
+    string maxresult(const string& s1, const string& s2)
+    {
+        if (s1.size() == s2.size())
+            return max(s1, s2);
+        return s1.size() > s2.size() ? s1 : s2;
+    }
+};
+```
+* **空间优化**
+```C++
+class Solution {
+public:
+    string largestNumber(vector<int>& cost, int target) {
+        int n = cost.size();
+        vector<string> dp(target + 1, "");
+        for (int j = 1; j <= target; ++j)
+            dp[j] = "#";       
+        dp[0] = "";
+        for (int i = 1; i <= n; ++i)
+            for (int j = 0; j <= target; ++j)
+            {
+                if (j >= cost[i - 1] && dp[j - cost[i - 1]] != "#") dp[j] = maxresult(dp[j], to_string(i) + dp[j - cost[i - 1]]);
+                else dp[j] = dp[j];
+            }
+        return dp[target] == "#" ? "0" : dp[target];
+    }
+    string maxresult(const string& s1, const string& s2)
+    {
+        if (s1.size() == s2.size())
+            return max(s1, s2);
+        return s1.size() > s2.size() ? s1 : s2;
+    }
+};
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+### []()
+*
+```C++
+
+```
+---
+---
+
 
 
 
