@@ -1,5 +1,485 @@
 
 # LEETCODE OF SHX
+<!-- TOC -->
+
+- [LEETCODE OF SHX](#leetcode-of-shx)
+    - [排序算法](#排序算法)
+        - [冒泡排序](#冒泡排序)
+        - [选择排序](#选择排序)
+        - [插入排序](#插入排序)
+        - [归并排序](#归并排序)
+        - [快速排序](#快速排序)
+        - [test main](#test-main)
+    - [链表](#链表)
+        - [[206.反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)](#206反转链表httpsleetcode-cncomproblemsreverse-linked-list)
+        - [[25.K个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)](#25k个一组翻转链表httpsleetcode-cncomproblemsreverse-nodes-in-k-group)
+        - [[234.回文链表](https://leetcode-cn.com/problems/palindrome-linked-list/)](#234回文链表httpsleetcode-cncomproblemspalindrome-linked-list)
+        - [[21.合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)](#21合并两个有序链表httpsleetcode-cncomproblemsmerge-two-sorted-lists)
+        - [[141.环形链表](https://leetcode-cn.com/problems/linked-list-cycle/)](#141环形链表httpsleetcode-cncomproblemslinked-list-cycle)
+        - [[160.相交链表](https://leetcode-cn.com/problems/intersection-of-two-linked-lists/)](#160相交链表httpsleetcode-cncomproblemsintersection-of-two-linked-lists)
+        - [[19.删除链表的倒数第N个节点](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/)](#19删除链表的倒数第n个节点httpsleetcode-cncomproblemsremove-nth-node-from-end-of-list)
+        - [[142.环形链表II](https://leetcode-cn.com/problems/linked-list-cycle-ii/)](#142环形链表iihttpsleetcode-cncomproblemslinked-list-cycle-ii)
+        - [[23.合并K个升序链表](https://leetcode-cn.com/problems/merge-k-sorted-lists/)](#23合并k个升序链表httpsleetcode-cncomproblemsmerge-k-sorted-lists)
+    - [树](#树)
+        - [144/145/94二叉树的前中后遍历](#14414594二叉树的前中后遍历)
+        - [[101.对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)](#101对称二叉树httpsleetcode-cncomproblemssymmetric-tree)
+        - [[104.二叉树的最大深度](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/)](#104二叉树的最大深度httpsleetcode-cncomproblemsmaximum-depth-of-binary-tree)
+        - [[226.翻转二叉树](https://leetcode-cn.com/problems/invert-binary-tree/)](#226翻转二叉树httpsleetcode-cncomproblemsinvert-binary-tree)
+        - [[543.二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)](#543二叉树的直径httpsleetcode-cncomproblemsdiameter-of-binary-tree)
+        - [[617.合并二叉树](https://leetcode-cn.com/problems/merge-two-binary-trees/)](#617合并二叉树httpsleetcode-cncomproblemsmerge-two-binary-trees)
+        - [[98.验证二叉搜索树](https://leetcode-cn.com/problems/validate-binary-search-tree/)](#98验证二叉搜索树httpsleetcode-cncomproblemsvalidate-binary-search-tree)
+        - [[114.二叉树展开为链表](https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/)](#114二叉树展开为链表httpsleetcode-cncomproblemsflatten-binary-tree-to-linked-list)
+        - [[116.填充每个节点的下一个右侧节点指针](https://leetcode-cn.com/problems/populating-next-right-pointers-in-each-node/)](#116填充每个节点的下一个右侧节点指针httpsleetcode-cncomproblemspopulating-next-right-pointers-in-each-node)
+        - [[654.最大二叉树](https://leetcode-cn.com/problems/maximum-binary-tree/)](#654最大二叉树httpsleetcode-cncomproblemsmaximum-binary-tree)
+        - [[105.从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)](#105从前序与中序遍历序列构造二叉树httpsleetcode-cncomproblemsconstruct-binary-tree-from-preorder-and-inorder-traversal)
+        - [[106.从中序与后序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)](#106从中序与后序遍历序列构造二叉树httpsleetcode-cncomproblemsconstruct-binary-tree-from-inorder-and-postorder-traversal)
+        - [[652.寻找重复的子树](https://leetcode-cn.com/problems/find-duplicate-subtrees/)](#652寻找重复的子树httpsleetcode-cncomproblemsfind-duplicate-subtrees)
+        - [[230.二叉搜索树中第K小的元素](https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/)](#230二叉搜索树中第k小的元素httpsleetcode-cncomproblemskth-smallest-element-in-a-bst)
+        - [[538/1038.把二叉搜索树转换为累加树](https://leetcode-cn.com/problems/convert-bst-to-greater-tree/)](#5381038把二叉搜索树转换为累加树httpsleetcode-cncomproblemsconvert-bst-to-greater-tree)
+        - [[700.二叉搜索树中的搜索](https://leetcode-cn.com/problems/search-in-a-binary-search-tree/)](#700二叉搜索树中的搜索httpsleetcode-cncomproblemssearch-in-a-binary-search-tree)
+        - [[701.二叉搜索树中的插入操作](https://leetcode-cn.com/problems/insert-into-a-binary-search-tree/)](#701二叉搜索树中的插入操作httpsleetcode-cncomproblemsinsert-into-a-binary-search-tree)
+        - [[450.删除二叉搜索树中的节点](https://leetcode-cn.com/problems/delete-node-in-a-bst/)](#450删除二叉搜索树中的节点httpsleetcode-cncomproblemsdelete-node-in-a-bst)
+        - [[222.完全二叉树的节点个数](https://leetcode-cn.com/problems/count-complete-tree-nodes/)](#222完全二叉树的节点个数httpsleetcode-cncomproblemscount-complete-tree-nodes)
+        - [[235.二叉搜索树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-search-tree/solution/er-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-26/)](#235二叉搜索树的最近公共祖先httpsleetcode-cncomproblemslowest-common-ancestor-of-a-binary-search-treesolutioner-cha-sou-suo-shu-de-zui-jin-gong-gong-zu-xian-26)
+        - [[236.二叉树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/)](#236二叉树的最近公共祖先httpsleetcode-cncomproblemslowest-common-ancestor-of-a-binary-tree)
+        - [[297.二叉树的序列化与反序列化](https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/)](#297二叉树的序列化与反序列化httpsleetcode-cncomproblemsserialize-and-deserialize-binary-tree)
+        - [[341. 扁平化嵌套列表迭代器](https://leetcode-cn.com/problems/flatten-nested-list-iterator/)](#341-扁平化嵌套列表迭代器httpsleetcode-cncomproblemsflatten-nested-list-iterator)
+        - [[96.不同的二叉搜索树](https://leetcode-cn.com/problems/unique-binary-search-trees/)](#96不同的二叉搜索树httpsleetcode-cncomproblemsunique-binary-search-trees)
+        - [[437.路径总和III](https://leetcode-cn.com/problems/path-sum-iii/)](#437路径总和iiihttpsleetcode-cncomproblemspath-sum-iii)
+        - [[337.打家劫舍III](https://leetcode-cn.com/problems/house-robber-iii/)](#337打家劫舍iiihttpsleetcode-cncomproblemshouse-robber-iii)
+        - [[102.二叉树的层序遍历](https://leetcode-cn.com/problems/binary-tree-level-order-traversal/)](#102二叉树的层序遍历httpsleetcode-cncomproblemsbinary-tree-level-order-traversal)
+        - [[94.二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)](#94二叉树的中序遍历httpsleetcode-cncomproblemsbinary-tree-inorder-traversal)
+        - [[124.二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)](#124二叉树中的最大路径和httpsleetcode-cncomproblemsbinary-tree-maximum-path-sum)
+        - [[687.最长同值路径](https://leetcode-cn.com/problems/longest-univalue-path/)](#687最长同值路径httpsleetcode-cncomproblemslongest-univalue-path)
+    - [数据结构设计](#数据结构设计)
+        - [[130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)](#130被围绕的区域httpsleetcode-cncomproblemssurrounded-regions)
+        - [[990.等式方程的可满足性](https://leetcode-cn.com/problems/satisfiability-of-equality-equations/)](#990等式方程的可满足性httpsleetcode-cncomproblemssatisfiability-of-equality-equations)
+        - [[146.LRU缓存机制](https://leetcode-cn.com/problems/lru-cache/)](#146lru缓存机制httpsleetcode-cncomproblemslru-cache)
+        - [[146.LFU缓存机制](https://leetcode-cn.com/problems/lfu-cache/)](#146lfu缓存机制httpsleetcode-cncomproblemslfu-cache)
+        - [[295.数据流的中位数](https://leetcode-cn.com/problems/find-median-from-data-stream/)](#295数据流的中位数httpsleetcode-cncomproblemsfind-median-from-data-stream)
+        - [[355.设计推特](https://leetcode-cn.com/problems/design-twitter/)](#355设计推特httpsleetcode-cncomproblemsdesign-twitter)
+        - [[496.下一个更大元素I](https://leetcode-cn.com/problems/next-greater-element-i/)](#496下一个更大元素ihttpsleetcode-cncomproblemsnext-greater-element-i)
+        - [[503.下一个更大元素II](https://leetcode-cn.com/problems/next-greater-element-ii/)](#503下一个更大元素iihttpsleetcode-cncomproblemsnext-greater-element-ii)
+        - [[739.每日温度](https://leetcode-cn.com/problems/daily-temperatures/submissions/)](#739每日温度httpsleetcode-cncomproblemsdaily-temperaturessubmissions)
+        - [[42.接雨水](https://leetcode-cn.com/problems/trapping-rain-water/solution/jie-yu-shui-by-leetcode/)](#42接雨水httpsleetcode-cncomproblemstrapping-rain-watersolutionjie-yu-shui-by-leetcode)
+        - [[84.柱状图中最大的矩形](https://leetcode-cn.com/problems/largest-rectangle-in-histogram/)](#84柱状图中最大的矩形httpsleetcode-cncomproblemslargest-rectangle-in-histogram)
+        - [[581.最短无序连续子数组](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/submissions/)](#581最短无序连续子数组httpsleetcode-cncomproblemsshortest-unsorted-continuous-subarraysubmissions)
+        - [[901.股票价格跨度](https://leetcode-cn.com/problems/online-stock-span/submissions/)](#901股票价格跨度httpsleetcode-cncomproblemsonline-stock-spansubmissions)
+        - [[402.移掉K位数字](https://leetcode-cn.com/problems/remove-k-digits/)](#402移掉k位数字httpsleetcode-cncomproblemsremove-k-digits)
+        - [[316.去除重复字母](https://leetcode-cn.com/problems/remove-duplicate-letters/solution/qu-chu-zhong-fu-zi-mu-by-leetcode-soluti-vuso/)](#316去除重复字母httpsleetcode-cncomproblemsremove-duplicate-letterssolutionqu-chu-zhong-fu-zi-mu-by-leetcode-soluti-vuso)
+        - [[1081.不同字符的最小子序列](https://leetcode-cn.com/problems/smallest-subsequence-of-distinct-characters/)](#1081不同字符的最小子序列httpsleetcode-cncomproblemssmallest-subsequence-of-distinct-characters)
+        - [[321.拼接最大数](https://leetcode-cn.com/problems/create-maximum-number/solution/c-dan-diao-zhan-pin-jie-tiao-li-qing-xi-nrnu1/)](#321拼接最大数httpsleetcode-cncomproblemscreate-maximum-numbersolutionc-dan-diao-zhan-pin-jie-tiao-li-qing-xi-nrnu1)
+        - [[239.滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)](#239滑动窗口最大值httpsleetcode-cncomproblemssliding-window-maximum)
+        - [[剑指Offer09.用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)](#剑指offer09用两个栈实现队列httpsleetcode-cncomproblemsyong-liang-ge-zhan-shi-xian-dui-lie-lcof)
+    - [数组](#数组)
+        - [[875.爱吃香蕉的珂珂](https://leetcode-cn.com/problems/koko-eating-bananas/)](#875爱吃香蕉的珂珂httpsleetcode-cncomproblemskoko-eating-bananas)
+        - [[1011.在D天内送达包裹的能力](https://leetcode-cn.com/problems/capacity-to-ship-packages-within-d-days/)](#1011在d天内送达包裹的能力httpsleetcode-cncomproblemscapacity-to-ship-packages-within-d-days)
+        - [[76.最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/submissions/)](#76最小覆盖子串httpsleetcode-cncomproblemsminimum-window-substringsubmissions)
+        - [[567.字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)](#567字符串的排列httpsleetcode-cncomproblemspermutation-in-string)
+        - [[438.找到字符串中所有字母异位词](https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/)](#438找到字符串中所有字母异位词httpsleetcode-cncomproblemsfind-all-anagrams-in-a-string)
+        - [[3.无重复字符的最长子串](https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/)](#3无重复字符的最长子串httpsleetcode-cncomproblemslongest-substring-without-repeating-characters)
+        - [[30.串联所有单词的子串](https://leetcode-cn.com/problems/substring-with-concatenation-of-all-words/)](#30串联所有单词的子串httpsleetcode-cncomproblemssubstring-with-concatenation-of-all-words)
+        - [[209.长度最小的子数组](https://leetcode-cn.com/problems/minimum-size-subarray-sum/)](#209长度最小的子数组httpsleetcode-cncomproblemsminimum-size-subarray-sum)
+        - [[632.最小区间](https://leetcode-cn.com/problems/smallest-range-covering-elements-from-k-lists/)](#632最小区间httpsleetcode-cncomproblemssmallest-range-covering-elements-from-k-lists)
+        - [[380.常数时间插入、删除和获取随机元素](https://leetcode-cn.com/problems/insert-delete-getrandom-o1/)](#380常数时间插入删除和获取随机元素httpsleetcode-cncomproblemsinsert-delete-getrandom-o1)
+        - [[710.黑名单中的随机数](https://leetcode-cn.com/problems/random-pick-with-blacklist/)](#710黑名单中的随机数httpsleetcode-cncomproblemsrandom-pick-with-blacklist)
+        - [[26.删除排序数组中的重复项](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/submissions/)](#26删除排序数组中的重复项httpsleetcode-cncomproblemsremove-duplicates-from-sorted-arraysubmissions)
+        - [[83.删除排序链表中的重复元素]()](#83删除排序链表中的重复元素)
+        - [[27.移除元素](https://leetcode-cn.com/problems/remove-element/)](#27移除元素httpsleetcode-cncomproblemsremove-element)
+        - [[283.移动零](https://leetcode-cn.com/problems/move-zeroes/)](#283移动零httpsleetcode-cncomproblemsmove-zeroes)
+        - [[1.两数之和](https://leetcode-cn.com/problems/two-sum/)](#1两数之和httpsleetcode-cncomproblemstwo-sum)
+        - [[167.两数之和II-输入有序数组](https://leetcode-cn.com/problems/two-sum-ii-input-array-is-sorted/)](#167两数之和ii-输入有序数组httpsleetcode-cncomproblemstwo-sum-ii-input-array-is-sorted)
+        - [[653.两数之和IV-输入BST](https://leetcode-cn.com/problems/two-sum-iv-input-is-a-bst/)](#653两数之和iv-输入bsthttpsleetcode-cncomproblemstwo-sum-iv-input-is-a-bst)
+        - [[15.三数之和](https://leetcode-cn.com/problems/3sum/submissions/)](#15三数之和httpsleetcode-cncomproblems3sumsubmissions)
+        - [[18.四数之和](https://leetcode-cn.com/problems/4sum/)](#18四数之和httpsleetcode-cncomproblems4sum)
+        - [[2.两数相加](https://leetcode-cn.com/problems/add-two-numbers/)](#2两数相加httpsleetcode-cncomproblemsadd-two-numbers)
+        - [[445.两数相加II](https://leetcode-cn.com/problems/add-two-numbers-ii/)](#445两数相加iihttpsleetcode-cncomproblemsadd-two-numbers-ii)
+    - [回溯](#回溯)
+        - [[78.子集](https://leetcode-cn.com/problems/subsets/)](#78子集httpsleetcode-cncomproblemssubsets)
+        - [[90.子集2](https://leetcode-cn.com/problems/subsets-ii/)](#90子集2httpsleetcode-cncomproblemssubsets-ii)
+        - [[77.组合](https://leetcode-cn.com/problems/combinations/)](#77组合httpsleetcode-cncomproblemscombinations)
+        - [[46.全排列](https://leetcode-cn.com/problems/permutations/)](#46全排列httpsleetcode-cncomproblemspermutations)
+        - [[47.全排列2](https://leetcode-cn.com/problems/permutations-ii/)](#47全排列2httpsleetcode-cncomproblemspermutations-ii)
+        - [[51.N皇后](https://leetcode-cn.com/problems/n-queens/)](#51n皇后httpsleetcode-cncomproblemsn-queens)
+        - [[52.N皇后II](https://leetcode-cn.com/problems/n-queens-ii/)](#52n皇后iihttpsleetcode-cncomproblemsn-queens-ii)
+        - [[36.有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)](#36有效的数独httpsleetcode-cncomproblemsvalid-sudoku)
+        - [[37.解数独](https://leetcode-cn.com/problems/sudoku-solver/)](#37解数独httpsleetcode-cncomproblemssudoku-solver)
+        - [[22.括号生成](https://leetcode-cn.com/problems/generate-parentheses/)](#22括号生成httpsleetcode-cncomproblemsgenerate-parentheses)
+        - [[39.组合总和](https://leetcode-cn.com/problems/combination-sum/)](#39组合总和httpsleetcode-cncomproblemscombination-sum)
+        - [[17.电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)](#17电话号码的字母组合httpsleetcode-cncomproblemsletter-combinations-of-a-phone-number)
+        - [[79.单词搜索](https://leetcode-cn.com/problems/word-search/)](#79单词搜索httpsleetcode-cncomproblemsword-search)
+    - [动态规划](#动态规划)
+        - [[322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)](#322零钱兑换httpsleetcode-cncomproblemscoin-change)
+        - [[1143.最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)](#1143最长公共子序列httpsleetcode-cncomproblemslongest-common-subsequence)
+        - [[583.两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)](#583两个字符串的删除操作httpsleetcode-cncomproblemsdelete-operation-for-two-strings)
+        - [[712.两个字符串的最小ASCII删除和](https://leetcode-cn.com/problems/minimum-ascii-delete-sum-for-two-strings/)](#712两个字符串的最小ascii删除和httpsleetcode-cncomproblemsminimum-ascii-delete-sum-for-two-strings)
+        - [[72.编辑距离](https://leetcode-cn.com/problems/edit-distance/)](#72编辑距离httpsleetcode-cncomproblemsedit-distance)
+        - [[300.最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)](#300最长递增子序列httpsleetcode-cncomproblemslongest-increasing-subsequence)
+        - [[354.俄罗斯套娃信封问题](https://leetcode-cn.com/problems/russian-doll-envelopes/)](#354俄罗斯套娃信封问题httpsleetcode-cncomproblemsrussian-doll-envelopes)
+        - [[53.最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)](#53最大子序和httpsleetcode-cncomproblemsmaximum-subarray)
+        - [[516.最长回文子序列](https://leetcode-cn.com/problems/longest-palindromic-subsequence/)](#516最长回文子序列httpsleetcode-cncomproblemslongest-palindromic-subsequence)
+        - [[416.分割等和子集](https://leetcode-cn.com/problems/partition-equal-subset-sum/)](#416分割等和子集httpsleetcode-cncomproblemspartition-equal-subset-sum)
+        - [[474.一和零](https://leetcode-cn.com/problems/ones-and-zeroes/)](#474一和零httpsleetcode-cncomproblemsones-and-zeroes)
+        - [[494.目标和](https://leetcode-cn.com/problems/target-sum/)](#494目标和httpsleetcode-cncomproblemstarget-sum)
+        - [[879.盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)](#879盈利计划httpsleetcode-cncomproblemsprofitable-schemes)
+        - [[518.零钱兑换II](https://leetcode-cn.com/problems/coin-change-2/)](#518零钱兑换iihttpsleetcode-cncomproblemscoin-change-2)
+        - [[1449.数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)](#1449数位成本和为目标值的最大数字httpsleetcode-cncomproblemsform-largest-integer-with-digits-that-add-up-to-target)
+        - [[435.无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)](#435无重叠区间httpsleetcode-cncomproblemsnon-overlapping-intervals)
+        - [[452.用最少数量的箭引爆气球](https://leetcode-cn.com/problems/minimum-number-of-arrows-to-burst-balloons/)](#452用最少数量的箭引爆气球httpsleetcode-cncomproblemsminimum-number-of-arrows-to-burst-balloons)
+        - [[56.合并区间](https://leetcode-cn.com/problems/merge-intervals/)](#56合并区间httpsleetcode-cncomproblemsmerge-intervals)
+        - [[57.插入区间](https://leetcode-cn.com/problems/insert-interval/)](#57插入区间httpsleetcode-cncomproblemsinsert-interval)
+        - [[986.区间列表的交集](https://leetcode-cn.com/problems/interval-list-intersections/)](#986区间列表的交集httpsleetcode-cncomproblemsinterval-list-intersections)
+        - [[763.划分字母区间](https://leetcode-cn.com/problems/partition-labels/)](#763划分字母区间httpsleetcode-cncomproblemspartition-labels)
+        - [[55.跳跃游戏](https://leetcode-cn.com/problems/jump-game/)](#55跳跃游戏httpsleetcode-cncomproblemsjump-game)
+        - [[45.跳跃游戏II](https://leetcode-cn.com/problems/jump-game-ii/)](#45跳跃游戏iihttpsleetcode-cncomproblemsjump-game-ii)
+        - [[10.正则表达式匹配](https://leetcode-cn.com/problems/regular-expression-matching/)](#10正则表达式匹配httpsleetcode-cncomproblemsregular-expression-matching)
+        - [[887.鸡蛋掉落](https://leetcode-cn.com/problems/super-egg-drop/)](#887鸡蛋掉落httpsleetcode-cncomproblemssuper-egg-drop)
+        - [[312. 戳气球](https://leetcode-cn.com/problems/burst-balloons/submissions/)](#312-戳气球httpsleetcode-cncomproblemsburst-balloonssubmissions)
+        - [[292.Nim游戏](https://leetcode-cn.com/problems/nim-game/)](#292nim游戏httpsleetcode-cncomproblemsnim-game)
+        - [[486.预测赢家](https://leetcode-cn.com/problems/predict-the-winner/)](#486预测赢家httpsleetcode-cncomproblemspredict-the-winner)
+        - [[121.买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)](#121买卖股票的最佳时机httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock)
+        - [[122.买卖股票的最佳时机II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)](#122买卖股票的最佳时机iihttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-ii)
+        - [[123.买卖股票的最佳时机III](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/)](#123买卖股票的最佳时机iiihttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-iii)
+        - [[188.买卖股票的最佳时机IV](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/)](#188买卖股票的最佳时机ivhttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-iv)
+        - [[309.最佳买卖股票时机含冷冻期](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)](#309最佳买卖股票时机含冷冻期httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-with-cooldown)
+        - [[714.买卖股票的最佳时机含手续费](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)](#714买卖股票的最佳时机含手续费httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-with-transaction-fee)
+        - [[198.打家劫舍](https://leetcode-cn.com/problems/house-robber/)](#198打家劫舍httpsleetcode-cncomproblemshouse-robber)
+        - [[213.打家劫舍II](https://leetcode-cn.com/problems/house-robber-ii/)](#213打家劫舍iihttpsleetcode-cncomproblemshouse-robber-ii)
+        - [[337.打家劫舍III](https://leetcode-cn.com/problems/house-robber-iii/)](#337打家劫舍iiihttpsleetcode-cncomproblemshouse-robber-iii-1)
+        - [[152.乘积最大子数组](https://leetcode-cn.com/problems/maximum-product-subarray/)](#152乘积最大子数组httpsleetcode-cncomproblemsmaximum-product-subarray)
+        - [[面试题17.16.按摩师](https://leetcode-cn.com/problems/the-masseuse-lcci/submissions/)](#面试题1716按摩师httpsleetcode-cncomproblemsthe-masseuse-lccisubmissions)
+    - [BFS & 图问题](#bfs--图问题)
+        - [[1162.地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)](#1162地图分析httpsleetcode-cncomproblemsas-far-from-land-as-possible)
+        - [[279.完全平方数](https://leetcode-cn.com/problems/perfect-squares/)](#279完全平方数httpsleetcode-cncomproblemsperfect-squares)
+        - [[]()](#)
+        - [[]()](#-1)
+        - [[]()](#-2)
+    - [剑指offer系列](#剑指offer系列)
+        - [[]()](#-3)
+        - [[]()](#-4)
+        - [[]()](#-5)
+        - [[]()](#-6)
+        - [[]()](#-7)
+        - [[]()](#-8)
+        - [[]()](#-9)
+        - [[]()](#-10)
+        - [[]()](#-11)
+        - [[]()](#-12)
+        - [[]()](#-13)
+        - [[]()](#-14)
+        - [[]()](#-15)
+        - [[]()](#-16)
+        - [[]()](#-17)
+        - [[]()](#-18)
+        - [[]()](#-19)
+        - [[]()](#-20)
+        - [[]()](#-21)
+        - [[]()](#-22)
+        - [[]()](#-23)
+        - [[]()](#-24)
+        - [[]()](#-25)
+        - [[]()](#-26)
+        - [[]()](#-27)
+        - [[]()](#-28)
+        - [[]()](#-29)
+        - [[]()](#-30)
+        - [[]()](#-31)
+        - [[]()](#-32)
+        - [[]()](#-33)
+        - [[]()](#-34)
+        - [[]()](#-35)
+        - [[]()](#-36)
+        - [[]()](#-37)
+        - [[]()](#-38)
+        - [[]()](#-39)
+        - [[]()](#-40)
+        - [[]()](#-41)
+        - [[]()](#-42)
+        - [[]()](#-43)
+        - [[]()](#-44)
+        - [[]()](#-45)
+        - [[]()](#-46)
+        - [[]()](#-47)
+        - [[]()](#-48)
+        - [[]()](#-49)
+        - [[]()](#-50)
+        - [[]()](#-51)
+        - [[]()](#-52)
+        - [[]()](#-53)
+        - [[]()](#-54)
+        - [[]()](#-55)
+        - [[]()](#-56)
+        - [[]()](#-57)
+        - [[]()](#-58)
+        - [[]()](#-59)
+        - [[]()](#-60)
+        - [[]()](#-61)
+        - [[]()](#-62)
+        - [[]()](#-63)
+        - [[]()](#-64)
+        - [[]()](#-65)
+        - [[]()](#-66)
+        - [[]()](#-67)
+        - [[]()](#-68)
+        - [[]()](#-69)
+        - [[]()](#-70)
+        - [[]()](#-71)
+        - [[]()](#-72)
+        - [[]()](#-73)
+        - [[]()](#-74)
+        - [[]()](#-75)
+        - [[]()](#-76)
+        - [[]()](#-77)
+        - [[]()](#-78)
+        - [[]()](#-79)
+        - [[]()](#-80)
+        - [[]()](#-81)
+        - [[]()](#-82)
+        - [[]()](#-83)
+        - [[]()](#-84)
+        - [[]()](#-85)
+        - [[]()](#-86)
+        - [[]()](#-87)
+        - [[]()](#-88)
+        - [[]()](#-89)
+        - [[]()](#-90)
+        - [[]()](#-91)
+        - [[]()](#-92)
+        - [[]()](#-93)
+        - [[]()](#-94)
+        - [[]()](#-95)
+        - [[]()](#-96)
+        - [[]()](#-97)
+        - [[]()](#-98)
+        - [[]()](#-99)
+        - [[]()](#-100)
+        - [[]()](#-101)
+        - [[]()](#-102)
+        - [[]()](#-103)
+        - [[]()](#-104)
+        - [[]()](#-105)
+        - [[]()](#-106)
+        - [[]()](#-107)
+        - [[]()](#-108)
+        - [[]()](#-109)
+        - [[]()](#-110)
+        - [[]()](#-111)
+        - [[]()](#-112)
+        - [[]()](#-113)
+        - [[]()](#-114)
+        - [[]()](#-115)
+        - [[]()](#-116)
+        - [[]()](#-117)
+        - [[]()](#-118)
+        - [[]()](#-119)
+        - [[]()](#-120)
+        - [[]()](#-121)
+        - [[]()](#-122)
+        - [[]()](#-123)
+        - [[]()](#-124)
+        - [[]()](#-125)
+        - [[]()](#-126)
+        - [[]()](#-127)
+        - [[]()](#-128)
+        - [[]()](#-129)
+        - [[]()](#-130)
+        - [[]()](#-131)
+        - [[]()](#-132)
+        - [[]()](#-133)
+        - [[]()](#-134)
+        - [[]()](#-135)
+        - [[]()](#-136)
+        - [[]()](#-137)
+        - [[]()](#-138)
+        - [[]()](#-139)
+        - [[]()](#-140)
+        - [[]()](#-141)
+        - [[]()](#-142)
+        - [[]()](#-143)
+        - [[]()](#-144)
+        - [[]()](#-145)
+        - [[]()](#-146)
+        - [[]()](#-147)
+        - [[]()](#-148)
+        - [[]()](#-149)
+        - [[]()](#-150)
+        - [[]()](#-151)
+        - [[]()](#-152)
+        - [[]()](#-153)
+        - [[]()](#-154)
+        - [[]()](#-155)
+        - [[]()](#-156)
+        - [[]()](#-157)
+        - [[]()](#-158)
+        - [[]()](#-159)
+        - [[]()](#-160)
+        - [[]()](#-161)
+        - [[]()](#-162)
+        - [[]()](#-163)
+        - [[]()](#-164)
+        - [[]()](#-165)
+        - [[]()](#-166)
+        - [[]()](#-167)
+        - [[]()](#-168)
+        - [[]()](#-169)
+        - [[]()](#-170)
+        - [[]()](#-171)
+        - [[]()](#-172)
+        - [[]()](#-173)
+        - [[]()](#-174)
+        - [[]()](#-175)
+        - [[]()](#-176)
+        - [[]()](#-177)
+
+<!-- /TOC -->
+
+## 排序算法
+
+### 冒泡排序
+```C++
+void bubblesort(vector<int>& nums)//两两比较从前往后
+{
+    int n = nums.size();
+    if (n == 0 || n == 1) return;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n - i - 1; j++)//排完一个，需要排的数量就减少
+            if (nums[j] > nums[j + 1])
+            {
+                auto temp = nums[j];
+                nums[j] = nums[j + 1];
+                nums[j + 1] = temp;
+            }
+}
+```
+---
+### 选择排序
+```C++
+void selectionsort(vector<int>& nums)
+{
+	int n = nums.size();
+	if (n == 0 || n == 1) return;
+    for (int i = 0; i < n; i++)
+    {
+        int minindex = i;
+        int curnum = nums[i];
+        for (int j = i + 1; j < n; j++)
+        {
+            if (nums[j] < curnum)//找到最小的数，记录下标
+            {
+                minindex = j;
+                curnum  = nums[j];
+            }
+        }
+        auto temp = nums[i];//和未排序的第一个数交换
+        nums[i] = nums[minindex];
+        nums[minindex] = temp;
+    }
+}
+```
+---
+### 插入排序
+```C++
+void insertionsort(vector<int>& nums)
+{
+	int n = nums.size();
+	if (n == 0 || n == 1) return;
+    for (int j = 1; j < n; j++)
+    {
+        int key = nums[j];//待排序
+        int i = j - 1;//已经排完序的最后一个索引
+		//从后向前逐个比较已经排序过数组，如果比它小，则把后者用前者代替，
+		//数组逐个后移动一位,为找到合适的位置时候便于Key的插入
+        while (i >= 0 && key < nums[i])
+        {
+            nums[i + 1] = nums[i];
+            i--;
+        }
+        nums[i + 1] = key;
+    }
+}
+```
+---
+### 归并排序
+```C++
+void merge(vector<int>, int lo, int mid, int hi)
+{
+	int i = lo;//左侧数组起始位置
+	int j = mid + 1;//右侧数组起始位置
+	vector<int> temp;//暂存
+    while (i <= mid && j <= hi)
+        temp.push_back(nums[i] < nums[j] ? nums[i++] : nums[j++]);	
+	while (i <= mid)
+		temp.push_back(nums[i++]);
+	while (j <= hi)
+		temp.push_back(nums[j++]);
+
+    auto it = temp.begin();
+	while (lo <= hi)
+		nums[lo++] = *it++;
+}
+void mergesort(vector<int>& nums, int lo, int hi)
+{
+    if (lo < hi)
+    {
+        int mid = (hi + lo) / 2;
+        mergesort(nums, lo, mid);
+        mergesort(nums, mid + 1, hi);
+        merge(nums, lo, mid, hi);
+    }
+}
+```
+---
+### 快速排序
+```C++
+void quicksort(vector<int>& nums, int left, int right)
+{
+    if (left >= right) return;
+    int i = left, j = right;
+    int base = nums[left];
+    while (i < j)
+    {
+		while (nums[j] >= base && i < j)//等于号
+			j--;
+		while (nums[i] <= base && i < j)
+			i++;
+		if (i < j)
+		{
+			int temp = nums[j];
+			nums[j] = nums[i];
+			nums[i] = temp;
+		}
+    }
+    nums[left] = nums[i];
+    nums[i] = base;
+    quicksort(nums, left, i - 1);
+    quicksort(nums, i + 1, right);
+}
+```
+### test main 
+```C++
+int main()
+{
+    vector<int> nums = { 2,5,8,4,1,9,3,7,10,0,11,16,13 };
+    //冒泡测试
+    //bubblesort(nums);
+    //选择测试
+    //selectionsort(nums);
+    //插入测试
+    //insertionsort(nums);
+    //归并测试
+    //mergesort(nums, 0, nums.size() - 1);
+    //快速排序测试
+    //quicksort(nums, 0, nums.size() - 1);
+    for (auto num : nums)
+        cout << num << "---";
+    return 0;
+}
+```
+---
+---
+---
+---
+---
 
 ## 链表
 
@@ -191,12 +671,6 @@ public:
         return presumHead->next;
     }
 };
-```
----
-### []()
-* 
-```C++
-
 ```
 ---
 ### [141.环形链表](https://leetcode-cn.com/problems/linked-list-cycle/)
@@ -616,6 +1090,116 @@ void traverse(TreeNode root) {
     traverse(root.right)
     // 后序遍历
 }
+```
+### 144/145/94二叉树的前中后遍历
+1. 递归
+```C++
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        dfs(root, res);
+        return res;
+    }
+    //前序遍历
+    void dfs(TreeNode* root, vector<int>& res)
+    {
+        if (root == nullptr) return ;
+        res.push_back(root->val);
+        dfs(root->left, res);
+        dfs(root->right, res);
+    }
+    //中序遍历
+    void dfs(TreeNode* root, vector<int>& res)
+    {
+        if (root == nullptr) return ;
+        dfs(root->left, res);
+        res.push_back(root->val);
+        dfs(root->right, res);
+    }
+    //后序遍历
+    void dfs(TreeNode* root, vector<int>& res)
+    {
+        if (root == nullptr) return ;
+        dfs(root->left, res);
+        dfs(root->right, res);
+        res.push_back(root->val);
+    }
+
+};
+```
+2. 迭代
+```C++
+////////前序遍历////////
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if (root == nullptr) return {};
+        stack<TreeNode*> mystack;
+        mystack.push(root);
+        while (!mystack.empty())
+        {
+            auto node = mystack.top();
+            mystack.pop();
+            res.push_back(node->val);
+            if (node->right) mystack.push(node->right);//右进栈
+            if (node->left) mystack.push(node->left);//左进栈
+        }
+        //出栈中、左、右
+        return res;
+    }
+};
+//////////////////////
+/////////中序遍历///////
+class Solution {
+public:
+
+    vector<int> inorderTraversal(TreeNode* root) {
+        if (root == nullptr) return {};
+        vector<int> res;
+        stack<TreeNode*> mystack;
+        auto cur = root;
+        while (cur != nullptr || !mystack.empty())
+        {
+            while (cur != nullptr)
+            {
+                mystack.push(cur);
+                cur = cur->left;
+            }
+            cur = mystack.top();
+            mystack.pop();
+            res.push_back(cur->val);
+            cur = cur->right;
+        }
+        return res;
+    }
+};//........
+/////////////////////
+////////后序遍历///////
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        if (root == nullptr) return {};
+        vector<int> res;
+        stack<TreeNode*> mystack;
+        mystack.push(root);
+        while (!mystack.empty())
+        {
+            auto node = mystack.top();
+            mystack.pop();
+            res.push_back(node->val);
+            if (node->left) mystack.push(node->left);//左进栈
+            if (node->right) mystack.push(node->right);//右进栈
+        }
+        //出栈是中、右、左，反转刚好就是结果
+        reverse(res.begin(), res.end());
+        return res;       
+    }
+};
+//////////////////////
+
+
 ```
 
 ### [101.对称二叉树](https://leetcode-cn.com/problems/symmetric-tree/)
@@ -1672,6 +2256,39 @@ public:
         int sum = lVal + root->val + rVal;
         maxSum = max(sum, maxSum);
         return root->val + max(lVal, rVal);
+    }
+};
+```
+### [687.最长同值路径](https://leetcode-cn.com/problems/longest-univalue-path/)
+* l 是与当前节点值相同的左子树的路径长度，r 是与当前节点值相同的右子树路径长度，l + r 是与当前节点值相同，左右连接在一起的路径的长度
+* max(l, r)是因为选择父节点的时候，不可以同时选择左右
+```C++
+class Solution {
+public:
+    int maxlength = 0;
+    int longestUnivaluePath(TreeNode* root) {
+        dfs(root);
+        return maxlength;
+    }
+    int dfs(TreeNode* root)
+    {
+        if (root == nullptr) return 0;  
+        int l = dfs(root->left);
+        int r = dfs(root->right);
+        if (root->left) 
+        {
+            if (root->val == root->left->val)
+                l++;
+            else l = 0;
+        }
+        if (root->right)
+        {
+            if (root->val == root->right->val)
+                r++;
+            else r = 0;
+        }
+        maxlength = max(maxlength, l + r);
+        return max(l, r);
     }
 };
 ```
@@ -5793,151 +6410,2492 @@ public:
     }
 };
 ```
+---贪心算法 - 区间调度问题
 ---
+### [435.无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)
+* 排序
+* 计算不相交区间个数count
+* size - count
+```C++
+class Solution {
+public:
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+        if (intervals.size() == 0 || intervals.size() == 1) return 0;
+        sort(intervals.begin(), intervals.end(), [](vector<int>& a, vector<int>& b){return a[1] < b[1];});//俺区间尾部大小排序
+        int count = 1;//计算不相交区间个数
+        int index = intervals.at(0).at(1);
+        for (int i = 1; i < intervals.size(); ++i)
+        {
+            if (index <= intervals[i][0])
+            {
+                index = intervals[i][1];
+                count++;
+            }
+        }
+        return intervals.size() - count;
+    }
+};
+```
+---
+### [452.用最少数量的箭引爆气球](https://leetcode-cn.com/problems/minimum-number-of-arrows-to-burst-balloons/)
+* 贪心算法
+* 和上题基本一样
+```C++
+class Solution {
+public:
+    int findMinArrowShots(vector<vector<int>>& points) {
+        int n = points.size();
+        if (n == 0 || n == 1) return n;
+        sort(points.begin(), points.end(), [](vector<int>& a, vector<int>& b){return a.at(1) < b.at(1);});
+        int index = points.at(0).at(1);
+        int count = 1;
+        for (int i = 1; i < n; ++i)
+        {
+            if (index < points[i].at(0))
+            {
+                index = points[i].at(1);
+                count++;
+            }
+        }
+        return count;
+    }
+};
+```
+---
+### [56.合并区间](https://leetcode-cn.com/problems/merge-intervals/)
+* 首先，我们将列表中的区间按照左端点升序排序。然后我们将第一个区间加入 result 数组中，并按顺序依次考虑之后的每个区间：
+
+* 如果当前区间的左端点在数组 result 中最后一个区间的右端点之后，那么它们不会重合，我们可以直接将这个区间加入数组 result 的末尾；
+
+* 否则，它们重合，我们需要用当前区间的右端点更新数组 result 中最后一个区间的右端点，将其置为二者的较大值。
+
+```C++
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        if (intervals.size() == 0 || intervals.size() == 1) return intervals;
+        vector<vector<int>> result;
+        sort(intervals.begin(), intervals.end());
+
+        for (int i = 0; i < intervals.size(); ++i)
+        {
+            int L = intervals[i][0], R = intervals[i][1];
+            if (result.size() == 0 || result.back()[1] < L)
+                result.push_back({L, R});
+            else
+                result.back()[1] = max(result.back()[1], R);
+        }
+        return result;
+    }
+};
+```
+---
+### [57.插入区间](https://leetcode-cn.com/problems/insert-interval/)
+1. 类似上面的做法
+2. **模拟插入**
+```C++
+class Solution {
+public:
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> result;
+        int index = 0;//索引
+        //找到开始合并的区间位置
+        while (index < intervals.size() && intervals[index][1] < newInterval[0])
+            result.push_back(intervals[index++]);
+        //合并区间
+        while (index < intervals.size() && intervals[index][0] <= newInterval[1])
+        {
+            newInterval[0] = min(intervals[index][0], newInterval[0]);
+            newInterval[1] = max(intervals[index][1], newInterval[1]);
+            index++;
+        }
+        result.push_back(newInterval);
+        //处理剩余的
+        while (index < intervals.size())
+            result.push_back(intervals[index++]);
+        return result;
+    }
+};
+```
+---
+### [986.区间列表的交集](https://leetcode-cn.com/problems/interval-list-intersections/)
+1. 暴力
+```C++
+class Solution {
+public:
+    vector<vector<int>> intervalIntersection(vector<vector<int>>& firstList, vector<vector<int>>& secondList) {
+        if (firstList.size() == 0 || secondList.size() == 0) return {};
+        vector<vector<int>> result;
+        for (int i = 0; i < firstList.size(); ++i)
+            for (int j = 0; j < secondList.size(); ++j)
+            {
+                auto res = Intersection(firstList[i], secondList[j]);
+                if (res.size() == 0) continue;
+                result.push_back(res);
+            }
+        return result;
+    }
+    vector<int> Intersection(vector<int>& a, vector<int>& b)
+    {
+        if (a.size() == 0 || b.size() == 0 || a[1] < b[0] || b[1] < a[0])
+            return {};
+        return {max(a[0], b[0]), min(a[1], b[1])};     
+    }
+};
+```
+2. 双指针 [参考](https://leetcode-cn.com/problems/interval-list-intersections/solution/jiu-pa-ni-bu-dong-shuang-zhi-zhen-by-hyj8/)
+```C++
+class Solution {
+public:
+    vector<vector<int>> intervalIntersection(vector<vector<int>>& firstList, vector<vector<int>>& secondList) {
+        if (firstList.size() == 0 || secondList.size() == 0) return {};
+        vector<vector<int>> result;
+        int i = 0, j = 0;
+        while (i < firstList.size() && j < secondList.size())
+        {
+            int left = max(firstList[i][0], secondList[j][0]);
+            int right = min(firstList[i][1], secondList[j][1]);
+            if (left <= right)  result.push_back({left, right});
+            if (firstList[i][1] < secondList[j][1]) i++;
+            else j++;
+        }
+        return result;
+    }
+};
+```
+---
+### [763.划分字母区间](https://leetcode-cn.com/problems/partition-labels/)
+* **贪心**
+* 由于同一个字母只能出现在同一个片段，显然同一个字母的第一次出现的下标位置和最后一次出现的下标位置必须出现在同一个片段。因此需要遍历字符串，得到每个字母最后一次出现的下标位置。
+
+```C++
+class Solution {
+public:
+    vector<int> partitionLabels(string S) {
+        int n = S.size();
+        vector<int> lastpos(26, 0);
+        for (int i = 0; i < n; ++i)
+            lastpos[S[i] - 'a'] = i;
+        vector<int> result;
+        int start = 0, end = 0;
+        for (int i = 0; i < n; ++i)
+        {
+            end = max(end, lastpos[S[i] - 'a']);
+            if (i == end)
+            {
+                result.emplace_back(end - start + 1);
+                start = end + 1;
+            }
+        }
+        return result;
+    }
+};
+```
+---
+### [55.跳跃游戏](https://leetcode-cn.com/problems/jump-game/)
+* **贪心算法**
+* 每一步都计算一下从当前位置最远能够跳到哪里，然后和一个全局最优的最远位置farthest做对比，通过每一步的最优解，更新全局最优解
+* 算到倒数第二个，看最终长度是否能够超过长度
+```C++
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        int maxdistance = 0;
+        for (int i = 0; i < nums.size() - 1; ++i)
+        {
+            maxdistance = max(maxdistance, i + nums[i]);
+            if (maxdistance <= i) return false;
+        }
+        return true;//maxdistance >= nums.size() - 1;
+    }
+};
+```
+---
+### [45.跳跃游戏II](https://leetcode-cn.com/problems/jump-game-ii/)
+* **贪心算法**参考[题解](https://leetcode-cn.com/problems/jump-game-ii/solution/45-by-ikaruga/)
+* i和end标记了可以选择的跳跃步数，maxpos标记了所有可选择跳跃步数[i..end]中能够跳到的最远距离，count记录了跳跃次数。
+```C++
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int count = 0;
+        int start = 0;
+        int end = 1;//前闭后开区间
+        while (end < nums.size())
+        {
+            int maxpos = 0; 
+            for (int i = start; i < end; ++i)
+                maxpos = max(maxpos, i + nums[i]);
+            start = end;
+            end = maxpos + 1;
+            count++;
+        }
+        return count;
+    }
+};
+```
+* **优化**
+```C++
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int maxpos = 0;
+        int count = 0;
+        int end = 0;//
+        for (int i = 0; i < nums.size() - 1; ++i)
+        {
+            maxpos = max(maxpos, i + nums[i]);
+            if (i == end)
+            {
+                count++;
+                end = maxpos;
+            }
+        }
+        return count;
+    }
+};
+```
+---
+### [10.正则表达式匹配](https://leetcode-cn.com/problems/regular-expression-matching/)
+* **动态规划**
+* 参考[题解](https://leetcode-cn.com/problems/regular-expression-matching/solution/shou-hui-tu-jie-wo-tai-nan-liao-by-hyj8/)
+* 关键在于**分类讨论**和对**题目的理解**
+```C++
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int slength = s.size();
+        int plength = p.size();
+        //dp[][]表示s[0]~s[i - 1](长度为i)和p[0]~p[j - 1](长度为j)是否匹配哦
+        vector<vector<bool>> dp(slength + 1, vector<bool>(plength + 1, false));
+        /*base case*/
+        //1. 均为空串，必然匹配
+        dp[0][0] = true;
+        //2. s不空，p为空
+        for (int i = 1; i <= slength; ++i)
+            dp[i][0] = false;
+        //3. s空，p不空，必须要靠*消除字母后为空才能匹配
+        for (int j = 1; j <= plength; ++j)
+        {
+            if (p[j - 1] == '*')
+                dp[0][j] = dp[0][j - 2];
+        }
+        //状态转移.分类讨论
+        for (int i = 1; i <= slength; ++i)
+            for (int j = 1; j <= plength; ++j)
+            {
+                if (s[i - 1] == p[j - 1] || p[j - 1] == '.')
+                    dp[i][j] = dp[i - 1][j - 1];
+                else if (p[j - 1] == '*')
+                {
+                    if (s[i - 1] == p[j - 2] || p[j - 2] == '.')
+                        dp[i][j] = dp[i][j - 2] || dp[i - 1][j - 2] || dp[i - 1][j];//*把前面的字符替换0次('a*' = '')，1次('a*' = 'a')，2次及以上('a*' = 'aaaaaaaa......')
+                    else dp[i][j] = dp[i][j - 2];
+                }
+                else dp[i][j] = false;
+            }
+        return dp[slength][plength];
+    }
+};
+```
+---
+### [887.鸡蛋掉落](https://leetcode-cn.com/problems/super-egg-drop/)
+1. **递归** - > 超时 参考[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484675&idx=1&sn=4a4ac1c0f1279530b42fedacc6cca6e6&chksm=9bd7fb0baca0721dda1eaa1d00b9a520672dc9d5c3be762eeca869be35d7ce232922ba8e928b&scene=21#wechat_redirect)
+   * 关键要理解题意！
+```C++
+class Solution {
+public:
+    map<pair<int, int>, int> memo;//备忘录记录已经出现过的结果
+    int superEggDrop(int k, int n) {
+        return dfs(k, n);
+    }
+    int dfs(int k, int n)//k个鸡蛋，n层楼待扔
+    {
+        if (k == 1) return n;
+        if (n == 0) return 0;
+        int res = INT_MAX;
+        if (memo.count(make_pair(k, n)) != 0) return memo[make_pair(k, n)];
+        for (int i = 1; i <= n; ++i)
+        {
+            //碎了鸡蛋数量少一个，层数变为1-i-1，没碎鸡蛋数不变，层数变为n-i
+            res = min(res, max(dfs(k - 1, i - 1), dfs(k, n - i)) + 1);
+        }
+        memo[make_pair(k, n)] = res;
+        return res;
+    }
+};
+```
+1. **二分优化** 参考[题解](https://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484690&idx=1&sn=eea075701a5d96dd5c6e3dc6a993cac5&chksm=9bd7fb1aaca0720c58c9d9e02a8b9211a289bcea359633a95886d7808d2846898d489ce98078&scene=21#wechat_redirect)
+```C++
+class Solution {
+public:
+    map<pair<int, int>, int> memo;
+    int superEggDrop(int k, int n) {
+        return dfs(k, n);
+    }
+    int dfs(int k, int n)
+    {
+        if (k == 1) return n;
+        if (n == 0) return 0;
+        if (memo.count(make_pair(k, n)) != 0) return memo[make_pair(k, n)];
+        int res = INT_MAX;
+        int lo = 1;
+        int hi = n;
+        while (lo <= hi)
+        {
+            auto mid = (hi - lo) / 2 + lo;
+            auto broken = dfs(k - 1, mid - 1);
+            auto noBroken = dfs(k, n - mid);
+            if (broken > noBroken)
+            {
+                hi = mid - 1;
+                res = min(res, broken + 1);//+1
+            }
+            else
+            {
+                lo = mid + 1;
+                res = min(res, noBroken + 1);
+            }
+        }
+        memo[make_pair(k, n)] = res;
+        return res;
+    }
+};
+```
+3. **改变状态转移方程**
+```C++
+class Solution {
+public:
+    int superEggDrop(int k, int n) {
+//dp[k][m] = n
+// 当前有 k 个鸡蛋，可以尝试扔 m 次鸡蛋
+// 这个状态下，最坏情况下最多能确切测试一栋 n 层的楼
+        vector<vector<int>> dp(k + 1, vector<int>(n + 1, 0));//最多可以尝试丢n次
+        //basecase
+        for (int i = 0; i <= k; i++)
+            dp[i][0] = 0;
+        for (int j = 0; j <= n; j++)
+            dp[0][j] = 0;
+        int m = 0;
+        while (dp[k][m] < n)
+        {
+            m++;
+            for (int i = 1; i <= k; i++)
+                dp[i][m] = dp[i][m - 1] + dp[i - 1][m - 1] + 1;
+        }
+        return m;
+    }
+};
+```
+---
+### [312. 戳气球](https://leetcode-cn.com/problems/burst-balloons/submissions/)
+1. **回溯**-> 超时
+```C++
+class Solution {
+public:
+    int res = INT_MIN;
+    int maxCoins(vector<int>& nums) {
+        if (nums.size() == 1) return nums[0];
+        backtrack(nums, 0);
+        return res;
+    }
+    void backtrack(vector<int>& nums, int sum)
+    {
+        if (nums.size() == 0)
+        {
+            res = max(res, sum);
+            return;
+        }
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            //选择
+            auto temp = nums[i];
+            int leftCoin = 0, rightCoin = 0;
+            leftCoin = i == 0 ? 1 : nums[i - 1];
+            rightCoin = i == nums.size() - 1 ? 1 : nums[i + 1];
+            auto curCoins = leftCoin * nums[i] * rightCoin;
+
+            nums.erase(nums.begin() + i);
+            //回溯
+            backtrack(nums, sum + curCoins);
+            //撤销
+            nums.insert(nums.begin() + i, temp);
+        }
+    }
+};
+```
+2. **动态规划**
+   * 建立DP数组，明确意义：dp[i][j]**表示戳破i~j之间（不包括ij）的气球可获得的最大硬币数量**，所求即为dp[0][n + 1];
+   * base case ：区间大小为**0**，即没有气球可以戳破，一定为零
+   * 状态转移方程：m为ij之间**最后一个戳破的气球**
+     >dp[i][j] = max(dp[i][j], dp[i][m] + dp[m][j] + points>[i] * points[m] * points[j]);
+   * tip：在两端补上两个数，防止越界，也更匹配dp数组的定义
+
+```C++
+class Solution {
+public:
+    int maxCoins(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 1) return nums[0];
+        vector<int> points(n + 2, 1);
+        for (int i = 0; i < n; i++)
+            points[i + 1] = nums[i];//头尾加上1，方便计算
+        vector<vector<int>> dp(n + 2, vector<int>(n + 2, 0));//dp[i][j]表示戳破i~j之间（不包括ij）的气球可获得的最大硬币数量，所求即为dp[0][n + 1];
+        //basecase
+        /*for (int i = 0; i <= n; ++i)
+        {
+            dp[i][i] = 0;
+            dp[i][i + 1] = 0;//没有气球可以戳破
+        }
+        dp[n + 1][n + 1] = 0;*/
+        //状态转移方程
+        for (int i = n; i >= 0; --i)
+            for (int j = i + 1; j <= n + 1; ++j)
+                for (int m = i + 1; m < j; ++m)//m为ij之间最后一个戳破的气球
+                    dp[i][j] = max(dp[i][j], dp[i][m] + dp[m][j] + points[i] * points[m] * points[j]);
+        return dp[0][n + 1];
+    }
+};
+```
+---
+### [292.Nim游戏](https://leetcode-cn.com/problems/nim-game/)
+1. **dp**
+```C++
+class Solution {
+public:
+    bool canWinNim(int n) {
+        vector<bool> dp(n + 1, false);
+        dp[0] = true;
+        dp[1] = true;
+        dp[2] = true;
+        dp[3] = true;
+        for (int i = 4; i <= n; ++i)
+            dp[i] = !dp[i - 1] || !dp[i - 2] || !dp[i - 3];
+        return dp[n];
+    }
+};
+```
+2. **数学方法**
+```C++
+class Solution {
+public:
+    bool canWinNim(int n) {
+        return n % 4 != 0;
+    }
+};
+```
+---
+### [486.预测赢家](https://leetcode-cn.com/problems/predict-the-winner/)
+* 这里定义 **dp[i][j] 表示作为先手，在区间 nums[i..j] 里进行选择可以获得的相对分数**。相对分数的意思是：当前自己的选择得分为正，对手的选择得分为负。「记忆化递归」里递归函数的返回值也类似地去理解。这种定义是比较常见的，也是符合当前这个问题的直接的定义。
+
+在这个定义下，只需要判断输出 >= 0 即可。
+1. **记忆化递归**（备忘录）
+```C++
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> memo(n, vector<int>(n, INT_MIN));
+        return dfs(nums, 0, n - 1, memo) >= 0;
+    }
+    int dfs(vector<int>& nums, int i, int j, vector<vector<int>>& memo)
+    {
+        if (i > j) return 0;
+        if (memo[i][j] != INT_MIN)  return memo[i][j];
+        int left = nums[i] - dfs(nums, i + 1, j, memo);
+        int right = nums[j] - dfs(nums, i, j - 1, memo);
+        memo[i][j] = max(left, right);
+        return memo[i][j];
+    }
+};
+```
+2. 动态规划
+```C++
+class Solution {
+public:
+    bool PredictTheWinner(vector<int>& nums) {
+        int n = nums.size();
+        //dp[i][j] 表示作为先手，在区间 nums[i..j] 里进行选择可以获得的相对分数
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        //basecase
+        for (int i = 0; i < n; i++)
+            dp[i][i] = nums[i];
+        for (int i = n - 2; i >= 0; i--)
+            for (int j = i + 1; j < n; j++)
+                dp[i][j] = max(nums[i] - dp[i + 1][j], nums[j] - dp[i][j - 1]);
+        return dp[0][n - 1] >= 0;
+    }
+};
+```
+---
+### [121.买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)
+* 差值最大即可
+* **记录最小值**和**最大差值**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int minprice = INT_MAX;
+        int maxpro = 0;
+        for(int price: prices)
+        {
+            maxpro = max (maxpro, price - minprice);
+            minprice = min(minprice, price);
+        }
+        return maxpro;
+    }
+};
+```
+---
+### [122.买卖股票的最佳时机II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)
+1. **dfs**超时
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<int> memo(n, -1);
+        return dfs(0, prices, memo);
+    }
+    int dfs(int buytime, vector<int>& prices, vector<int>& memo)
+    {
+        if (buytime >= prices.size() - 1) return 0;
+        if (memo[buytime] != -1) return memo[buytime];
+        int res = 0;
+        int curmin = prices[buytime];
+        for (int sell = buytime + 1; sell <= prices.size() - 1; sell++)
+        {
+            curmin = min(curmin, prices[sell]);
+            res = max(res, dfs(sell + 1, prices, memo) + prices[sell] - curmin);
+        }
+        memo[buytime] = res;
+        return res;
+    }
+};
+```
+2. **贪心**//总在股票比前一天高就卖出，低就买入
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        int res = 0;
+        for (int i = 1; i < n; ++i)
+        {
+            if (prices[i] > prices[i - 1])
+                res += prices[i] - prices[i - 1];
+        }
+        return res;
+    }
+};
+```
+3. **dp**
+   * 定义状态dp[i][0] 表示第 i 天交易完后手里没有股票的最大利润，dp[i][1] 表示第 i 天交易完后手里持有一支股票的最大利润（i 从 0 开始）
+   * basecase :第一天买了或者没买
+   * 状态转移:
+```C++
+dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i]);//i天没有持有股票，有两种可能：前一天没有，前一天有，今天卖了；
+dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);//类似
+```
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        //定义状态 \textit{dp}[i][0]dp[i][0] 表示第 i 天交易完后手里没有股票的最大利润，\textit{dp}[i][1]dp[i][1] 表示第 ii 天交易完后手里持有一支股票的最大利润（i 从 0 开始）
+        if (n < 2) return 0;
+        vector<vector<int>> dp(n, vector<int>(2, 0));
+        //basecase
+        dp[0][0] = 0;//第一天，没有交易，为0；
+        dp[0][1] = -prices[0];//第一天买了第一只股票，付了price[0]钱；
+        for (int i = 1; i < n; i++)
+        {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i]);//i天没有持有股票，有两种可能：前一天没有，前一天有，今天卖了；
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);//类似
+        }
+        return dp[n - 1][0];//不持有股票赚的钱肯定不小于持有股票
+    }
+};
+```
+**优化**只和前一天有关系
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<int> dp(2, 0);
+        //basecase
+        dp[0] = 0;//第一天，没有交易，为0；
+        dp[1] = -prices[0];//第一天买了第一只股票，付了price[0]钱；
+        for (int i = 1; i < n; i++)
+        {
+            dp[0] = max(dp[0], dp[1] + prices[i]);//i天没有持有股票，有两种可能：前一天没有，前一天有，今天卖了；
+            dp[1] = max(dp[1], dp[0] - prices[i]);//类似
+        }
+        return dp[0];//不持有股票赚的钱肯定不小于持有股票
+    }
+};
+```
+
+---
+### [123.买卖股票的最佳时机III](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/)
+1. **dfs**超时
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        map<pair<int, int>, int> memo;
+        return dfs(0, 2, prices, memo);
+    }
+    int dfs(int start, int k, vector<int>& prices, map<pair<int, int>, int>& memo)
+    {
+        if (start >= prices.size() - 1) return 0;
+        if (k == 0) return 0;
+        if (memo.count(make_pair(start, k)) != 0) return memo[make_pair(start, k)];
+        int res = 0;
+        int curmin = prices[start];
+        for (int sell = start + 1; sell < prices.size(); sell++)
+        {
+            curmin = min(curmin, prices[sell]);
+            res = max(res, dfs(sell + 1, k - 1, prices, memo) + prices[sell] - curmin);
+        }
+        memo[make_pair(start, k)] = res;
+        return res;
+    }
+};
+```
+2. **dp**
+* dp含义，basecase，状态转移方程见代码备注
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        /*
+        1. 没有操作
+        2. 第一次买入
+        3. 第一次卖出
+        4. 第二次买入
+        5. 第二次卖出
+        dp[i][j]中 i表示第i天，j为 [0 - 4] 五个状态，dp[i][j]表示第i天状态j所剩最大现金。
+        */
+        vector<vector<int>> dp(prices.size(), vector<int>(5, 0));
+        //base case
+        dp[0][0] = 0;//第0天没有操作
+        dp[0][1] = -prices[0];//第0天第一次买入
+        dp[0][2] = 0;//第0天第一次卖出
+        dp[0][3] = -prices[0];//第0天第一次买入
+        dp[0][4] = 0;//第0天第一次卖出
+        for (int i = 1; i < prices.size(); i++)
+        {
+            dp[i][0] = dp[i - 1][0];
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+            dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] + prices[i]);
+            dp[i][3] = max(dp[i - 1][3], dp[i - 1][2] - prices[i]);
+            dp[i][4] = max(dp[i - 1][4], dp[i - 1][3] + prices[i]); 
+        }
+        return max(dp[prices.size() - 1][2], dp[prices.size() - 1][4]);
+    }
+};
+```
+3. **空间优化**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        if (prices.size() == 0) return 0;
+        vector<int> dp(5, 0);
+        //base case
+        dp[0] = 0;//第0天没有操作
+        dp[1] = -prices[0];//第0天第一次买入
+        dp[2] = 0;//第0天第一次卖出
+        dp[3] = -prices[0];//第0天第一次买入
+        dp[4] = 0;//第0天第一次卖出
+        for (int i = 1; i < prices.size(); i++)
+        {
+            dp[1] = max(dp[1], dp[0] - prices[i]);
+            dp[2] = max(dp[2], dp[1] + prices[i]);
+            dp[3] = max(dp[3], dp[2] - prices[i]);
+            dp[4] = max(dp[4], dp[3] + prices[i]); 
+        }
+        return max(dp[2], dp[4]);
+    }
+};
+```
+---
+### [188.买卖股票的最佳时机IV](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/)
+1. **dfs**超时
+```C++
+class Solution {
+public:
+    int maxProfit(int k, vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        map<pair<int, int>, int> memo;
+        return dfs(k, 0, prices, memo);
+    }
+    int dfs(int k, int start, vector<int>& prices, map<pair<int, int>, int>& memo)
+    {
+        if (start >= prices.size() - 1) return 0;
+        if (k == 0) return 0;
+        if (memo.count(make_pair(k, start)) != 0) return memo[make_pair(k, start)];
+        int res = 0;
+        int curmin = prices[start];
+        for (int sell = start + 1; sell < prices.size(); sell++)
+        {
+            curmin = min(curmin, prices[sell]);
+            res = max(res, dfs(k - 1, sell + 1, prices, memo) + prices[sell] - curmin);//sell + 1,卖后的第二天继续操作
+        }
+        memo[make_pair(k, start)] = res;
+        return res;
+    }
+};
+```
+2. **dp**
+* 参考上一题。奇数买入，偶数卖出
+```C++
+class Solution {
+public:
+    int maxProfit(int k, vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        //dp[i][j]第i天，j状态(包括0无操作、奇数买入，偶数卖出)
+        vector<vector<int>> dp(n, vector<int>(2 * k + 1, 0));
+        //basecase第0天买入，收入为-price[i]
+        for (int j = 0; j < 2 * k + 1; j++)
+            dp[0][j] = j % 2 == 1 ? -prices[0] : 0;
+
+        for (int i = 1; i < n; i++)
+            for (int j = 0; j < 2 * k - 1; j += 2)
+            {
+                dp[i][j + 1] = max(dp[i - 1][j + 1], dp[i - 1][j] - prices[i]);
+                dp[i][j + 2] = max(dp[i - 1][j + 2], dp[i - 1][j + 1] + prices[i]);
+            }
+        return dp[n - 1][2 * k];
+    }
+};
+```
+---
+### [309.最佳买卖股票时机含冷冻期](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)
+* **dfs**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<int> memo(n, -1);
+        return dfs(0, prices, memo);
+    }
+    int dfs(int start, vector<int>& prices, vector<int>& memo)
+    {
+        if (start >= prices.size() - 1) return 0;
+        if (memo[start] != -1) return memo[start];
+        int curmin = prices[start];
+        int res = 0;
+        for (int sell = start + 1; sell < prices.size(); sell++)
+        {
+            curmin = min(curmin, prices[sell]);
+            res = max(res, dfs(sell + 2, prices, memo) + prices[sell] - curmin);//sell + 2冷冻期
+        }
+        memo[start] = res;
+        return res;
+    }
+};
+```
+2. **dp**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        /*确定dp数组以及下标的含义
+        dp[i][j]，第i天状态为j，所剩的最多现金为dp[i][j]。
+        j的状态为：
+        0：持有股票后的最多现金
+        1：不持有股票（能购买）的最多现金
+        2：不持有股票（冷冻期）的最多现金
+        */
+        vector<vector<int>> dp(n, vector<int>(3, 0));
+        dp[0][0] = -prices[0];//持有
+        dp[0][1] = 0;//不持有
+        dp[0][2] = 0;//不持有、冷冻期
+        for (int i = 1; i < n; i++)
+        {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] - prices[i]);//冷冻期不能卖
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][2]);//今天不是冷冻期，能购买
+            dp[i][2] = dp[i - 1][0] + prices[i];//冷冻期前一天肯定才卖出
+        }
+        return max(dp[n - 1][1], dp[n - 1][2]);
+    }
+};
+```
+**优化**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        /*确定dp数组以及下标的含义
+        dp[i][j]，第i天状态为j，所剩的最多现金为dp[i][j]。
+        j的状态为：
+        0：持有股票后的最多现金
+        1：不持有股票（能购买）的最多现金
+        2：不持有股票（冷冻期）的最多现金
+        */
+        vector<int> dp(3, 0);
+        dp[0] = -prices[0];//持有
+        dp[1] = 0;//不持有
+        dp[2] = 0;//不持有、冷冻期
+        for (int i = 1; i < n; i++)
+        {
+            dp[0] = max(dp[0], dp[1] - prices[i]);//冷冻期不能卖
+            dp[1] = max(dp[1], dp[2]);//今天不是冷冻期，能购买
+            dp[2] = dp[0] + prices[i];//冷冻期前一天肯定才卖出
+        }
+        return max(dp[1], dp[2]);
+    }
+};
+```
+---
+### [714.买卖股票的最佳时机含手续费](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)
+1. **dfs**超时
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<int> memo(n, -1);
+        return dfs(0, prices, memo, fee);
+    }
+    int dfs(int start, vector<int>& prices, vector<int>& memo, int fee)
+    {
+        if (start >= prices.size() - 1) return 0;
+        if (memo[start] != -1) return memo[start];
+        int res = 0;
+        int curmin = prices[start];
+        for (int sell = start + 1; sell < prices.size(); sell++)
+        {
+            curmin = min(curmin, prices[sell]);
+            res = max(res, dfs(sell + 1, prices, memo, fee) + prices[sell] - curmin - fee);
+        }
+        memo[start] = res;
+        return res;
+    }
+};
+```
+2. **dp**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<vector<int>> dp(n, vector<int>(2, 0));
+        dp[0][0] = 0;//不持有
+        dp[0][1] = -prices[0];//持有
+        for (int i = 1; i < n; i++)
+        {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+        }
+        return dp[n - 1][0];
+    }
+```
+---
+**优化**
+```C++
+class Solution {
+public:
+    int maxProfit(vector<int>& prices, int fee) {
+        int n = prices.size();
+        if (n < 2) return 0;
+        vector<int> dp(2, 0);
+        dp[0] = 0;//不持有
+        dp[1] = -prices[0];//持有
+        for (int i = 1; i < n; i++)
+        {
+            dp[0] = max(dp[0], dp[1] + prices[i] - fee);
+            dp[1] = max(dp[1], dp[0] - prices[i]);
+        }
+        return dp[0];
+    }
+};
+```
+### [198.打家劫舍](https://leetcode-cn.com/problems/house-robber/)
+1. **dp**
+* dp[i]表示在第i天获得的最大金额
+* basecase：第0家别无选择，第1家，0/1选大的
+* 状态转移：相邻的不能偷（这间屋子偷了，说明上间屋子没有偷）dp[i] = max(dp[i - 2] + nums[i], dp[i - 1])
+```C++
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+        vector<int> dp(n, 0);
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+        for (int i = 2; i < n; i++)
+        {
+            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp[n - 1];
+    }
+};
+```
+**空间优化**
+```C++
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+        int firstday = nums[0];
+        int secondday = max(nums[0], nums[1]);
+        for (int i = 2; i < n; i++)
+        {
+            int temp = secondday;
+            secondday = max(firstday + nums[i], secondday);
+            firstday = temp;
+        }
+        return secondday;
+    }
+};
+```
+---
+### [213.打家劫舍II](https://leetcode-cn.com/problems/house-robber-ii/)
+* **dp**
+  偷第一间（不偷最后一间）、偷最后一间（不偷第一间）、都不偷（可以忽略，收益显然小于前面的情况）
+```C++
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 1) return nums[0];
+        if (n == 2) return max(nums[0], nums[1]);
+        return max(dp(0, n - 1, nums), dp(1, n, nums));
+    }
+    int dp(int start, int end, vector<int>& nums)
+    {
+        if (start == end) return nums[start];
+        vector<int> dp(nums.size(), 0);
+        dp[start] = nums[start];
+        dp[start + 1] = max(nums[start], nums[start + 1]);
+        for (int i = start + 2; i < end; i++)
+            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+        return dp[end - 1];
+    }
+};
+```
+* **优化**
+```C++
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 1) return nums[0];
+        if (n == 2) return max(nums[0], nums[1]);
+        return max(dp(0, n - 1, nums), dp(1, n, nums));
+    }
+    int dp(int start, int end, vector<int>& nums)
+    {
+        if (start == end) return nums[start];
+        vector<int> dp(nums.size(), 0);
+        int first = nums[start];
+        int second = max(nums[start], nums[start + 1]);
+        for (int i = start + 2; i < end; i++)
+        {
+            int temp = second;
+            second = max(first + nums[i], second);
+            first = temp;
+        }           
+        return second;
+    }
+};
+```
+---
+### [337.打家劫舍III](https://leetcode-cn.com/problems/house-robber-iii/)
+1. 深度优先
+```C++
+class Solution {
+public:
+    struct state{
+        int select;
+        int noselect;
+    };
+    int rob(TreeNode* root) {
+        if (root == nullptr) return 0;
+        auto res = dfs(root);
+        return max(res.select, res.noselect);
+    }
+    state dfs(TreeNode* root)
+    {
+        if (root == nullptr) return {0, 0};
+        auto L = dfs(root->left);
+        auto R = dfs(root->right);
+        int select = root->val + L.noselect + R.noselect;
+        int noselect = max(L.select, L.noselect) + max(R.select, R.noselect);
+        return {select, noselect};
+    }
+};
+```
+2. **dp**
+```C++
+用dp数组取代state
+```
+---
+### [152.乘积最大子数组](https://leetcode-cn.com/problems/maximum-product-subarray/)
+* **动态规划**
+* dp[i][0]/[1]代表nums[i]结尾的连续子数组的最小值和最大值
+* //basecase,只有一个元素时，最大值，最小值均是自己
+* 状态传递需要考虑当前数是正还是负！
+```C++
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        //dp[i][0]/[1]代表nums[i]结尾的连续子数组的最小值和最大值
+        vector<vector<int>> dp(n, vector<int>(2, 0));
+        //basecase,只有一个元素时，最大值，最小值均是自己
+        dp[0][1] = nums[0];
+        dp[0][0] = nums[0];
+        for (int i = 1; i < n; i++)
+        {
+            if (nums[i] >= 0)//当前数大于零
+            {
+                dp[i][0] = min(nums[i], nums[i] * dp[i - 1][0]);
+                dp[i][1] = max(nums[i], nums[i] * dp[i - 1][1]);
+            }
+            else//当前数小于零，则大小性质转变
+            {
+                dp[i][0] = min(nums[i], nums[i] * dp[i - 1][1]);
+                dp[i][1] = max(nums[i], nums[i] * dp[i - 1][0]);
+            }
+        }
+        int res = INT_MIN;
+        for (int i = 0; i < n; i++)
+            res = max(res, dp[i][1]);
+        return res;
+    }
+};
+```
+**空间优化**
+```C++
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        int res = INT_MIN;
+        int minnum = nums[0];
+        int maxnum = nums[0];
+        res = max(maxnum, res);//只有一个数/第一个数就是结果
+        for (int i = 1; i < n; i++)
+        {
+            if (nums[i] >= 0)//当前数大于零
+            {
+                minnum = min(nums[i], nums[i] * minnum);
+                maxnum = max(nums[i], nums[i] * maxnum);
+            }
+            else//当前数小于零，则大小性质转变
+            {
+                int temp = minnum;//下一步会更新minnum，需要保存当前值
+                minnum = min(nums[i], nums[i] * maxnum);
+                maxnum = max(nums[i], nums[i] * temp);
+            }
+            res = max(maxnum, res);
+        }
+        return res;
+    }
+};
+```
+---
+### [面试题17.16.按摩师](https://leetcode-cn.com/problems/the-masseuse-lcci/submissions/)
+* **打家劫舍动态规划**
+```C++
+class Solution {
+public:
+    int massage(vector<int>& nums) {
+        int n = nums.size(); 
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+        vector<int> dp(n, 0);
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+        for (int i = 2; i < n; i++)
+        {
+            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp.back();
+    }
+};
+```
+---
+
+
+## BFS & 图问题
+### [1162.地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)
+* **队列逐层**
+* **方向数组**
+* **visited数组**
+* **合法判断**
+```C++
+class Solution {
+public:
+    int maxDistance(vector<vector<int>>& grid) {
+        int N = grid.size();
+        queue<pair<int, int>> que;
+        for (int i = 0; i < N; ++i)
+            for (int j = 0; j < N; ++j)
+                if (grid[i][j] != 0)
+                    que.push(make_pair(i, j));
+        int landSize = que.size();
+        if (landSize == 0 || landSize == N * N)
+            return -1;
+        vector<vector<int>> directions{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};//方向数组
+        vector<vector<bool>> visited(N, vector<bool>(N, false));//是否访问
+        int steps = 0;
+        while (!que.empty())
+        {
+            int curSize = que.size();
+            while (curSize--)//逐层遍历
+            {
+                auto point = que.front();
+                que.pop();
+                int x = point.first;
+                int y = point.second;
+                for(auto d : directions)
+                {
+                    auto curX = x + d[0], curY = y + d[1];
+                    if (inArea(curX, curY, N) && !visited[curX][curY] && grid[curX][curY] == 0)//未做扩散的海洋区域
+                    {
+                        visited[curX][curY] = true;
+                        que.push(make_pair(curX, curY));
+                    }
+                }
+            }
+            steps++;
+        }
+        return steps - 1;
+    }
+
+    bool inArea(int x, int y, int N)
+    {
+        return (x >= 0 && x < N && y >= 0 && y < N);
+    }
+};
+```
+---
+### [279.完全平方数](https://leetcode-cn.com/problems/perfect-squares/)
+1. BFS
+* **队列逐层**
+* **visited数组**
+```C++
+class Solution {
+public:
+    int numSquares(int n) {
+        queue<int> que;
+        vector<int> visited(n, false);
+        que.push(n);
+        int count = 0;
+        while (!que.empty())
+        {
+            int curSize = que.size();
+            while (curSize--)
+            {
+                auto num = que.front();
+                que.pop();
+                for (int i = 1; i * i <= num; ++i)
+                {
+                    int curnum = num - i * i;
+                    if (curnum == 0) return count + 1;
+                    if (!visited[curnum])
+                    {
+                        visited[curnum] = true;
+                        que.push(curnum);
+                    }
+                }
+            }
+            count++;
+        }
+        return -1;
+    }  
+};
+```
+
+1. **dp**
+```C++
+class Solution {
+public:
+    int numSquares(int n) {
+        vector<int> dp(n + 1, INT_MAX);
+        dp[0] = 0;
+        dp[1] = 1;
+        for (int i = 2; i <= n; ++i)
+            for (int j = 1; j * j <= i; ++j)
+                dp[i] = min(dp[i], dp[i - j * j] + 1);
+        return dp.back();   
+    }
+};
+```
+---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
+
+
+
+## 剑指offer系列
+
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
 ### []()
 *
 ```C++
 
 ```
 ---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
 ### []()
 *
 ```C++
