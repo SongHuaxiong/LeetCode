@@ -151,13 +151,19 @@
     - [BFS & 图问题](#bfs--图问题)
         - [[1162.地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)](#1162地图分析httpsleetcode-cncomproblemsas-far-from-land-as-possible)
         - [[279.完全平方数](https://leetcode-cn.com/problems/perfect-squares/)](#279完全平方数httpsleetcode-cncomproblemsperfect-squares)
+        - [[111.二叉树的最小深度](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/)](#111二叉树的最小深度httpsleetcode-cncomproblemsminimum-depth-of-binary-tree)
+        - [[752.打开转盘锁](https://leetcode-cn.com/problems/open-the-lock/)](#752打开转盘锁httpsleetcode-cncomproblemsopen-the-lock)
+        - [[773.滑动谜题](https://leetcode-cn.com/problems/sliding-puzzle/)](#773滑动谜题httpsleetcode-cncomproblemssliding-puzzle)
+        - [[剑指 Offer 13.机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)](#剑指-offer-13机器人的运动范围httpsleetcode-cncomproblemsji-qi-ren-de-yun-dong-fan-wei-lcof)
+        - [[130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)](#130被围绕的区域httpsleetcode-cncomproblemssurrounded-regions-1)
+        - [[994.腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)](#994腐烂的橘子httpsleetcode-cncomproblemsrotting-oranges)
         - [[]()](#)
         - [[]()](#-1)
         - [[]()](#-2)
-    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-3)
         - [[]()](#-4)
         - [[]()](#-5)
+    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-6)
         - [[]()](#-7)
         - [[]()](#-8)
@@ -330,6 +336,9 @@
         - [[]()](#-175)
         - [[]()](#-176)
         - [[]()](#-177)
+        - [[]()](#-178)
+        - [[]()](#-179)
+        - [[]()](#-180)
 
 <!-- /TOC -->
 
@@ -7651,6 +7660,460 @@ public:
 ```
 ---
 
+### [111.二叉树的最小深度](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/)
+1. **BFS**
+```C++
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if (root == nullptr) return 0;
+        queue<TreeNode*> q;
+        q.push(root);
+        int step = 1;
+        while (!q.empty())
+        {
+            int size = q.size();
+            for (int i = 0; i < size; ++i)
+            {
+                auto node = q.front();
+                q.pop();
+                if (node->left == nullptr && node->right == nullptr) return step;
+                if (node->left) q.push(node->left);
+                if (node->right) q.push(node->right);              
+            }
+            step++;
+        }
+        return step;
+    }
+};
+```
+2. **DFS**
+```C++
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if (root == nullptr) return 0;
+        if (root->left == nullptr  && root->right == nullptr) return 1;
+        int left = minDepth(root->left);
+        int right = minDepth(root->right);
+        if (root->left == nullptr  || root->right == nullptr) return left + right + 1;
+        return min(left, right) + 1;
+    }
+};
+```
+---
+
+### [752.打开转盘锁](https://leetcode-cn.com/problems/open-the-lock/)
+* **visited数组**
+* **逐层进队**
+* **InValid数组**
+```C++
+class Solution {
+public:
+    int openLock(vector<string>& deadends, string target) {
+        unordered_set<string> Invalid;
+        for (auto elem : deadends)
+            Invalid.insert(elem);
+        unordered_set<string> visited;
+        queue<string> q;
+        q.push("0000");
+        visited.insert("0000");
+        int step = 0;
+        while (!q.empty())
+        {
+            int size = q.size();
+            for (int i = 0; i < size; i++)
+            {
+                auto temp = q.front();
+                q.pop();
+                if (Invalid.count(temp) != 0)
+                    continue;
+                if (temp == target) return step;
+
+                for (int pos = 0; pos < 4; pos++)
+                {
+                    string upnum = up(temp, pos);
+                    if (visited.count(upnum) == 0)
+                    {
+                        q.push(upnum);
+                        visited.insert(upnum);
+                    }
+                    string downnum = down(temp, pos);
+                    if (visited.count(downnum) == 0)
+                    {
+                        q.push(downnum);
+                        visited.insert(downnum);
+                    }
+                }
+            }
+            step++;
+        }
+        return -1;
+    }
+
+    string up(const string& str, int pos)
+    {
+        string s = str;
+        s[pos] = s[pos] == '9' ? '0' : s[pos] + 1;
+        return s;
+    }
+    string down(const string& str, int pos)
+    {
+        string s = str;
+        s[pos] = s[pos] == '0' ? '9' : s[pos] - 1;
+        return s;
+    }
+};
+```
+
+---
+
+### [773.滑动谜题](https://leetcode-cn.com/problems/sliding-puzzle/)
+* **将二维数组转换为一维数组**， 建立上下左右的映射关系
+* **visited set**访问数组
+```C++
+class Solution {
+public:
+    int slidingPuzzle(vector<vector<int>>& board) {
+        string start;
+        for (auto row : board)
+            for (auto num : row)
+                start += num + '0';
+        string target = "123450";
+        vector<vector<int>> next{{1, 3}, {0, 2, 4}, {1, 5}, {0, 4}, {1, 3, 5}, {2, 4}};//2*3数组转为一维的方向下标
+        queue<string> q;
+        q.push(start);
+        unordered_set<string> visited;
+        visited.insert(start);
+        int steps = 0;
+        
+        while (!q.empty())
+        {
+            int size = q.size();
+            while (size--)
+            {
+                string curRes = q.front();
+                q.pop();
+                if (curRes == target) return steps;
+                int index = 0;
+                while (curRes[index] != '0') index++;
+                for (auto choose : next[index])
+                {
+                    string temp = curRes;
+                    swap(temp[choose], temp[index]);
+                    if (visited.count(temp) == 0)
+                    {
+                        visited.insert(temp);
+                        q.push(temp);
+                    }
+                }
+            }
+            steps++;
+        }
+        return -1;
+    }
+};
+```
+---
+
+### [剑指 Offer 13.机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)
+1. **BFS**
+```C++
+class Solution {
+public:
+    int movingCount(int m, int n, int k) {
+        if (k == 0) return 1;
+        vector<vector<int>> directions{{0, 1}, {1, 0}};
+        set<pair<int, int>> visited;
+        queue<pair<int, int>> q;
+        q.push(make_pair(0, 0));
+        visited.insert(make_pair(0, 0));
+        int count = 1;
+        while (!q.empty())
+        {
+            auto curPos = q.front();
+            q.pop();
+            for (auto d : directions)
+            {
+                int newX = curPos.first + d[0];
+                int newY = curPos.second + d[1];
+                if (newX > n - 1 || newY > m - 1 || sum(newX, newY) > k) continue;
+                if (visited.count(make_pair(newX, newY)) == 0)
+                {
+                    visited.insert(make_pair(newX, newY));
+                    q.push(make_pair(newX, newY));
+                    count++;
+                }
+            } 
+        }
+        return count;
+    }
+    int sum(int x, int y)
+    {
+        int res = 0;
+        while (x)
+        {
+            res += x % 10;
+            x /= 10;
+        }
+        while (y)
+        {
+            res += y % 10;
+            y /= 10;
+        }
+        return res;
+    }
+};
+```
+2. **DFS**
+```C++
+class Solution {
+public:
+    int count = 0;
+    int movingCount(int m, int n, int k) {
+        if (k == 0) return 1;
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+        dfs(0, 0, m, n, k, visited);
+        return count;
+    }
+
+    void dfs(int x, int y, int m, int n, int k, vector<vector<bool>>& visited) 
+    {
+        if (x == m || y == n || sum(x, y) > k || visited[x][y] == true) return;
+        visited[x][y] = true;
+        count++;
+        dfs(x + 1, y, m, n, k, visited);
+        dfs(x, y + 1, m, n, k, visited);
+    }
+
+    int sum(int x, int y)
+    {
+        int res = 0;
+        while (x)
+        {
+            res += x % 10;
+            x /= 10;
+        }
+        while (y)
+        {
+            res += y % 10;
+            y /= 10;
+        }
+        return res;
+    }
+};
+```
+---
+
+### [130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)
+1. **BFS**
+```C++
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) {
+        vector<vector<int>> directions{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int row = board.size();
+        if (row == 0) return;
+        int col = board.at(0).size();
+        queue<pair<int, int>> q;
+
+        for (int i = 0; i < row; i++)
+        {
+            if (board[i][0] == 'O')
+                q.emplace(i, 0);
+            if (board[i][col - 1] == 'O')
+                q.emplace(i, col - 1);
+        }
+        for (int j = 0; j < col; j++)
+        {
+            if (board[0][j] == 'O')
+                q.emplace(0, j);
+            if (board[row - 1][j] == 'O')
+                q.emplace(row - 1, j);
+        }
+
+        while (!q.empty())
+        {
+            auto point = q.front();
+            q.pop();
+            int x = point.first, y = point.second;
+            board[x][y] = '#';
+
+            for (auto d : directions)
+            {
+                int newX = x + d[0];
+                int newY = y + d[1];
+                if (newX < 0 || newY < 0 || newX > row - 1 || newY > col - 1 || board[newX][newY] != 'O') continue;
+                q.emplace(newX, newY);
+            }
+        }
+
+        for (auto& row : board)
+            for (auto& ele : row)
+            {
+                if (ele == '#')
+                    ele = 'O';
+                else
+                    ele = 'X';
+            } 
+    }
+};
+```
+2. **DFS**
+```C++
+class Solution {
+public:
+    int row, col;
+    void dfs(int x, int y, vector<vector<char>>& board)
+    {
+        if (x < 0 || y < 0 || x > row - 1 || y > col - 1 || board[x][y] != 'O') return;
+        board[x][y] = '#';
+        dfs(x + 1, y, board);
+        dfs(x, y + 1, board);
+        dfs(x - 1, y, board);
+        dfs(x, y - 1, board);
+    }
+
+    void solve(vector<vector<char>>& board) {
+        row = board.size();
+        if (row == 0) return;
+        col = board.at(0).size();
+
+        for (int i = 0; i < row; i++)
+        {
+            dfs (i, 0, board);
+            dfs (i, col - 1, board);
+        }
+        for (int j = 0; j < col; j++)
+        {
+            dfs (0, j, board);
+            dfs (row - 1, j, board);
+        }
+
+        for (auto& row : board)
+            for (auto& ele : row)
+            {
+                if (ele == '#')
+                    ele = 'O';
+                else
+                    ele = 'X';
+            } 
+    }
+};
+```
+3. **并查集**
+```C++
+class UnionFind {
+public:
+    int count;
+    vector<int> parent;
+    vector<int> size;
+public:
+    UnionFind(int n)
+    {
+        count = n;
+        parent.resize(n);
+        size.resize(n);
+        for (int i = 0; i < n; i++)
+        {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+    ~UnionFind(){}
+    int find(int x)
+    {
+        while (x != parent[x])
+        {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    }
+    void toUnion(int p, int q)
+    {
+        int proot = find(p), qroot = find(q);
+        if (proot == qroot) return;
+        if (size[proot] > size[qroot])
+        {
+            parent[qroot] = proot;
+            size[proot] += size[qroot];
+        }
+        else
+        {
+            parent[proot] = qroot;
+            size[qroot] += size[proot];
+        }
+        count--;
+    }
+    bool isConnected(int p, int q)
+    {
+        return find(p) == find(q);
+    }
+};
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) {
+        int m = board.size();
+        if (m == 0) return;
+        int n = board[0].size();
+        UnionFind UF(m * n + 1);
+        int dummy = m * n;
+
+        vector<vector<int>> directions{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        
+        for (int i = 0; i < m; i++)
+        {
+            if (board[i][0] == 'O') UF.toUnion(i * n + 0, dummy);
+            if (board[i][n - 1] == 'O') UF.toUnion(i * n + n - 1, dummy);
+        }
+        for (int j = 0; j < n; j++)
+        {
+            if (board[0][j] == 'O') UF.toUnion(0 * n + j, dummy);
+            if (board[m - 1][j] == 'O') UF.toUnion((m - 1) * n + j, dummy);
+        }
+        for (int  i = 1; i < m - 1; i++)
+            for (int j = 1; j < n - 1; j++)
+            {
+                if (board[i][j] == 'O')
+                {
+                    for (auto d : directions)
+                    {
+                        int newx = i + d[0], newy = j + d[1];
+                        if (board[newx][newy] == 'O') UF.toUnion(newx * n + newy, i * n + j);
+                    }
+                }
+            }
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (!UF.isConnected(i * n + j, dummy))
+                    board[i][j] = 'X';
+    }
+};
+```
+---
+
+### [994.腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
+* **BFS**
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
 ### []()
 *
 ```C++
@@ -7672,6 +8135,12 @@ public:
 ```
 ---
 
+### []()
+*
+```C++
+
+```
+---
 
 
 
