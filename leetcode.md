@@ -8096,7 +8096,51 @@ public:
 ### [994.腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)
 * **BFS**
 ```C++
+class Solution {
+public:
+    int orangesRotting(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid.at(0).size();
 
+        queue<pair<int, int>> q;
+        int steps = 0, count_1 = 0;
+        vector<vector<int>> directions{{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+            {
+                if (grid[i][j] == 1) count_1++;
+                if (grid[i][j] == 2) q.emplace(i, j);
+            }
+                
+        if (count_1 == 0) return 0;            
+        if (q.size() == 0) return -1;
+
+        while (!q.empty())
+        {
+            int size = q.size();
+            while (size--)
+            {
+                auto curBadOrange = q.front();
+                q.pop();
+                int x = curBadOrange.first, y = curBadOrange.second;
+                for (auto d : directions)
+                {
+                    int newx = x + d[0], newy = y + d[1];
+                    if (newx < 0 || newx > m - 1 || newy < 0 || newy > n - 1 || grid[newx][newy] != 1) continue;
+                    grid[newx][newy] = 2;
+                    q.emplace(newx, newy);
+                }
+            }
+            steps++;
+        }
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                if (grid[i][j] == 1) return -1;
+        return steps - 1;
+    }
+};
 ```
 ---
 
