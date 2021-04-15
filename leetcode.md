@@ -51,6 +51,7 @@
         - [[94.二叉树的中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)](#94二叉树的中序遍历httpsleetcode-cncomproblemsbinary-tree-inorder-traversal)
         - [[124.二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)](#124二叉树中的最大路径和httpsleetcode-cncomproblemsbinary-tree-maximum-path-sum)
         - [[687.最长同值路径](https://leetcode-cn.com/problems/longest-univalue-path/)](#687最长同值路径httpsleetcode-cncomproblemslongest-univalue-path)
+        - [[257.二叉树的所有路径](https://leetcode-cn.com/problems/binary-tree-paths/)](#257二叉树的所有路径httpsleetcode-cncomproblemsbinary-tree-paths)
     - [数据结构设计](#数据结构设计)
         - [[130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)](#130被围绕的区域httpsleetcode-cncomproblemssurrounded-regions)
         - [[990.等式方程的可满足性](https://leetcode-cn.com/problems/satisfiability-of-equality-equations/)](#990等式方程的可满足性httpsleetcode-cncomproblemssatisfiability-of-equality-equations)
@@ -2302,6 +2303,90 @@ public:
 };
 ```
 ---
+
+### [257.二叉树的所有路径](https://leetcode-cn.com/problems/binary-tree-paths/)
+1. **dfs**
+```C++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<string> res;
+    vector<string> binaryTreePaths(TreeNode* root) {
+        string str;
+        dfs(root, str);
+        return res;
+    }
+    void dfs(TreeNode* root, string str)
+    {
+        if (root != nullptr) 
+        {
+            str += to_string(root->val);
+            if (root->left == nullptr && root->right == nullptr)
+            {
+                res.push_back(str);
+                return;
+            }
+            else
+            {
+                str += "->";
+                dfs(root->left, str);
+                dfs(root->right, str);
+            }
+        }       
+    }
+};
+```
+
+2. **bfs**
+```C++
+class Solution {
+public:
+    vector<string> res;
+    vector<string> binaryTreePaths(TreeNode* root) {
+        if (root == nullptr) return {};
+        string path;
+        queue<TreeNode*> node_q;
+        queue<string> path_q;
+        node_q.push(root);
+        path_q.push(to_string(root->val));
+
+        while (!node_q.empty())
+        {
+            auto curNode = node_q.front();
+            auto curPath = path_q.front();
+            node_q.pop();
+            path_q.pop();
+            if (curNode->left == nullptr && curNode->right == nullptr) res.push_back(curPath);
+            else
+            {
+                if (curNode->left != nullptr)
+                {
+                    node_q.push(curNode->left);
+                    path_q.push(curPath + "->" + to_string(curNode->left->val));
+                }
+                if (curNode->right != nullptr)
+                {
+                    node_q.push(curNode->right);
+                    path_q.push(curPath + "->" + to_string(curNode->right->val));
+                }
+            }
+        }
+        return res;
+    }
+
+};
+
+```
 ---
 ---
 
