@@ -72,6 +72,7 @@
         - [[321.拼接最大数](https://leetcode-cn.com/problems/create-maximum-number/solution/c-dan-diao-zhan-pin-jie-tiao-li-qing-xi-nrnu1/)](#321拼接最大数httpsleetcode-cncomproblemscreate-maximum-numbersolutionc-dan-diao-zhan-pin-jie-tiao-li-qing-xi-nrnu1)
         - [[239.滑动窗口最大值](https://leetcode-cn.com/problems/sliding-window-maximum/)](#239滑动窗口最大值httpsleetcode-cncomproblemssliding-window-maximum)
         - [[剑指Offer09.用两个栈实现队列](https://leetcode-cn.com/problems/yong-liang-ge-zhan-shi-xian-dui-lie-lcof/)](#剑指offer09用两个栈实现队列httpsleetcode-cncomproblemsyong-liang-ge-zhan-shi-xian-dui-lie-lcof)
+        - [[706.设计哈希映射](https://leetcode-cn.com/problems/design-hashmap/)](#706设计哈希映射httpsleetcode-cncomproblemsdesign-hashmap)
     - [数组](#数组)
         - [[875.爱吃香蕉的珂珂](https://leetcode-cn.com/problems/koko-eating-bananas/)](#875爱吃香蕉的珂珂httpsleetcode-cncomproblemskoko-eating-bananas)
         - [[1011.在D天内送达包裹的能力](https://leetcode-cn.com/problems/capacity-to-ship-packages-within-d-days/)](#1011在d天内送达包裹的能力httpsleetcode-cncomproblemscapacity-to-ship-packages-within-d-days)
@@ -164,8 +165,16 @@
         - [[]()](#-3)
         - [[]()](#-4)
         - [[]()](#-5)
-    - [剑指offer系列](#剑指offer系列)
+    - [常用算法](#常用算法)
+        - [[560.和为K的子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)](#560和为k的子数组httpsleetcode-cncomproblemssubarray-sum-equals-k)
+        - [[1248.统计「优美子数组」](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/)](#1248统计优美子数组httpsleetcode-cncomproblemscount-number-of-nice-subarrays)
+        - [[974. 和可被 K 整除的子数组](https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/)](#974-和可被-k-整除的子数组httpsleetcode-cncomproblemssubarray-sums-divisible-by-k)
+        - [[454.四数相加II](https://leetcode-cn.com/problems/4sum-ii/)](#454四数相加iihttpsleetcode-cncomproblems4sum-ii)
+        - [[303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)](#303-区域和检索---数组不可变httpsleetcode-cncomproblemsrange-sum-query-immutable)
+        - [[304. 二维区域和检索 - 矩阵不可变](https://leetcode-cn.com/problems/range-sum-query-2d-immutable/)](#304-二维区域和检索---矩阵不可变httpsleetcode-cncomproblemsrange-sum-query-2d-immutable)
+        - [[307. 区域和检索 - 数组可修改](https://leetcode-cn.com/problems/range-sum-query-mutable/)](#307-区域和检索---数组可修改httpsleetcode-cncomproblemsrange-sum-query-mutable)
         - [[]()](#-6)
+    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-7)
         - [[]()](#-8)
         - [[]()](#-9)
@@ -340,6 +349,7 @@
         - [[]()](#-178)
         - [[]()](#-179)
         - [[]()](#-180)
+        - [[]()](#-181)
 
 <!-- /TOC -->
 
@@ -4045,6 +4055,110 @@ public:
 private:
     stack<int> s1;
     stack<int> s2;
+};
+```
+### [706.设计哈希映射](https://leetcode-cn.com/problems/design-hashmap/)
+1. 一维数组
+```C++
+class MyHashMap {
+public:
+    MyHashMap() {
+        data = vector<int>(1000001, -1);
+    }
+    
+    void put(int key, int value) {
+        data[key] = value;
+    }
+    
+    int get(int key) {
+        return data[key];
+    }
+    
+    void remove(int key) {
+        data[key] = -1;
+    }
+private:
+    vector<int> data;
+};
+```
+2. 二维数组(稀疏矩阵节省空间)
+```C++
+class MyHashMap {
+public:
+
+    MyHashMap() {
+        data.resize(N);
+    }
+
+    void put(int key, int value) {
+        int key1 = getHashKey1(key);
+        int key2 = getHashKey2(key);
+        if (data[key1].empty()) data[key1].resize(N, -1);
+        data[key1][key2] = value;
+    }
+
+    int get(int key) {
+        int key1 = getHashKey1(key);
+        int key2 = getHashKey2(key);
+        if (!data[key1].empty()) return data[key1][key2];
+        return -1;
+    }
+
+    void remove(int key) {
+        int key1 = getHashKey1(key);
+        int key2 = getHashKey2(key);
+        if (!data[key1].empty()) data[key1][key2] = -1;
+    }
+private:
+    int getHashKey1(int key) {return key % N;}
+    int getHashKey2(int key) {return key / N;}
+    vector<vector<int>> data;
+    int N = 1001;
+};
+```
+3. 链地址法
+```C++
+class MyHashMap {
+public:
+    /** Initialize your data structure here. */
+    MyHashMap() : data(N) {
+    }
+    
+    /** value will always be non-negative. */
+    void put(int key, int value) {
+        int hashKey = hash(key);
+        for (auto it = data[hashKey].begin(); it != data[hashKey].end(); it++)
+            if ((*it).first == key)
+            {
+                (*it).second = value;
+                return;
+            }
+        data[hashKey].emplace_back(key, value);
+    }
+    
+    /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
+    int get(int key) {
+        int hashKey = hash(key);
+        for (auto it = data[hashKey].begin(); it != data[hashKey].end(); it++)
+            if ((*it).first == key)
+                return (*it).second;
+        return -1;
+    }
+    
+    /** Removes the mapping of the specified value key if this map contains a mapping for the key */
+    void remove(int key) {
+        int hashKey = hash(key);
+        for (auto it = data[hashKey].begin(); it != data[hashKey].end(); it++)
+            if ((*it).first == key)
+            {
+                data[hashKey].erase(it);
+                return;
+            }
+    }
+private:
+    const int N = 769;
+    vector<list<pair<int, int>>> data;
+    int hash(int key) {return key % N;};
 };
 ```
 ---
@@ -8271,7 +8385,337 @@ public:
 ```
 ---
 
+## 常用算法
+>### 前缀和
+>前缀和数组preSum的含义也很好理解，preSum[i]就是nums[0..i-1]的和。那么如果我们想求nums[i..j]的和，只需要一步操作preSum[j+1]-preSum[i]即可（j+1 - i）
+### [560.和为K的子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)
+1. **前缀和**
+```C++
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        int n = nums.size();
+        vector<int> sum(n + 1, 0);
+        sum[0] = 0;
+        for (int i = 0; i < n; i++)
+            sum[i + 1] = sum[i] + nums[i];
+        int res = 0;
+        for (int i = 1; i <= n; i++)
+            for (int j = 0; j < i; j++)
+                if (sum[i] - sum[j] == k)
+                    res++;
+        return res; 
+    }
+};
+```
+2. **前缀和** + **哈希优化**
+* 将sum[i] - sum[j] == k ->sum[i] == sum[j] + k,进行哈希优化
+```C++
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        int n = nums.size();
+        //哈希记录该前缀和出现的次数
+        unordered_map<int, int> preSumCount;
+        preSumCount[0] = 1;
+        int res = 0, sum0_i = 0;
+        for (int i = 0; i < n; i++)
+        {
+            sum0_i += nums[i];
+            int sum0_j = sum0_i - k;
+            if (preSumCount.count(sum0_j) != 0)
+                res += preSumCount[sum0_j];
+            preSumCount[sum0_i]++; 
+        }
+        return res; 
+    }
+};
+```
+---
+### [1248.统计「优美子数组」](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/)
+1. 滑动窗口 [题解](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/solution/hua-dong-chuang-kou-qian-zhui-he-bi-xu-miao-dong-b/)
+   * 统计第 1 个奇数左边的偶数个数 leftEvenCnt。 这 leftEvenCnt 个偶数都可以作为「优美子数组」的起点，因此起点的选择有 leftEvenCnt + 1 种
+   * 统计第 k 个奇数右边的偶数个数 rightEvenCnt 。 这 rightEvenCnt 个偶数都可以作为「优美子数组」的终点，因此终点的选择有 rightEvenCnt + 1 种
+   * 因此「优美子数组」左右起点的选择组合数为 (leftEvenCnt + 1) * (rightEvenCnt + 1)。
 
+```C++
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        int n = nums.size();
+        int i = 0, j = 0;
+        int count = 0, res = 0;
+        while (j < n)
+        {
+            if (nums[j++] % 2 == 1)
+                count++;         
+            if (count == k)
+            {
+                int temp = j;
+                while (j < n && (nums[j] % 2 == 0))
+                    j++;
+                int rightEvenCount = j - temp;
+                int leftEvenCount = 0;
+                while (nums[i] % 2 == 0)
+                {
+                    leftEvenCount++;
+                    i++;
+                }
+                res += (leftEvenCount + 1) * (rightEvenCount + 1);
+                i++;
+                count--;
+            }
+        }
+        return res;
+    }
+};
+```
+2. **前缀和** + **哈希优化**
+
+```C++
+class Solution {
+public:
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        //map的键是前缀和、值是前缀和的个数
+        //这里的前缀和技术的个数
+        unordered_map<int, int> preSum;
+        preSum[0] = 1;
+        //遍历计算前缀和，并在res中累计计算满足要求的数
+        int res = 0, curSum = 0;
+        for (auto num : nums)
+        {
+            curSum += num & 1;
+            if (preSum.count(curSum - k) != 0)
+                res += preSum[curSum - k];
+            preSum[curSum]++;
+        }
+        return res;
+    }
+};
+```
+### [974. 和可被 K 整除的子数组](https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/)
+1. **前缀和**
+```C++
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& A, int K) {
+        int count = 0;
+        vector<int> preSum(A.size() + 1, 0);
+        //preSum[0] = 0;
+        for (int i = 0; i < A.size(); i++)
+            preSum[i + 1] = A[i] + preSum[i];
+        for (int i = 1; i <= A.size(); i++)
+            for (int j = 0; j < i; j++)
+                if ((preSum[i] - preSum[j]) % K == 0) count++;
+        return count;
+    }
+};
+```
+2. **前缀和** + **哈希优化**
+**同余数**
+```C++
+class Solution {
+public:
+    int subarraysDivByK(vector<int>& A, int K) {
+        unordered_map<int, int> preSumKCount;
+        preSumKCount[0] = 1;
+        int sum = 0, count = 0;
+        for (int i = 0; i < A.size(); i++)
+        {
+            sum += A[i];
+            int mod = (sum % K + K) % K;//同余
+            if (preSumKCount.count(mod) != 0)
+                count += preSumKCount[mod];
+            preSumKCount[mod]++;
+        }
+        return count;
+    }
+};
+```
+
+---
+### [454.四数相加II](https://leetcode-cn.com/problems/4sum-ii/)
+* **利用哈希**
+* 分组哈希，AB一组求和的个数，CD一组求在AB和中是否有CD和负数的值存在，统计个数即可
+```C++
+class Solution {
+public:
+    int fourSumCount(vector<int>& nums1, vector<int>& nums2, vector<int>& nums3, vector<int>& nums4) {
+        unordered_map<int, int> sum1_2, sum3_4;
+        int res = 0;
+        for (auto num1 : nums1)
+            for (auto num2 : nums2)
+                sum1_2[num1 + num2]++;
+        for (auto num3 : nums3)
+            for (auto num4 : nums4)
+            {
+                if (sum1_2.count(-num3 - num4) != 0)
+                    res += sum1_2[-num3 - num4];
+                sum3_4[num3 + num4]++;
+            }
+        return res;    
+    }
+};
+```
+---
+
+### [303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)
+**前缀和**
+```C++
+class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+        m_Nums = nums;
+        sum();
+    }
+    
+    int sumRange(int left, int right) {
+        return m_preSum[right + 1] - m_preSum[left];
+    }
+
+private:
+    vector<int> m_Nums;
+    vector<int> m_preSum;
+    void sum()
+    {
+        m_preSum.resize(m_Nums.size() + 1, 0);
+        for (int i = 0; i < m_Nums.size(); i++)
+            m_preSum[i + 1] = m_preSum[i] + m_Nums[i];
+    }
+};
+```
+---
+
+### [304. 二维区域和检索 - 矩阵不可变](https://leetcode-cn.com/problems/range-sum-query-2d-immutable/)
+1. **一维前缀和**
+* 每次逐行计算当前行的前缀和
+```C++
+class NumMatrix {
+public:
+    NumMatrix(vector<vector<int>>& matrix) : sumbyrow(matrix.size(), vector<int>(matrix[0].size() + 1, 0))
+    {
+        for (int i = 0; i < matrix.size(); i++)
+            for (int j = 0; j < matrix[0].size(); j++)
+                sumbyrow[i][j + 1] = sumbyrow[i][j] + matrix[i][j];
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        int sum = 0;
+        for (int i = row1; i <= row2; i++)
+            sum += sumbyrow[i][col2 + 1] - sumbyrow[i][col1];
+        return sum;
+    }
+private:
+    vector<vector<int>> sumbyrow;
+};
+```
+2. **二维前缀和**
+* [参考](https://leetcode-cn.com/problems/range-sum-query-2d-immutable/solution/ru-he-qiu-er-wei-de-qian-zhui-he-yi-ji-y-6c21/)
+```C++
+class NumMatrix {
+public:
+    NumMatrix(vector<vector<int>>& matrix) : sums(matrix.size() + 1, vector<int>(matrix[0].size() + 1, 0))
+    {
+        for (int i = 0; i < matrix.size(); i++)
+            for (int j = 0; j < matrix[0].size(); j++)
+                sums[i + 1][j + 1] = sums[i][j + 1] + sums[i + 1][j] - sums[i][j] + matrix[i][j];
+    }
+    
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        return sums[row2 + 1][col2 + 1] - sums[row1][col2 + 1] - sums[row2 + 1][col1] + sums[row1][col1];
+    }
+private:
+    vector<vector<int>> sums;
+};
+```
+---
+---
+---
+
+
+>### 树状数组 
+* [参考](https://blog.csdn.net/Small_Orange_glory/article/details/81290634?utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control)
+* lowbit函数
+   * lowbit函数: lowbit这个函数的功能就是求某一个数的二进制表示中最低的一位1，举个例子，x = 6，它的二进制为110，那么lowbit(x)就返回2，因为最后一位1表示2
+   * 求解：
+    ```C++
+    int lowbit(x) 
+    {	
+        return x - (x & (x - 1));
+    }
+    int lowbit(x) 
+    {	
+        return x & -x;
+    }
+    ```
+### [307. 区域和检索 - 数组可修改](https://leetcode-cn.com/problems/range-sum-query-mutable/)
+针对不同的题目，我们有不同的方案可以选择（假设我们有一个数组）：
+
+    数组不变，求区间和：「前缀和」、「树状数组」、「线段树」
+    多次修改某个数，求区间和：「树状数组」、「线段树」
+    多次整体修改某个区间，求区间和：「树状数组」、「线段树」
+    多次将某个区间变成同一个数，求区间和：「线段树」
+
+1. **树状数组**（前缀和超时）
+* 前缀和插入和查询为o1/on / on/o1 树状数组综合了性能
+```C++
+class NumArray {
+public:
+    NumArray(vector<int>& nums) {
+        m_Nums = nums;
+        tree.resize(nums.size() + 1, 0);
+        for (int i = 0; i < nums.size(); i++)
+            add(i + 1, nums[i]);
+    }
+    
+    void update(int index, int val) {
+        add(index + 1, val - m_Nums[index]);
+        m_Nums[index] = val;
+    }
+    
+    int sumRange(int left, int right) {
+        return query(right + 1) - query(left);
+    }
+private:
+    vector<int> tree;
+    vector<int> m_Nums;
+    int lowbit(int x)
+    {
+        return x & (-x);//x - (x & (x - 1));
+    }
+    void add(int index, int value)//原始数组单点添加（树状数组相关位置会发生整体改变）
+    {
+        int n = tree.size();
+        while (index < n)
+        {
+            tree[index] += value;
+            index += lowbit(index);
+        }
+    }
+    int query(int index)//树状数组前缀和
+    {
+        int res = 0;
+        while(index > 0)
+        {
+            res += tree[index];
+            index -= lowbit(index);
+        }
+        return res;
+    }
+};
+```
+---
+
+
+>### 差分数组
+>前缀和数组preSum的含义也很好理解，preSum[i]就是nums[0..i-1]的和。那么如果我们想求nums[i..j]的和，只需要一步操作preSum[j+1]-preSum[i]即可（j+1 - i）
+
+### []()
+*
+```C++
+
+```
+---
 
 ## 剑指offer系列
 test
