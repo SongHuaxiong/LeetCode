@@ -10,6 +10,10 @@
         - [归并排序](#归并排序)
         - [快速排序](#快速排序)
         - [test main](#test-main)
+        - [堆排序](#堆排序)
+        - [快排非递归实现](#快排非递归实现)
+        - [归并非递归实现](#归并非递归实现)
+        - [用栈模拟递归](#用栈模拟递归)
     - [链表](#链表)
         - [[206.反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)](#206反转链表httpsleetcode-cncomproblemsreverse-linked-list)
         - [[25.K个一组翻转链表](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)](#25k个一组翻转链表httpsleetcode-cncomproblemsreverse-nodes-in-k-group)
@@ -173,9 +177,11 @@
         - [[303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)](#303-区域和检索---数组不可变httpsleetcode-cncomproblemsrange-sum-query-immutable)
         - [[304. 二维区域和检索 - 矩阵不可变](https://leetcode-cn.com/problems/range-sum-query-2d-immutable/)](#304-二维区域和检索---矩阵不可变httpsleetcode-cncomproblemsrange-sum-query-2d-immutable)
         - [[307. 区域和检索 - 数组可修改](https://leetcode-cn.com/problems/range-sum-query-mutable/)](#307-区域和检索---数组可修改httpsleetcode-cncomproblemsrange-sum-query-mutable)
+        - [[315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)](#315计算右侧小于当前元素的个数httpsleetcode-cncomproblemscount-of-smaller-numbers-after-self)
+        - [[剑指Offer 51.数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)](#剑指offer-51数组中的逆序对httpsleetcode-cncomproblemsshu-zu-zhong-de-ni-xu-dui-lcof)
         - [[]()](#-6)
-    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-7)
+    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-8)
         - [[]()](#-9)
         - [[]()](#-10)
@@ -350,6 +356,7 @@
         - [[]()](#-179)
         - [[]()](#-180)
         - [[]()](#-181)
+        - [[]()](#-182)
 
 <!-- /TOC -->
 
@@ -495,6 +502,11 @@ int main()
     return 0;
 }
 ```
+
+### 堆排序
+### 快排非递归实现
+### 归并非递归实现
+### 用栈模拟递归
 ---
 ---
 ---
@@ -8633,7 +8645,7 @@ private:
 ---
 
 
->### 树状数组 
+>### 树状数组 ： 解决动态前缀和问题，常规前缀和方法在数组变化的时候，更新或者查询的效率会降低
 * [参考](https://blog.csdn.net/Small_Orange_glory/article/details/81290634?utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&dist_request_id=&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control)
 * lowbit函数
    * lowbit函数: lowbit这个函数的功能就是求某一个数的二进制表示中最低的一位1，举个例子，x = 6，它的二进制为110，那么lowbit(x)就返回2，因为最后一位1表示2
@@ -8705,8 +8717,165 @@ private:
 };
 ```
 ---
+### [315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)
+1. **树状数组**
+   * 建立不重复、排序的数组
+   * 统计数字出现的个数、
+   * 问题转换为反向的计算前缀和
+   * 采用树状数组降低时间复杂度
+```C++
+class F_Tree
+{
+private:
+    vector<int> tree;
+    int len;
 
+    //lowbit函数
+    int lowbit(int x)
+    {
+        return x & (-x);
+    }
+public:
+    F_Tree(int n) : len(n)
+    {
+        tree.resize(n + 1, 0);
+    }
 
+    ~F_Tree(){}
+
+    //单点更新、由下至上
+    void add(int index, int value)
+    {
+        while (index <= len)
+        {
+            tree[index] += value;
+            index += lowbit(index);
+        }
+    }
+
+    //查询前缀和
+    int query(int index)
+    {
+        int res = 0;
+        while (index > 0)
+        {
+            res += tree[index];
+            index -=lowbit(index);
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<int> countSmaller(vector<int>& nums) {
+        vector<int> res;
+        int n = nums.size();
+        if (n == 0)
+            return res;
+        
+        //去重 + 排序
+        set<int> newNum(nums.begin(), nums.end());
+
+        //建立数和 index 的映射关系
+        map<int, int> num_To_Index;
+        int index = 1;
+        for (auto num : newNum)
+            num_To_Index[num] = index++;
+
+        //FenwickTree 进行前缀和统计
+        F_Tree f_tree(newNum.size() + 1);
+        //依据题意、从后往前
+        for (int i = n - 1; i >= 0; i--)
+        {
+            auto curindex = num_To_Index[nums[i]];//nums数组中的数在set中的index
+            f_tree.add(curindex, 1);//出现一次加一次
+            res.push_back(f_tree.query(curindex - 1));//计算此前出现的前缀和，故为curindex - 1
+        }
+        reverse(res.begin(), res.end());
+        return res;
+
+    }
+};
+```
+2. **归并排序、线段树**
+   * 见线段树章节，单独归纳
+---
+### [剑指Offer 51.数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+* **树状数组** 类似上一题
+```C++
+class FenwickTree
+{
+public:
+    FenwickTree(int n) : len(n)
+    {
+        tree.resize(n + 1, 0);
+    }
+    ~FenwickTree(){}
+    void add(int index, int value)
+    {
+        while (index <= len)
+        {
+            tree[index] += value;
+            index += lowbit(index);
+        }
+    }
+
+    int query(int index)
+    {
+        int res = 0;
+        while (index > 0)
+        {
+            res += tree[index];
+            index -= lowbit(index);
+        }
+        return res;
+    }
+
+private:
+    int len;
+    vector<int> tree;
+
+    int lowbit(int x) 
+    {
+        return x & (-x);
+    }
+};
+
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0 || n == 1) return 0;
+        int count = 0;
+
+        set<int> newNums(nums.begin(), nums.end());
+        map<int, int> num_To_Index;//建立set中数和对应index的关系
+        int index = 1;
+        for (auto num : newNums)
+            num_To_Index[num] = index++;
+        FenwickTree treeNums(newNums.size());//important
+
+        for (int i = n - 1; i >= 0; --i)
+        {
+            auto curI = num_To_Index[nums[i]];
+            treeNums.add(curI, 1);
+            count += treeNums.query(curI - 1);
+        }
+        return count;
+    }
+};
+```
+**归并排序、线段树**方法
+   * 见线段树章节，单独归纳
+---
+### []()
+*
+```C++
+
+```
+---
+>### 线段树
 >### 差分数组
 >前缀和数组preSum的含义也很好理解，preSum[i]就是nums[0..i-1]的和。那么如果我们想求nums[i..j]的和，只需要一步操作preSum[j+1]-preSum[i]即可（j+1 - i）
 
@@ -8716,6 +8885,37 @@ private:
 
 ```
 ---
+>### 前缀树
+*
+```C++
+
+```
+---
+
+*
+```C++
+
+```
+---
+
+*
+```C++
+
+```
+---
+
+*
+```C++
+
+```
+---
+
+*
+```C++
+
+```
+---
+
 
 ## 剑指offer系列
 test
