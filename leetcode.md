@@ -179,11 +179,15 @@
         - [[307. 区域和检索 - 数组可修改](https://leetcode-cn.com/problems/range-sum-query-mutable/)](#307-区域和检索---数组可修改httpsleetcode-cncomproblemsrange-sum-query-mutable)
         - [[315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)](#315计算右侧小于当前元素的个数httpsleetcode-cncomproblemscount-of-smaller-numbers-after-self)
         - [[剑指Offer 51.数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)](#剑指offer-51数组中的逆序对httpsleetcode-cncomproblemsshu-zu-zhong-de-ni-xu-dui-lcof)
+        - [[493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)](#493-翻转对httpsleetcode-cncomproblemsreverse-pairs)
+        - [[剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)](#剑指-offer-51-数组中的逆序对httpsleetcode-cncomproblemsshu-zu-zhong-de-ni-xu-dui-lcof)
+        - [[315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)](#315计算右侧小于当前元素的个数httpsleetcode-cncomproblemscount-of-smaller-numbers-after-self-1)
+        - [[493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)](#493-翻转对httpsleetcode-cncomproblemsreverse-pairs-1)
         - [[]()](#-6)
         - [[]()](#-7)
-    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-8)
         - [[]()](#-9)
+    - [剑指offer系列](#剑指offer系列)
         - [[]()](#-10)
         - [[]()](#-11)
         - [[]()](#-12)
@@ -357,6 +361,8 @@
         - [[]()](#-180)
         - [[]()](#-181)
         - [[]()](#-182)
+        - [[]()](#-183)
+        - [[]()](#-184)
 
 <!-- /TOC -->
 
@@ -428,13 +434,14 @@ void insertionsort(vector<int>& nums)
 ---
 ### 归并排序
 ```C++
-void merge(vector<int>, int lo, int mid, int hi)
+void merge(vector<int>& nums, int lo, int mid, int hi)
 {
 	int i = lo;//左侧数组起始位置
 	int j = mid + 1;//右侧数组起始位置
 	vector<int> temp;//暂存
     while (i <= mid && j <= hi)
-        temp.push_back(nums[i] < nums[j] ? nums[i++] : nums[j++]);	
+        temp.push_back(nums[i] <=
+         nums[j] ? nums[i++] : nums[j++]);	
 	while (i <= mid)
 		temp.push_back(nums[i++]);
 	while (j <= hi)
@@ -8798,8 +8805,6 @@ public:
     }
 };
 ```
-2. **归并排序、线段树**
-   * 见线段树章节，单独归纳
 ---
 ### [剑指Offer 51.数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
 * **树状数组** 类似上一题
@@ -8866,16 +8871,302 @@ public:
     }
 };
 ```
-**归并排序、线段树**方法
-   * 见线段树章节，单独归纳
 ---
+### [493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)
+* **树状数组**
+```C++
+class FenwickTree
+{
+private:
+    int len;
+    vector<int> tree;
+    int lowbit(int x)
+    {
+        return x & (-x);
+    }
+public:
+    FenwickTree(int n) : len(n)
+    {
+        tree.resize(n + 1, 0);
+    }
+
+    void add(int index, int value)
+    {
+        while(index <= len)
+        {
+            tree[index] += value;
+            index += lowbit(index);
+        }
+    }
+
+    int query(int index)
+    {
+        int res = 0;
+        while (index > 0)
+        {
+            res += tree[index];
+            index -= lowbit(index);
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0 || n == 1) return 0;
+        int res = 0;
+
+        set<long long> newNums;
+        for (auto num : nums)
+        {
+            newNums.insert(num);
+            ////////////////////////////
+            newNums.insert((long long)num * 2);
+            //////////////////////////////
+        }
+        int index = 1;
+        map<long long, int> num_To_Index;
+        for (auto num : newNums)
+            num_To_Index[num] = index++;
+        FenwickTree treeNums(newNums.size());
+        for (int i = 0; i < n; ++i)
+        {    
+            //////////////////////////////
+            int left = num_To_Index[(long long)nums[i] * 2];
+            //////////////////////////////
+            int right = num_To_Index.size();
+            res += treeNums.query(right) - treeNums.query(left); 
+            int curI = num_To_Index[nums[i]];
+            treeNums.add(curI, 1);       
+        }
+        return res;
+    }
+};
+```
+---
+>### 归并排序
+### [剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)
+* **归并排序**
+* 在过程中计算逆序对，参考[题解](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/solution/bao-li-jie-fa-fen-zhi-si-xiang-shu-zhuang-shu-zu-b/)
+```C++
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 2) return 0;
+        vector<int> newNums = nums;
+        return mergeSort(newNums, 0, n - 1);
+    }
+
+    int mergeSort(vector<int>& nums, int lo, int hi)
+    {
+        if (lo == hi) return 0;
+        
+        int mid = lo + (hi - lo) / 2;
+        int leftPairs = mergeSort(nums, lo, mid);//计算左侧逆序对
+        int rightPairs = mergeSort(nums, mid + 1, hi);//计算右侧逆序对
+        //数组已经有序，那么就不存在crossPairs问题
+        if (nums[mid] <= nums[mid + 1]) return leftPairs + rightPairs;
+
+        int crossPairs = merge(nums, lo, mid, hi);
+        return leftPairs + rightPairs + crossPairs;
+    }
+
+    int merge(vector<int>& nums, int lo, int mid, int hi)
+    {
+        int i = lo, j = mid + 1;
+        vector<int> temp;
+        int count = 0;
+
+        while (i <= mid && j <= hi)
+        {
+            if (nums[i] <= nums[j])
+                temp.push_back(nums[i++]);
+            else
+            {
+                temp.push_back(nums[j++]);
+                count += mid - i + 1;
+            }
+        }
+        while (i <= mid)
+            temp.push_back(nums[i++]);
+        while (j <= hi)
+            temp.push_back(nums[j++]);
+        
+        auto it = temp.begin();
+        while (lo <= hi) nums[lo++] = *it++;
+        return count;
+    }
+};
+```
+---
+
+### [315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)
+* **索引 + 归并排序**
+* merge1超时
+```C++
+class Solution {
+public:
+    vector<int> res;
+    vector<int> countSmaller(vector<int>& nums) {
+        int n = nums.size();
+        if (n == 0) return {};
+
+        vector<pair<int, int>> num_With_Index;
+        for (int i = 0; i < n; ++i)
+            num_With_Index.emplace_back(nums[i], i);
+        res.resize(n, 0);
+        mergeSort(num_With_Index, 0, n - 1);
+        return res;
+    }
+
+    void mergeSort(vector<pair<int, int>>& arr, int lo, int hi)
+    {
+        if (lo == hi) return;
+        int mid = lo + (hi - lo) / 2;
+        mergeSort(arr, lo, mid);
+        mergeSort(arr, mid + 1, hi);
+        if (arr[mid].first <= arr[mid + 1].first) return;
+        merge(arr, lo, mid, hi);
+    }
+
+    /*void merge1(vector<pair<int, int>>& arr, int lo, int mid, int hi)
+    {
+        int i = lo, j = mid + 1;
+        vector<pair<int, int>> temp;
+        while (i <= mid && j <= hi)
+        {
+            if (arr[i].first <= arr[j].first)
+                temp.push_back(arr[i++]);
+            else
+            {            
+                for (int index = i; index <= mid; index++)
+                    res[arr[index].second]++;
+                temp.push_back(arr[j++]);
+            }
+        }
+
+        while (i <= mid)
+            temp.push_back(arr[i++]);
+        while (j <= hi)
+            temp.push_back(arr[j++]);
+        
+        auto it = temp.begin();
+
+        while (lo <= hi) arr[lo++] = *it++;
+    }*/
+
+        void merge(vector<pair<int, int>>& nums, int left, int mid, int right){
+        int i = left, j = mid + 1;
+        int k = left;
+
+        vector<pair<int, int>> sort_nums;
+
+        while (i <= mid && j <= right){
+            if (nums[i].first <= nums[j].first){
+                res[nums[i].second] += j - mid - 1;
+                sort_nums.push_back(nums[i++]);
+            }else if (nums[i].first > nums[j].first){
+                sort_nums.push_back(nums[j++]);
+            }
+        }
+
+        while (i <= mid){
+            res[nums[i].second] += j - mid - 1;
+            sort_nums.push_back(nums[i++]);
+        }
+
+        while (j <= right){
+            sort_nums.push_back(nums[j++]);
+        }
+
+        for (int m = 0, n = left; m < sort_nums.size(); m++, n++){
+            nums[n] = sort_nums[m];
+        }
+    }
+
+};
+```
+---
+
+### [493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)
+* **归并排序**
+```C++
+class Solution {
+public:
+    int reversePairs(vector<int>& nums) {
+        int n = nums.size();
+        if (n < 2) return 0;
+        return mergeSort(nums, 0, n - 1);
+    }
+
+    int mergeSort(vector<int>& nums, int lo, int hi)
+    {
+        if (lo == hi)
+            return 0;
+        int mid = lo + (hi - lo) / 2;
+        int leftPairs = mergeSort(nums, lo, mid);
+        int rightPairs = mergeSort(nums, mid + 1, hi);
+
+        return leftPairs + rightPairs + merge(nums, lo, mid, hi);
+    }
+
+    int merge(vector<int>& nums, int lo, int mid, int hi)
+    {
+        int i = lo, j = mid + 1;
+        int res = 0;
+        vector<int> temp;
+
+        while (i <= mid && j <= hi)
+        {
+            if (nums[i] > 2 * static_cast<long>(nums[j]))
+            {
+                res += mid - i + 1;
+                j++;
+            }
+            else i++;
+        }
+        i = lo, j = mid + 1;
+        while (i <= mid && j <= hi)
+            temp.push_back(nums[i] <= nums[j] ? nums[i++] : nums[j++]);
+        while (i <= mid)
+            temp.push_back(nums[i++]);
+        while (j <= hi)
+            temp.push_back(nums[j++]);
+
+        for (int i = 0; i < temp.size(); ++i)
+            nums[lo + i] = temp[i];
+
+        return res;
+
+    }
+};
+```
+---
+
 ### []()
 *
 ```C++
 
 ```
 ---
->### 线段树
+
+### []()
+*
+```C++
+
+```
+---
+
+### []()
+*
+```C++
+
+```
+---
+
 >### 差分数组
 >前缀和数组preSum的含义也很好理解，preSum[i]就是nums[0..i-1]的和。那么如果我们想求nums[i..j]的和，只需要一步操作preSum[j+1]-preSum[i]即可（j+1 - i）
 
