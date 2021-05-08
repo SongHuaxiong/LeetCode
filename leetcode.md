@@ -100,6 +100,7 @@
         - [[18.四数之和](https://leetcode-cn.com/problems/4sum/)](#18四数之和httpsleetcode-cncomproblems4sum)
         - [[2.两数相加](https://leetcode-cn.com/problems/add-two-numbers/)](#2两数相加httpsleetcode-cncomproblemsadd-two-numbers)
         - [[445.两数相加II](https://leetcode-cn.com/problems/add-two-numbers-ii/)](#445两数相加iihttpsleetcode-cncomproblemsadd-two-numbers-ii)
+        - [[215.数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)](#215数组中的第k个最大元素httpsleetcode-cncomproblemskth-largest-element-in-an-array)
     - [回溯](#回溯)
         - [[78.子集](https://leetcode-cn.com/problems/subsets/)](#78子集httpsleetcode-cncomproblemssubsets)
         - [[90.子集2](https://leetcode-cn.com/problems/subsets-ii/)](#90子集2httpsleetcode-cncomproblemssubsets-ii)
@@ -130,6 +131,7 @@
         - [[879.盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)](#879盈利计划httpsleetcode-cncomproblemsprofitable-schemes)
         - [[518.零钱兑换II](https://leetcode-cn.com/problems/coin-change-2/)](#518零钱兑换iihttpsleetcode-cncomproblemscoin-change-2)
         - [[1449.数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)](#1449数位成本和为目标值的最大数字httpsleetcode-cncomproblemsform-largest-integer-with-digits-that-add-up-to-target)
+        - [[1723.完成所有工作的最短时间](https://leetcode-cn.com/problems/find-minimum-time-to-finish-all-jobs/)](#1723完成所有工作的最短时间httpsleetcode-cncomproblemsfind-minimum-time-to-finish-all-jobs)
         - [[435.无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)](#435无重叠区间httpsleetcode-cncomproblemsnon-overlapping-intervals)
         - [[452.用最少数量的箭引爆气球](https://leetcode-cn.com/problems/minimum-number-of-arrows-to-burst-balloons/)](#452用最少数量的箭引爆气球httpsleetcode-cncomproblemsminimum-number-of-arrows-to-burst-balloons)
         - [[56.合并区间](https://leetcode-cn.com/problems/merge-intervals/)](#56合并区间httpsleetcode-cncomproblemsmerge-intervals)
@@ -511,6 +513,39 @@ int main()
 ```
 
 ### 堆排序
+```C++
+void max_Heap(vector<int>& nums, int start, int end)
+{
+    int father = start;//父节点
+    int son = father * 2 + 1;//第一个子节点
+    while (son <= end)
+    {
+        if (son + 1 <= end && nums[son + 1] > nums[son])//比较节点大小，选择较大的节点
+            son = son + 1;
+        if (nums[father] > nums[son])//调整完毕，跳出
+            return;
+        else//交换父子节点，并循环比较子节点和孙节点
+        {
+            swap(nums[father], nums[son]);
+            father = son;
+            son = father * 2 + 1;
+        }
+    }
+}
+
+void heapSort(vector<int>& nums, int size)
+{
+    //初始化，从第一个父节点开始调整，完全二叉树
+    for (int i = size / 2 - 1; i >= 0; i--)
+        max_Heap(nums, i, size - 1);
+    //交换元素并重新调整
+    for (int i = size - 1; i > 0; i--)
+    {
+        swap(nums[0], nums[i]);
+        max_Heap(nums, 0, i - 1);
+    }
+}
+```
 ### 快排非递归实现
 ### 归并非递归实现
 ### 用栈模拟递归
@@ -5136,6 +5171,274 @@ public:
 ```
 ---
 
+### [215.数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
+1. **sort**
+```C++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        sort(nums.begin(), nums.end(), greater<int>());
+        return nums[k - 1];
+    }
+};
+```
+2. **快排**
+```C++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int left = 0, right = nums.size() - 1;
+        int target = nums.size() - k;
+        while (true)
+        {
+            int index = partition(nums, left, right);
+            if (index == target) return nums[index];
+            else if (index < target) left = index + 1;
+            else right = index - 1;
+        }
+    }
+
+    int partition(vector<int>& nums, int left, int right)
+    {
+        int i = left, j = right;
+        int curNum = nums[left];
+        int index = left;
+        while (i < j)
+        {
+            while (nums[j] >= curNum && i < j)
+                j--;
+            while (nums[i] <= curNum && i < j)
+                i++;
+            if (i < j)
+            {
+                swap(nums, i, j);
+            }
+        }
+        swap(nums, index, i);
+        return i;
+    }
+    void swap(vector<int>& nums, int i, int j)
+    {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+};
+```
+3. **快排 + 随机优化（主元优化）**
+```C++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int left = 0, right = nums.size() - 1;
+        int target = nums.size() - k;
+        
+        while (true)
+        {
+            int index = partition(nums, left, right);
+            if (index == target) return nums[index];
+            else if (index < target) left = index + 1;
+            else right = index - 1;
+        }
+    }
+
+    int partition(vector<int>& nums, int left, int right)
+    {
+        int i = left, j = right;
+        //随机抽取标记位元素
+        int randIndex = left + rand() % (right - left + 1);
+        swap(nums, left, randIndex);
+        int curNum = nums[left];
+        int index = left;
+        while (i < j)
+        {
+            while (nums[j] >= curNum && i < j)
+                j--;
+            while (nums[i] <= curNum && i < j)
+                i++;
+            if (i < j)
+            {
+                swap(nums, i, j);
+            }
+        }
+        swap(nums, index, i);
+        return i;
+    }
+    void swap(vector<int>& nums, int i, int j)
+    {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+};
+```
+4. **堆排序系统实现（priority_queue）**
+```C++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int n = nums.size();
+        int rk = n - k + 1;
+
+        if (k <= rk)
+        {
+            priority_queue<int, vector<int>, greater<int>> minHeap;
+            for (auto num : nums)
+            {
+                if (minHeap.size() < k)
+                    minHeap.push(num);
+                else
+                {
+                    if (num > minHeap.top())
+                    {
+                        minHeap.pop();
+                        minHeap.push(num);
+                    }
+                }
+            }     
+            return minHeap.top();
+        }
+
+        else//rk < k
+        {
+            priority_queue<int, vector<int>, less<int>> maxHeap;
+            for (auto num : nums)
+            {
+                if (maxHeap.size() < rk)
+                    maxHeap.push(num);
+                else
+                {
+                    if (num < maxHeap.top())
+                    {
+                        maxHeap.pop();
+                        maxHeap.push(num);
+                    }
+                }
+            }
+            return maxHeap.top();
+        }
+    }
+};
+
+```
+5. **手写堆排序**
+```C++
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int n = nums.size();
+        buildHeap(nums, n);
+        for (int i = n - 1; i >= n - k + 1; i--)
+        {
+            swap(nums[0], nums[i]);
+            maxHeap(nums, 0, i - 1);
+        }
+        return nums[0];
+    }
+private:
+    void buildHeap(vector<int>& nums, int len)
+    {
+        for (int i = len / 2 - 1; i >= 0; i--)
+            maxHeap(nums, i, len - 1);
+    }
+
+    void maxHeap(vector<int>& nums, int start, int end)
+    {
+        int dad = start;
+        int son = 2 * dad + 1;
+        while (son <= end)
+        {
+            if (son + 1 <= end && nums[son] < nums[son + 1])
+                son++;
+            if (nums[dad] > nums[son])
+                return;
+            else
+            {
+                swap(nums[dad], nums[son]);
+                dad = son;
+                son = dad * 2 + 1;
+            }
+        }
+    }
+};
+```
+6. **快排 + BFPRT**
+```C++
+class BFPRT
+{
+public:
+    //给定begin~end范围，寻找第k小的数
+    int getMinKthByBFPRT(vector<int>& nums, int k, int begin, int end)
+    {
+        if (nums.empty() || k >= nums.size() || begin > end || k < begin || k > end) 
+            return -1;
+        if (begin == end) 
+            return nums.at(begin);
+        int pivot = medianOfMedians(nums, begin, end);//快排主元
+        vector<int> range = partition(nums, begin, end, pivot);
+        if (k > range[0] && k < range[1])
+            return nums[k];
+        else if (k <= range[0])
+            return getMinKthByBFPRT(nums, k, begin, range[0]);
+        else 
+            return getMinKthByBFPRT(nums, k, range[1], end);
+    }
+private:
+    void swap(vector<int>& nums, int i, int j)
+    {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+
+    int medianOfMedians(vector<int>& nums, int begin, int end)
+    {
+        //五个数作为一组，不够五个数直接补上（舍弃也可以）
+        int offset = (end - begin + 1) % 5 == 0 ? 0 : 1;
+        int total = (end - begin + 1) / 5 + offset;
+        vector<int> median;
+        for (int i = 0; i < total; i++)
+        {
+            int subBegin = begin + i * 5;
+            int subEnd = subBegin + 4;
+            //由于最后一个数组可能是大小小于5的数组，边界可能会超过end，取小值
+            sort(nums.begin() + subBegin, nums.begin() + min(subEnd, end));
+            int mid = subBegin + (min(subEnd, end) - subBegin) / 2;
+            median.push_back(nums[mid]);
+        }
+        return getMinKthByBFPRT(median, median.size() / 2, 0, median.size() - 1);//求中位数，此时median可能仍旧是一个很大的数组，所以不能直接简单排序，用递归求解中位数（位于size / 2）
+    }
+
+    //引入了通过median方法求得的pivot替代第一个数作为pivot和随机数作为pivot，达到优化
+    vector<int> partition(vector<int>& nums, int begin, int end, int pivot)
+    {
+        int tmpL = begin - 1;
+        int tmpR = end + 1;
+        int index = begin;
+        while (index < tmpR)
+        {
+            if (nums[index] < pivot)
+                swap(nums, index++, ++tmpL);
+            else if (nums[index] > pivot)
+                swap(nums, index, --tmpR);
+            else   
+                index++;
+        }
+        vector<int> res {tmpL, tmpR};
+        return res;
+    }
+};
+
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        int n = nums.size();
+        int res = BFPRT().getMinKthByBFPRT(nums, n - k, 0, n - 1);
+        return res;
+    }
+};
+```
+---
 
 
 
@@ -6637,6 +6940,56 @@ public:
     }
 };
 ```
+
+### [1723.完成所有工作的最短时间](https://leetcode-cn.com/problems/find-minimum-time-to-finish-all-jobs/)
+* **状态压缩dp**[题解](https://leetcode-cn.com/problems/find-minimum-time-to-finish-all-jobs/solution/zhuang-ya-dp-jing-dian-tao-lu-xin-shou-j-3w7r/)
+* jobs 的长度为 NN，则可以用一个 [0,2^N]之间的整数代表 jobs 的任意一个子集
+* dp[j][i] 表示：前 j 个工人为了完成作业子集 i，需要花费的最大工作时间的最小值。
+* 状态压缩（二进制表示所有状态）
+```C++
+class Solution {
+public:
+    int minimumTimeRequired(vector<int>& jobs, int k) {
+        //dp[j][i] 表示：前 j 个工人为了完成作业子集 i，需要花费的最大工作时间的最小值。
+        //设jobs 的长度为 NN，则可以用一个 [0,2^N]之间的整数代表 jobs 的任意一个子集
+        //total[i] 代表子集 i 的工作总时间。设子集 i 的其中（任意）一个元素为 j，则 i-(1<<j) 代表了子集 i中去掉了元素 j 后剩下的那部分。因此，我们有
+        //total[i]=total[i−(1<<j)]+jobs[j]
+        int n = jobs.size();
+        int scheme = 1 << n;//工作子集数量
+
+        vector<int> total(scheme, 0);
+        for (int i = 0; i < scheme; i++)//某一子集
+            for (int j = 0; j < n; j++)//子集中包含的工作
+            {
+                if ((i & (1 << j)) == 0) continue;//当前子集i中不含有工作j
+                int part = i - (1 << j);//除去工作 j 后，剩余工作组成的子集
+                total[i] = total[part] + jobs[j];
+                break;
+            }
+        
+        vector<vector<int>> dp(k, vector<int>(scheme));
+        //base case
+        for (int i = 0; i < scheme; i++)
+            dp[0][i] = total[i];//一个人完成
+        //状态转移
+        for (int j = 1; j < k; j++)
+            for (int i = 0; i < scheme; i++)
+            {
+                int minTime = INT_MAX;
+                for (int s = i; s; s = (s - 1) & i)//i的子集
+                {
+                    int part = i - s;
+                    int val = max(dp[j - 1][i - s], total[s]);//最大工作时间
+                    minTime = min(minTime, val);//最小值
+                }
+                dp[j][i] = minTime;
+            }
+        return dp.back().back();
+    }
+};
+```
+---
+
 ---贪心算法 - 区间调度问题
 ---
 ### [435.无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)
