@@ -1,8 +1,8 @@
 ### leetcode 题解
 
-* created by songhuaxiong
-* 记录和分享leetcode刷题日常
+* leetcode.md 按**标签**题解
+* jianzhi_offer.md **剑指offer**题解
+* algorithm.md **常见算法**
 
 > e-mail ：hx_song@foxmail.com  
-> 欢迎关注我的[CSDN](https://blog.csdn.net/song_upbeat
-)
+> by cpp
