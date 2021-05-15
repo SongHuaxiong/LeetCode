@@ -80,6 +80,7 @@
     - [数组](#数组)
         - [[875.爱吃香蕉的珂珂](https://leetcode-cn.com/problems/koko-eating-bananas/)](#875爱吃香蕉的珂珂httpsleetcode-cncomproblemskoko-eating-bananas)
         - [[1011.在D天内送达包裹的能力](https://leetcode-cn.com/problems/capacity-to-ship-packages-within-d-days/)](#1011在d天内送达包裹的能力httpsleetcode-cncomproblemscapacity-to-ship-packages-within-d-days)
+        - [[1482.制作 m 束花所需的最少天数](https://leetcode-cn.com/problems/minimum-number-of-days-to-make-m-bouquets/)](#1482制作-m-束花所需的最少天数httpsleetcode-cncomproblemsminimum-number-of-days-to-make-m-bouquets)
         - [[76.最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/submissions/)](#76最小覆盖子串httpsleetcode-cncomproblemsminimum-window-substringsubmissions)
         - [[567.字符串的排列](https://leetcode-cn.com/problems/permutation-in-string/)](#567字符串的排列httpsleetcode-cncomproblemspermutation-in-string)
         - [[438.找到字符串中所有字母异位词](https://leetcode-cn.com/problems/find-all-anagrams-in-a-string/)](#438找到字符串中所有字母异位词httpsleetcode-cncomproblemsfind-all-anagrams-in-a-string)
@@ -4302,6 +4303,61 @@ public:
 };
 ```
 ---
+
+### [1482.制作 m 束花所需的最少天数](https://leetcode-cn.com/problems/minimum-number-of-days-to-make-m-bouquets/)
+* **二分**
+* 二分定位各个连续子数组的最大值
+```C++
+class Solution {
+public:
+    int minDays(vector<int>& bloomDay, int m, int k) {
+        int n = bloomDay.size();
+        if (n < m * k) return -1;
+        int lo = INT_MAX, hi = 0;
+        for (auto day : bloomDay)
+        {
+            lo = min(lo, day);
+            hi = max(hi, day);
+        }
+        if (n == m * k) return hi;
+
+        while (lo <= hi)
+        {
+            int limitDay = (hi - lo) / 2 + lo;//limitDay代表完成制作所需的天数
+            if (isValid(bloomDay, limitDay, m, k))//在limitday内能否完成
+                hi = limitDay - 1;
+            else
+                lo = limitDay + 1;
+        }
+        return lo;
+    }
+
+    bool isValid(vector<int>& bloomDay, int limitDay, int m, int k)
+    {
+        int gruops = 0, flowers = 0;
+        int n = bloomDay.size();
+        for (int i = 0; i < n && gruops < m; i++)
+        {
+            if (bloomDay[i] <= limitDay)
+            {
+                flowers++;
+                if (flowers == k)
+                {
+                    flowers = 0;
+                    gruops++;
+                    if (gruops >= m)
+                        return true;
+                }
+            }
+            else
+                flowers = 0;
+        }
+        return false;
+    }
+};
+
+```
+---
 ***tip滑动窗口***
 
 ### [76.最小覆盖子串](https://leetcode-cn.com/problems/minimum-window-substring/submissions/)
@@ -5272,6 +5328,7 @@ public:
     }
 };
 ```
+
 4. **堆排序系统实现（priority_queue）**
 ```C++
 class Solution {
@@ -5437,6 +5494,104 @@ public:
         return res;
     }
 };
+```
+
+
+```C++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+//主函数
+int BFPRT(vector<int>& nums, int left, int right, int k);
+//获取主元所在下标
+int getPivotIndex(vector<int>& nums, int left, int right);
+//Partition函数
+int partition(vector<int>& nums, int left, int right, int pivotIndex);
+//插入排序获取中位数下标
+int getMedianByInsertionSort(vector<int>& nums, int left, int right);
+
+int main(){
+    vector<int> array{13,14,15,12,10,9,8,7,11,1,5,2,3,4,6};
+
+    int length= array.size();
+
+    printf("原始数组为：\n");
+    for(int i=0; i<length; i++) {
+        cout<<array[i]<<"  ";
+    }
+
+    for (int k = 1; k <= length; k++)
+    {
+        printf("第%d小的数是：%d", k, array[BFPRT(array, 0, length - 1, k)]);
+        printf("此时的数组为：\n");
+        for(int i = 0; i < length; i++) 
+            cout<<array[i]<<"  ";
+        cout << endl << "-----------------------------------------------------" <<endl;
+    }
+
+    return 0;
+}
+
+int BFPRT(vector<int>& nums, int left, int right, int k)
+{
+    int pivotIndex = getPivotIndex(nums, left, right);
+    int index = partition(nums, left, right, pivotIndex);
+	if (left == right) return left;
+    int count = index-left+1;
+    if(count == k)
+        return index;
+    else if(count > k)
+        return BFPRT(nums, left, index-1, k);
+    else
+        return BFPRT(nums, index+1, right, k-count);
+}
+
+int getPivotIndex(vector<int>& nums, int left, int right)
+{
+    if (right - left + 1 <= 5) return getMedianByInsertionSort(nums, left, right);
+    int pos = left;
+    for (int i = left; i + 4 < right; i += 5)
+    {
+        int index = getMedianByInsertionSort(nums, i, i + 4);
+        swap(nums[pos++], nums[index]);
+    }
+    return BFPRT(nums, left, pos, (pos - left) / 2 + left + 1);
+}
+
+int partition(vector<int>& nums, int left, int right, int pivotIndex)
+{
+    int i = left, j = right;
+    int key = nums[pivotIndex];
+    swap(nums[left], nums[pivotIndex]);
+    while (i < j)
+    {
+        while (nums[j] >= key && i < j)
+            j--;
+        while (nums[i] <= key && i < j)
+            i++;
+        if (i < j)
+            swap(nums[i], nums[j]);
+    }
+    swap(nums[i], nums[left]);
+    return i;
+}
+
+int getMedianByInsertionSort(vector<int>& nums, int left, int right)
+{
+    for (int j = left + 1; j <= right; j++)
+    {
+        int i = j - 1;
+        int curNum = nums[j];
+        while (i >= left && curNum < nums[i])
+        {
+            nums[i + 1] = nums[i];
+            i--;
+        }
+        nums[i + 1] = curNum;
+    }
+    return (right - left) / 2 + left;
+}
 ```
 ---
 
