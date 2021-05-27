@@ -108,77 +108,6 @@
     - [动态规划](#动态规划)
         - [[322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)](#322零钱兑换httpsleetcode-cncomproblemscoin-change)
         - [[1143.最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)](#1143最长公共子序列httpsleetcode-cncomproblemslongest-common-subsequence)
-        - [[583.两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)](#583两个字符串的删除操作httpsleetcode-cncomproblemsdelete-operation-for-two-strings)
-        - [[712.两个字符串的最小ASCII删除和](https://leetcode-cn.com/problems/minimum-ascii-delete-sum-for-two-strings/)](#712两个字符串的最小ascii删除和httpsleetcode-cncomproblemsminimum-ascii-delete-sum-for-two-strings)
-        - [[72.编辑距离](https://leetcode-cn.com/problems/edit-distance/)](#72编辑距离httpsleetcode-cncomproblemsedit-distance)
-        - [[300.最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)](#300最长递增子序列httpsleetcode-cncomproblemslongest-increasing-subsequence)
-        - [[354.俄罗斯套娃信封问题](https://leetcode-cn.com/problems/russian-doll-envelopes/)](#354俄罗斯套娃信封问题httpsleetcode-cncomproblemsrussian-doll-envelopes)
-        - [[53.最大子序和](https://leetcode-cn.com/problems/maximum-subarray/)](#53最大子序和httpsleetcode-cncomproblemsmaximum-subarray)
-        - [[516.最长回文子序列](https://leetcode-cn.com/problems/longest-palindromic-subsequence/)](#516最长回文子序列httpsleetcode-cncomproblemslongest-palindromic-subsequence)
-        - [[416.分割等和子集](https://leetcode-cn.com/problems/partition-equal-subset-sum/)](#416分割等和子集httpsleetcode-cncomproblemspartition-equal-subset-sum)
-        - [[474.一和零](https://leetcode-cn.com/problems/ones-and-zeroes/)](#474一和零httpsleetcode-cncomproblemsones-and-zeroes)
-        - [[494.目标和](https://leetcode-cn.com/problems/target-sum/)](#494目标和httpsleetcode-cncomproblemstarget-sum)
-        - [[879.盈利计划](https://leetcode-cn.com/problems/profitable-schemes/)](#879盈利计划httpsleetcode-cncomproblemsprofitable-schemes)
-        - [[518.零钱兑换II](https://leetcode-cn.com/problems/coin-change-2/)](#518零钱兑换iihttpsleetcode-cncomproblemscoin-change-2)
-        - [[1449.数位成本和为目标值的最大数字](https://leetcode-cn.com/problems/form-largest-integer-with-digits-that-add-up-to-target/)](#1449数位成本和为目标值的最大数字httpsleetcode-cncomproblemsform-largest-integer-with-digits-that-add-up-to-target)
-        - [[1723.完成所有工作的最短时间](https://leetcode-cn.com/problems/find-minimum-time-to-finish-all-jobs/)](#1723完成所有工作的最短时间httpsleetcode-cncomproblemsfind-minimum-time-to-finish-all-jobs)
-        - [[435.无重叠区间](https://leetcode-cn.com/problems/non-overlapping-intervals/)](#435无重叠区间httpsleetcode-cncomproblemsnon-overlapping-intervals)
-        - [[452.用最少数量的箭引爆气球](https://leetcode-cn.com/problems/minimum-number-of-arrows-to-burst-balloons/)](#452用最少数量的箭引爆气球httpsleetcode-cncomproblemsminimum-number-of-arrows-to-burst-balloons)
-        - [[56.合并区间](https://leetcode-cn.com/problems/merge-intervals/)](#56合并区间httpsleetcode-cncomproblemsmerge-intervals)
-        - [[57.插入区间](https://leetcode-cn.com/problems/insert-interval/)](#57插入区间httpsleetcode-cncomproblemsinsert-interval)
-        - [[986.区间列表的交集](https://leetcode-cn.com/problems/interval-list-intersections/)](#986区间列表的交集httpsleetcode-cncomproblemsinterval-list-intersections)
-        - [[763.划分字母区间](https://leetcode-cn.com/problems/partition-labels/)](#763划分字母区间httpsleetcode-cncomproblemspartition-labels)
-        - [[55.跳跃游戏](https://leetcode-cn.com/problems/jump-game/)](#55跳跃游戏httpsleetcode-cncomproblemsjump-game)
-        - [[45.跳跃游戏II](https://leetcode-cn.com/problems/jump-game-ii/)](#45跳跃游戏iihttpsleetcode-cncomproblemsjump-game-ii)
-        - [[10.正则表达式匹配](https://leetcode-cn.com/problems/regular-expression-matching/)](#10正则表达式匹配httpsleetcode-cncomproblemsregular-expression-matching)
-        - [[887.鸡蛋掉落](https://leetcode-cn.com/problems/super-egg-drop/)](#887鸡蛋掉落httpsleetcode-cncomproblemssuper-egg-drop)
-        - [[312. 戳气球](https://leetcode-cn.com/problems/burst-balloons/submissions/)](#312-戳气球httpsleetcode-cncomproblemsburst-balloonssubmissions)
-        - [[292.Nim游戏](https://leetcode-cn.com/problems/nim-game/)](#292nim游戏httpsleetcode-cncomproblemsnim-game)
-        - [[486.预测赢家](https://leetcode-cn.com/problems/predict-the-winner/)](#486预测赢家httpsleetcode-cncomproblemspredict-the-winner)
-        - [[121.买卖股票的最佳时机](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/)](#121买卖股票的最佳时机httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock)
-        - [[122.买卖股票的最佳时机II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)](#122买卖股票的最佳时机iihttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-ii)
-        - [[123.买卖股票的最佳时机III](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/)](#123买卖股票的最佳时机iiihttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-iii)
-        - [[188.买卖股票的最佳时机IV](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/)](#188买卖股票的最佳时机ivhttpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-iv)
-        - [[309.最佳买卖股票时机含冷冻期](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)](#309最佳买卖股票时机含冷冻期httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-with-cooldown)
-        - [[714.买卖股票的最佳时机含手续费](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)](#714买卖股票的最佳时机含手续费httpsleetcode-cncomproblemsbest-time-to-buy-and-sell-stock-with-transaction-fee)
-        - [[198.打家劫舍](https://leetcode-cn.com/problems/house-robber/)](#198打家劫舍httpsleetcode-cncomproblemshouse-robber)
-        - [[213.打家劫舍II](https://leetcode-cn.com/problems/house-robber-ii/)](#213打家劫舍iihttpsleetcode-cncomproblemshouse-robber-ii)
-        - [[337.打家劫舍III](https://leetcode-cn.com/problems/house-robber-iii/)](#337打家劫舍iiihttpsleetcode-cncomproblemshouse-robber-iii-1)
-        - [[152.乘积最大子数组](https://leetcode-cn.com/problems/maximum-product-subarray/)](#152乘积最大子数组httpsleetcode-cncomproblemsmaximum-product-subarray)
-        - [[面试题17.16.按摩师](https://leetcode-cn.com/problems/the-masseuse-lcci/submissions/)](#面试题1716按摩师httpsleetcode-cncomproblemsthe-masseuse-lccisubmissions)
-    - [BFS & 图问题](#bfs--图问题)
-        - [[1162.地图分析](https://leetcode-cn.com/problems/as-far-from-land-as-possible/)](#1162地图分析httpsleetcode-cncomproblemsas-far-from-land-as-possible)
-        - [[279.完全平方数](https://leetcode-cn.com/problems/perfect-squares/)](#279完全平方数httpsleetcode-cncomproblemsperfect-squares)
-        - [[111.二叉树的最小深度](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/)](#111二叉树的最小深度httpsleetcode-cncomproblemsminimum-depth-of-binary-tree)
-        - [[752.打开转盘锁](https://leetcode-cn.com/problems/open-the-lock/)](#752打开转盘锁httpsleetcode-cncomproblemsopen-the-lock)
-        - [[773.滑动谜题](https://leetcode-cn.com/problems/sliding-puzzle/)](#773滑动谜题httpsleetcode-cncomproblemssliding-puzzle)
-        - [[剑指 Offer 13.机器人的运动范围](https://leetcode-cn.com/problems/ji-qi-ren-de-yun-dong-fan-wei-lcof/)](#剑指-offer-13机器人的运动范围httpsleetcode-cncomproblemsji-qi-ren-de-yun-dong-fan-wei-lcof)
-        - [[130.被围绕的区域](https://leetcode-cn.com/problems/surrounded-regions/)](#130被围绕的区域httpsleetcode-cncomproblemssurrounded-regions-1)
-        - [[994.腐烂的橘子](https://leetcode-cn.com/problems/rotting-oranges/)](#994腐烂的橘子httpsleetcode-cncomproblemsrotting-oranges)
-        - [[]()](#)
-        - [[]()](#-1)
-        - [[]()](#-2)
-        - [[]()](#-3)
-        - [[]()](#-4)
-        - [[]()](#-5)
-    - [常用算法](#常用算法)
-        - [[560.和为K的子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)](#560和为k的子数组httpsleetcode-cncomproblemssubarray-sum-equals-k)
-        - [[1248.统计「优美子数组」](https://leetcode-cn.com/problems/count-number-of-nice-subarrays/)](#1248统计优美子数组httpsleetcode-cncomproblemscount-number-of-nice-subarrays)
-        - [[974. 和可被 K 整除的子数组](https://leetcode-cn.com/problems/subarray-sums-divisible-by-k/)](#974-和可被-k-整除的子数组httpsleetcode-cncomproblemssubarray-sums-divisible-by-k)
-        - [[454.四数相加II](https://leetcode-cn.com/problems/4sum-ii/)](#454四数相加iihttpsleetcode-cncomproblems4sum-ii)
-        - [[303. 区域和检索 - 数组不可变](https://leetcode-cn.com/problems/range-sum-query-immutable/)](#303-区域和检索---数组不可变httpsleetcode-cncomproblemsrange-sum-query-immutable)
-        - [[304. 二维区域和检索 - 矩阵不可变](https://leetcode-cn.com/problems/range-sum-query-2d-immutable/)](#304-二维区域和检索---矩阵不可变httpsleetcode-cncomproblemsrange-sum-query-2d-immutable)
-        - [[307. 区域和检索 - 数组可修改](https://leetcode-cn.com/problems/range-sum-query-mutable/)](#307-区域和检索---数组可修改httpsleetcode-cncomproblemsrange-sum-query-mutable)
-        - [[315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)](#315计算右侧小于当前元素的个数httpsleetcode-cncomproblemscount-of-smaller-numbers-after-self)
-        - [[剑指Offer 51.数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)](#剑指offer-51数组中的逆序对httpsleetcode-cncomproblemsshu-zu-zhong-de-ni-xu-dui-lcof)
-        - [[493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)](#493-翻转对httpsleetcode-cncomproblemsreverse-pairs)
-        - [[剑指 Offer 51. 数组中的逆序对](https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/)](#剑指-offer-51-数组中的逆序对httpsleetcode-cncomproblemsshu-zu-zhong-de-ni-xu-dui-lcof)
-        - [[315.计算右侧小于当前元素的个数](https://leetcode-cn.com/problems/count-of-smaller-numbers-after-self/)](#315计算右侧小于当前元素的个数httpsleetcode-cncomproblemscount-of-smaller-numbers-after-self-1)
-        - [[493. 翻转对](https://leetcode-cn.com/problems/reverse-pairs/)](#493-翻转对httpsleetcode-cncomproblemsreverse-pairs-1)
-        - [[]()](#-6)
-        - [[]()](#-7)
-        - [[]()](#-8)
-        - [[]()](#-9)
 
 <!-- /TOC -->
 
@@ -5990,6 +5919,33 @@ public:
         return dp[text1.size()][text2.size()];
     }
 };
+```
+* **具体子序列**
+```C++
+29     while(dp[i][j])
+30     {
+31         if(dp[i][j]==dp[i-1][j])///来自于左方向
+32         {
+33             i--;
+34         }
+35         else if(dp[i][j]==dp[i][j-1])///来自于上方向
+36         {
+37             j--;
+38         }
+39         else if(dp[i][j]>dp[i-1][j-1])///来自于左上方向
+40         {
+41             i--;
+42             j--;
+43             s.push(a[i]);
+44         }
+45     }
+46     while(!s.empty())
+47     {
+48         c=s.top();
+49         printf("%c",c);
+50         s.pop();
+51     }
+```
 ```
 ### [583.两个字符串的删除操作](https://leetcode-cn.com/problems/delete-operation-for-two-strings/)
 * **基本同上**res = size1 + size2 - 2*最长子串长度

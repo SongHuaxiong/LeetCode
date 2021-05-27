@@ -122,6 +122,29 @@ void quicksort(vector<int>& nums, int left, int right)
 }
 ```
 
+### 快速选择
+```C++
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main()
+{
+	vector<int> res{5,6,15,89,7,2,1,3,52,63,12,64,47};
+	for (auto num : res)
+		cout << num << ",";
+	cout << endl;
+	int k;
+	cin >> k;
+    //下标k位置之前的数都比他大，后面都比他小
+	nth_element(res.begin(), res.begin() + 5, res.end(), greater<int>());
+	for (auto num : res)
+		cout << num << ",";
+	cout << endl;
+}
+```
+
 ### 堆排序
 ```C++
 void max_Heap(vector<int>& nums, int start, int end)
@@ -283,6 +306,97 @@ int getMedianByInsertionSort(vector<int>& nums, int left, int right)
 ### 用栈模拟递归
 ---
 ---
+### 字典树/前缀树
+```C++
+class Trie {
+private:
+    bool isEnd;
+    Trie* next[26];
+public:
+    Trie() {
+        isEnd = false;
+        memset(next, 0, sizeof(next));
+    }
+    
+    void insert(string word) {
+        Trie* node = this;
+        for (char c : word) {
+            if (node->next[c-'a'] == NULL) {
+                node->next[c-'a'] = new Trie();
+            }
+            node = node->next[c-'a'];
+        }
+        node->isEnd = true;
+    }
+    
+    bool search(string word) {
+        Trie* node = this; 
+        for (char c : word) {
+            node = node->next[c - 'a'];
+            if (node == NULL) {
+                return false;
+            }
+        }
+        return node->isEnd;
+    }
+    
+    bool startsWith(string prefix) {
+        Trie* node = this;
+        for (char c : prefix) {
+            node = node->next[c-'a'];
+            if (node == NULL) {
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+```
 ---
+### 树状数组
+```C++
+class F_Tree
+{
+private:
+    vector<int> tree;
+    int len;
+
+    //lowbit函数
+    int lowbit(int x)
+    {
+        return x & (-x);
+    }
+public:
+    F_Tree(int n) : len(n)
+    {
+        tree.resize(n + 1, 0);
+    }
+
+    ~F_Tree(){}
+
+    //单点更新、由下至上
+    void add(int index, int value)
+    {
+        while (index <= len)
+        {
+            tree[index] += value;
+            index += lowbit(index);
+        }
+    }
+
+    //查询前缀和
+    int query(int index)
+    {
+        int res = 0;
+        while (index > 0)
+        {
+            res += tree[index];
+            index -=lowbit(index);
+        }
+        return res;
+    }
+};
+```
 ---
 ---
