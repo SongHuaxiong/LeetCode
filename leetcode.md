@@ -105,9 +105,14 @@
         - [[39.组合总和](https://leetcode-cn.com/problems/combination-sum/)](#39组合总和httpsleetcode-cncomproblemscombination-sum)
         - [[17.电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)](#17电话号码的字母组合httpsleetcode-cncomproblemsletter-combinations-of-a-phone-number)
         - [[79.单词搜索](https://leetcode-cn.com/problems/word-search/)](#79单词搜索httpsleetcode-cncomproblemsword-search)
+        - [[491. 递增子序列](https://leetcode-cn.com/problems/increasing-subsequences/)](#491-递增子序列httpsleetcode-cncomproblemsincreasing-subsequences)
+        - [[60. 排列序列](https://leetcode-cn.com/problems/permutation-sequence/)](#60-排列序列httpsleetcode-cncomproblemspermutation-sequence)
     - [动态规划](#动态规划)
         - [[322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)](#322零钱兑换httpsleetcode-cncomproblemscoin-change)
         - [[1143.最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)](#1143最长公共子序列httpsleetcode-cncomproblemslongest-common-subsequence)
+- [define UP    1](#define-up----1)
+- [define DOWN -1](#define-down--1)
+- [define EQUAL 0](#define-equal-0)
 
 <!-- /TOC -->
 
@@ -5873,6 +5878,85 @@ public:
 ```
 ---
 
+### [491. 递增子序列](https://leetcode-cn.com/problems/increasing-subsequences/)
+* **回溯**
+* 关键是去重，判断**本层**是否使用过
+```C++
+class Solution {
+public:
+    vector<vector<int>> res;
+    vector<int> track;
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        backtrack(nums, 0);
+        return res;
+    }
+
+    void backtrack(vector<int>& nums, int start)
+    {
+        if (track.size() >= 2)
+            res.push_back(track);
+        unordered_set<int> visited;
+        for (int i = start; i < nums.size(); i++)
+        {
+            if ((!track.empty() && nums[i] < track.back()) || (visited.count(nums[i]) != 0))//不满足递增或本层已经使用过
+                continue;
+            visited.insert(nums[i]);
+            track.push_back(nums[i]);
+            backtrack(nums, i + 1);
+            track.pop_back();
+        }  
+    }
+};
+```
+---
+### [60. 排列序列](https://leetcode-cn.com/problems/permutation-sequence/)
+* **关键是减枝**
+```C++
+class Solution {
+public:
+    string str;
+    vector<int> visited;
+    vector<int> factorial;
+    string getPermutation(int n, int k) {
+        visited.resize(n + 1, 0);
+        initFactorial(n);
+        dfs(0, n, k);
+        return str;
+    }
+    //@param index 在这一步之前已经选择了几个数字，其值恰好等于这一步需要确定的下标位置
+    void dfs(int index, int n, int k)
+    {
+        if (index == n)
+            return;
+        // 计算还未确定的数字的全排列的个数，第 1 次进入的时候是 n - 1
+        int count = factorial[n - 1 - index];
+        for (int i = 1; i <= n; i++)
+        {
+            if (visited[i] == 1)
+                continue;
+            if (count < k)
+            {
+                k -= count;
+                continue;
+            }
+            str += to_string(i);
+            visited[i] = 1;
+            dfs(index + 1, n, k);
+            // 注意 1：不可以回溯（重置变量），算法设计是「一下子来到叶子结点」，没有回头的过程
+            // 注意 2：这里要加 return，后面的数没有必要遍历去尝试了
+            return;
+        }
+    }
+
+    void initFactorial(int n)
+    {
+        factorial.resize(n + 1, 0);
+        factorial[0] = 1;
+        for (int i = 1; i <= n; i++)
+            factorial[i] = factorial[i - 1] * i;
+    }
+};
+```
 ## 动态规划
 
 ### [322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)
@@ -6728,6 +6812,136 @@ public:
 };
 ```
 ---
+### [392. 判断子序列](https://leetcode-cn.com/problems/is-subsequence/)
+1. dp(适用于多次比较同一字符串)
+```C++
+class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        int n = s.size(), m = t.size();
+        vector<vector<int>> dp(m + 1, vector<int>(26, 0));
+        for (int i = 0; i < 26; i++)
+            dp[m][i] = m;
+        for (int i = m - 1; i >= 0; i--)
+            for (int j = 0; j < 26; j++)
+            {
+                if (t[i] == j + 'a')
+                    dp[i][j] = i;
+                else
+                    dp[i][j] = dp[i + 1][j];
+            }
+        
+        int next = 0;
+        for (int i = 0; i < n; i++)
+        {
+            if (dp[next][s[i] - 'a'] == m)
+                return false;
+            next = dp[next][s[i] - 'a'] + 1;
+        }
+        return true;
+    }
+};
+```
+2. 双指针
+```C++
+class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        if (s == t) return true;
+        int n = s.size(), m = t.size();
+        int i = 0, j = 0;
+        while (i < n && j < m)
+        {
+            if (t[j] == s[i])
+                i++;
+            j++;
+        }
+        return i == n;
+    }
+};
+```
+---
+### [115. 不同的子序列](https://leetcode-cn.com/problems/distinct-subsequences/)
+* [二维dp](https://leetcode-cn.com/problems/distinct-subsequences/solution/dai-ma-sui-xiang-lu-115-bu-tong-de-zi-xu-q6uq/)
+* dp[i][j]：以i-1为结尾的s子序列中出现以j-1为结尾的t的个数为dp[i][j]。
+```C++
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        int m = s.size(), n = t.size();
+        //0~i-1:s 和 0~j - 1:t 匹配的个数
+        vector<vector<unsigned long long>> dp(m + 1, vector<unsigned long long>(n + 1, 0));
+        for (int i = 0; i <= m; i++)
+            dp[i][0] = 1;
+        for (int j = 0; j <= n; j++)
+            dp[0][j] = 0;
+        dp[0][0] = 1;
+        for (int i = 1; i <= m; i++)
+            for (int j = 1; j <= n; j++)
+            {
+                if (s[i - 1] == t[j - 1])
+                    dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+                else
+                    dp[i][j] = dp[i - 1][j];
+            }
+        return dp[m][n];
+    }
+};
+```
+  **一维**
+```C++
+class Solution {
+public:
+    int numDistinct(string s, string t) {
+        int m = s.size(), n = t.size();
+        //0~i-1:s 和 0~j - 1:t 匹配的个数
+        vector<unsigned long long> dp(n + 1, 0);
+        dp[0] = 1;
+        for (int i = 1; i <= m; i++)
+            for (int j = n; j >= 1; j--)//倒序
+            {
+                if (s[i - 1] != t[j - 1])
+                    continue;
+                else
+                    dp[j] += dp[j - 1];
+            }
+        return dp[n];
+    }
+};
+```
+---
+
+---贪心算法
+### [376. 摆动序列](https://leetcode-cn.com/problems/wiggle-subsequence/)
+
+```C++
+#define UP    1 
+#define DOWN -1
+#define EQUAL 0 
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int n = nums.size();
+        if (n <= 1) return n;
+        int count = 1;
+        int state = EQUAL;
+        for (int i = 1; i < n; i++)
+        {
+            if (nums[i] > nums[i - 1] && state != UP)
+            {
+                state = UP;
+                count++;
+            }
+            if (nums[i] < nums[i - 1] && state != DOWN)
+            {
+                state = DOWN;
+                count++;
+            }
+        }
+        return count;
+    }
+};
+```
 
 ---贪心算法 - 区间调度问题
 ---
