@@ -107,6 +107,7 @@
         - [[79.单词搜索](https://leetcode-cn.com/problems/word-search/)](#79单词搜索httpsleetcode-cncomproblemsword-search)
         - [[491. 递增子序列](https://leetcode-cn.com/problems/increasing-subsequences/)](#491-递增子序列httpsleetcode-cncomproblemsincreasing-subsequences)
         - [[60. 排列序列](https://leetcode-cn.com/problems/permutation-sequence/)](#60-排列序列httpsleetcode-cncomproblemspermutation-sequence)
+        - [[1239. 串联字符串的最大长度](https://leetcode-cn.com/problems/maximum-length-of-a-concatenated-string-with-unique-characters/)](#1239-串联字符串的最大长度httpsleetcode-cncomproblemsmaximum-length-of-a-concatenated-string-with-unique-characters)
     - [动态规划](#动态规划)
         - [[322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)](#322零钱兑换httpsleetcode-cncomproblemscoin-change)
         - [[1143.最长公共子序列](https://leetcode-cn.com/problems/longest-common-subsequence/)](#1143最长公共子序列httpsleetcode-cncomproblemslongest-common-subsequence)
@@ -5957,6 +5958,38 @@ public:
     }
 };
 ```
+---
+
+### [1239. 串联字符串的最大长度](https://leetcode-cn.com/problems/maximum-length-of-a-concatenated-string-with-unique-characters/)
+* **回溯 + 位运算**
+* [参考](https://leetcode-cn.com/problems/maximum-length-of-a-concatenated-string-with-unique-characters/solution/cha-xi-ya-suo-di-gui-by-heroding-1g0r/)
+```C++
+class Solution {
+public:
+    int maxLength(vector<string>& arr) {
+        return backtrack(arr, 0, 0);
+    }
+    //用位来代替vector<26>
+    int backtrack(vector<string>& arr, int index, size_t visited)
+    {
+        if (index == arr.size())
+            return 0;
+        size_t old_visited = visited;
+
+        for (auto& ch : arr[index])
+        {
+            if (visited & (1 << (ch - 'a')))
+            {
+                return backtrack(arr, index + 1, old_visited);
+            }
+            visited |= (1 << (ch - 'a'));
+        }
+        int curLen = arr[index].size();
+        return max(curLen + backtrack(arr, index + 1, visited), backtrack(arr, index + 1, old_visited));
+    }
+};
+```
+---
 ## 动态规划
 
 ### [322.零钱兑换](https://leetcode-cn.com/problems/coin-change/)
