@@ -2015,6 +2015,47 @@ public:
 };
 
 ```
+
+### [1600. 皇位继承顺序](https://leetcode-cn.com/problems/throne-inheritance/)
+* **多叉树前序遍历**
+* move语义
+```C++
+class ThroneInheritance {
+public:
+    ThroneInheritance(string kingName) : king{move(kingName)}{
+    }
+    
+    void birth(string parentName, string childName) {
+        relation[move(parentName)].push_back(move(childName));
+    }
+    
+    void death(string name) {
+        dead.insert(move(name));
+    }
+    
+    vector<string> getInheritanceOrder() {
+        //preorder
+        vector<string> res;
+        preorder(king, res);
+        return res;
+    }
+private:
+    string king;
+    unordered_map<string, vector<string>> relation;
+    unordered_set<string> dead;
+    
+    void preorder(const string& name, vector<string>& res)
+    {
+        if (dead.count(name) == 0)
+            res.push_back(name);
+        if (relation.count(name) != 0)
+        {
+            for (auto& childName : relation[name])
+                preorder(childName,res);
+        }
+    }
+};
+```
 ---
 ---
 
